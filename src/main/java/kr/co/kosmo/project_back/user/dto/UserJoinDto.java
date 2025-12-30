@@ -37,8 +37,14 @@ public class UserJoinDto {
     @NotBlank(message = "전화번호는 필수 입력값입니다.")
     private String phone;
 
-    @NotBlank(message = "주소는 필수 입력값입니다.")
+    @NotBlank(message = "우편번호는 필수 입력값입니다.")
+    private String zipcode;
+
+    @NotBlank(message = "기본주소는 필수 입력값입니다.")
     private String address;
+
+    @NotBlank(message = "상세주소는 필수 입력값입니다.")
+    private String addressDetail;
 
     @NotNull(message = "관심분야는 필수 선택항목입니다.")
     @Size(min = 1, message = "관심분야는 최소 1개 이상 선택해주세요.")

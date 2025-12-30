@@ -11,10 +11,9 @@
             useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO bg_user
-        (login_id, password, name, phone, email, role, created_at, updated_at, last_login_at)
+        (login_id, password, name, phone, email, zipcode, address, address_detail )
         VALUES
-        (#{loginId}, #{password}, #{name}, #{phone}, #{email}, #{role},
-         CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL)
+        (#{loginId}, #{password}, #{name}, #{phone}, #{email}, #{zipcode}, #{address}, #{addressDetail})
     </insert>
     
     <!-- 아이디로 회원조회 -->

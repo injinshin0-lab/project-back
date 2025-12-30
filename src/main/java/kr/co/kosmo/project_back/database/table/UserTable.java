@@ -10,6 +10,10 @@ public class UserTable {
             name TEXT NOT NULL,
             phone TEXT NOT NULL,
             email TEXT NOT NULL,
+            zipcode TEXT NOT NULL,
+            address TEXT NOT NULL,
+            address_detail TEXT NOT NULL,
+
             role TEXT NOT NULL DEFAULT 'USER',
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME,

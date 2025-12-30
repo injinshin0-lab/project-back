@@ -29,6 +29,9 @@ public class UserService {
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
         user.setRole("USER");
+        user.setZipcode(dto.getZipcode());
+        user.setAddress(dto.getAddress());
+        user.setAddressDetail(dto.getAddressDetail());
 
         userMapper.insertUser(user);   // DB 저장해 -> user_id 생성
         return user.getId();

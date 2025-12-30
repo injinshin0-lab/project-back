@@ -34,3 +34,10 @@ build/
 
 # sqlite database
 db/*.db
+
+# local spring config
+src/main/resources/application.properties
+
+# logs
+logs/
+*.log
