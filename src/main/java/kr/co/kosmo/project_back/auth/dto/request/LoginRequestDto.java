@@ -15,3 +15,5 @@ public class LoginRequestDto {
     @NotBlank(message = "비밀번호는 필수입력 항목입니다.")
     private String password;
 }
+
+// 로그인 요청 단계

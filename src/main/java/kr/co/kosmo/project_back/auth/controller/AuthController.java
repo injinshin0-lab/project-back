@@ -35,7 +35,6 @@ public class AuthController {
             new MessageResponseDto("인증번호가 이메일로 발송되었습니다.")
         );
     }
-
     // 인증코드 확인절차(사용자로부터 두번째 요청 받음)
     @PostMapping("/email/verify-code")
     public ResponseEntity<MessageResponseDto> verifyEmailCode(
@@ -55,7 +54,6 @@ public class AuthController {
                 new MessageResponseDto("이메일 인증 성공")
             );
         }
-    
     // 로그인    
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto dto,

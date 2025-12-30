@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpSession;
 import kr.co.kosmo.project_back.auth.dto.request.LoginRequestDto;
+import kr.co.kosmo.project_back.mail.service.MailService;
 import kr.co.kosmo.project_back.user.mapper.UserMapper;
 import kr.co.kosmo.project_back.user.vo.UserVO;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ public class AuthService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final HttpSession session;
+    private final MailService mailService;
     
 
     public UserVO login(LoginRequestDto dto) {
@@ -38,10 +40,10 @@ public class AuthService {
         // 세션에 저장
         session.setAttribute("EMAIL_AUTH_CODE", authcode);
         session.setAttribute("EMAIL_AUTH_EMAIL", email);
-        // 유효기간 5분
-        session.setMaxInactiveInterval(300);
-        // 로그 출력
-        System.out.println("[EMAIL AUTH] email=" + email + ", code=" + authcode);
+        // 유효시간 1분
+        session.setMaxInactiveInterval(60);
+        // 이메일 발송
+        mailService.sendAuthCode(email, authcode);
     }
         private String createAuthCode() {
             return String.valueOf(
@@ -49,7 +51,7 @@ public class AuthService {
             );
         }   // 인증번호를 어떻게 만들었는지 구현 설명
 
-    // 인증번호 확인(컨트롤러로부터 받은 두번째 지시 처리 시작)
+    // 인증번호 검증(컨트롤러로부터 받은 두번째 지시 처리 시작)
     public boolean checkEmailCode(String email, String inputCode) {
         String savedCode = (String) session.getAttribute("EMAIL_AUTH_CODE");
         String savedEmail = (String) session.getAttribute("EMAIL_AUTH_EMAIL");
@@ -60,3 +62,9 @@ public class AuthService {
         return savedEmail.equals(email) && savedCode.equals(inputCode);
     }
 }
+
+
+
+
+// MailService를 호출. 인증번호 생성
+// AuthController -> AuthService -> MailService 순서

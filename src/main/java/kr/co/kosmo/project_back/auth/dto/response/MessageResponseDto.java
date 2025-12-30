@@ -8,3 +8,5 @@ import lombok.Getter;
 public class MessageResponseDto {
     private String message;
 }
+
+// 공통으로 들어가는 메세지 단계

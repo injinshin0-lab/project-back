@@ -10,3 +10,5 @@ public class LoginResponseDto {
     private Integer user_id;
     private String name;
 }
+
+// 로그인 응답 단계

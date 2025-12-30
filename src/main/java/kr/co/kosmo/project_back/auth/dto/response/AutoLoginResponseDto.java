@@ -15,3 +15,5 @@ public class AutoLoginResponseDto {
     private Integer user_id;
     private String name;
 }
+
+// 자동로그인 응답 단계

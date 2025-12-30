@@ -8,4 +8,4 @@ public class EmailCodeDto {
     private String authCode;
 }
 
-// 이메일 검증용 
+// 이메일 인증번호 확인 단계
