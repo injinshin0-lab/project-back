@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import kr.co.kosmo.project_back.auth.dto.request.EmailCodeDto;
 import kr.co.kosmo.project_back.auth.dto.request.EmailSendRequestDto;
-import kr.co.kosmo.project_back.auth.dto.request.EmailVerifyRequestDto;
 import kr.co.kosmo.project_back.auth.dto.request.LoginRequestDto;
 import kr.co.kosmo.project_back.auth.dto.response.AutoLoginResponseDto;
 import kr.co.kosmo.project_back.auth.dto.response.LoginResponseDto;
@@ -39,11 +39,11 @@ public class AuthController {
     // 인증코드 확인절차(사용자로부터 두번째 요청 받음)
     @PostMapping("/email/verify-code")
     public ResponseEntity<MessageResponseDto> verifyEmailCode(
-        @RequestBody EmailVerifyRequestDto dto,
+        @RequestBody EmailCodeDto dto,
         HttpServletRequest request) {
-            boolean result = authService.verifyEmailCode(   // 서비스에게 이거 맞아? 라고 묻는 지점
+            boolean result = authService.checkEmailCode(   // 서비스에게 이거 맞아? 라고 묻는 지점
                 dto.getEmail(),
-                dto.getCode()
+                dto.getAuthCode()
             );
             if (!result) {
                 return ResponseEntity.status(401)

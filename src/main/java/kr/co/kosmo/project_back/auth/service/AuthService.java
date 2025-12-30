@@ -50,7 +50,7 @@ public class AuthService {
         }   // 인증번호를 어떻게 만들었는지 구현 설명
 
     // 인증번호 확인(컨트롤러로부터 받은 두번째 지시 처리 시작)
-    public boolean verifyEmailCode(String email, String inputCode) {
+    public boolean checkEmailCode(String email, String inputCode) {
         String savedCode = (String) session.getAttribute("EMAIL_AUTH_CODE");
         String savedEmail = (String) session.getAttribute("EMAIL_AUTH_EMAIL");
         
