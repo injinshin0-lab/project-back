@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kr.co.kosmo.project_back.auth.dto.response.RegisterResponseDto;
 import kr.co.kosmo.project_back.user.dto.UserJoinDto;
@@ -23,9 +24,9 @@ public class UserController {
 
    // 회원가입 처리하라고 서비스에게 지시
    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserJoinDto dto) {    // JSON -> DTO로 바꿔서 넣음(바인딩)
+    public ResponseEntity<?> register(@Valid @RequestBody UserJoinDto dto, HttpServletRequest request) {    // JSON -> DTO로 바꿔서 넣음(바인딩)
         try {
-            Integer userId = userService.join(dto);
+            Integer userId = userService.join(dto, request);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponseDto(
                 "회원가입 성공", userId));
