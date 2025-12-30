@@ -40,7 +40,7 @@ public class AuthService {
         // 세션에 저장
         session.setAttribute("EMAIL_AUTH_CODE", authcode);
         session.setAttribute("EMAIL_AUTH_EMAIL", email);
-        // 유$효시간 1분
+        // 유효시간 1분
         session.setMaxInactiveInterval(60);
         // 이메일 발송
         mailService.sendAuthCode(email, authcode);
