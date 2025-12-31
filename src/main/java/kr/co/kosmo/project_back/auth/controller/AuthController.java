@@ -35,6 +35,7 @@ public class AuthController {
             new MessageResponseDto("인증번호가 이메일로 발송되었습니다.")
         );
     }
+
     // 인증코드 확인절차(사용자로부터 두번째 요청 받음)
     @PostMapping("/email/verify-code")
     public ResponseEntity<MessageResponseDto> verifyEmailCode(
@@ -54,6 +55,7 @@ public class AuthController {
                 new MessageResponseDto("이메일 인증 성공")
             );
         }
+
     // 로그인    
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto dto,
@@ -63,6 +65,7 @@ public class AuthController {
             return ResponseEntity.status(401)
             .body(new MessageResponseDto("아이디 또는 비밀번호가 일치하지 않습니다."));
         }
+
         // 로그인 시 세션 생성
         HttpSession session = request.getSession();
         session.setAttribute("LOGIN_USER", user.getId());
@@ -74,6 +77,7 @@ public class AuthController {
             )
         );
     }
+
     // 자동 로그인
     @PostMapping("/auto-login")
     public ResponseEntity<?> autologin(HttpServletRequest request) {
@@ -83,6 +87,7 @@ public class AuthController {
         if(session == null) {
             return ResponseEntity.status(401).body(new MessageResponseDto("로그인 상태가 아닙니다."));
         }
+
         // 세션은 있지만 로그인은 안했다면
         Integer userId = (Integer) session.getAttribute("LOGIN_USER");
         if(userId == null) {    // 로그인 안 한 상태
@@ -97,6 +102,7 @@ public class AuthController {
             )
         );
     }
+    
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<MessageResponseDto> logout(HttpServletRequest request) {
@@ -109,3 +115,9 @@ public class AuthController {
         );
     }
 }
+
+
+
+
+// 로그인했는지 / 인증됐는지 관리하는 곳
+// 로그인 이후 인증 상태 관리

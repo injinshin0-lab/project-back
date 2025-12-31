@@ -60,4 +60,13 @@
         WHERE id = #{id}
     </select>
 
+    <!-- 아이디 찾기 -->
+    <select id="findByNameAndEmail" resultType="kr.co.kosmo.project_back.user.vo.UserVO">
+        SELECT 
+            id,
+            login_id        AS loginId,
+            email,
+            password
+        FROM bg_user WHERE name = #{name} AND email = #{email}
+    </select>
 </mapper>

@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpSession;
+import kr.co.kosmo.project_back.auth.dto.request.FindUserIdRequestDto;
 import kr.co.kosmo.project_back.auth.dto.request.LoginRequestDto;
 import kr.co.kosmo.project_back.mail.service.MailService;
 import kr.co.kosmo.project_back.user.mapper.UserMapper;
@@ -61,7 +62,28 @@ public class AuthService {
         } 
         return savedEmail.equals(email) && savedCode.equals(inputCode);
     }
+
+    // 아이디 찾기 로직
+    public void findUserId(FindUserIdRequestDto dto) {
+        UserVO user = userMapper.findByNameAndEmail(
+            dto.getName(),
+            dto.getEmail()
+        );
+        if( user == null) {
+            throw new IllegalStateException("일치하는 회원이 없습니다.");
+        }
+        Boolean emailAuth = (Boolean) session.getAttribute("EMAIL_AUTH_SUCCESS");
+        if(emailAuth == null || !emailAuth) {
+            throw new IllegalStateException("이메일 인증이 필요합니다.");
+        }
+        mailService.sendUserIdMail(
+            dto.getEmail(),
+            user.getLoginId()
+        );
+    }
 }
+
+
 
 
 

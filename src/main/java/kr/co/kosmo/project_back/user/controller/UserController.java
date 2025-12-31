@@ -35,6 +35,7 @@ public class UserController {
                 e.getMessage(),null));
         } 
     }
+
     // 아이디 중복체크
     @PostMapping("/check-username")
     public ResponseEntity<?> checkUsername(@Valid @RequestBody Map<String, String> request) {
@@ -47,3 +48,10 @@ public class UserController {
         return ResponseEntity.ok("사용 가능한 아이디입니다.");
     }
 }
+
+
+
+
+
+// 회원 되기 전 단계(회원가입 시작점)를 담당
+// 회원가입과 같은 인증 진입 기능 담당
