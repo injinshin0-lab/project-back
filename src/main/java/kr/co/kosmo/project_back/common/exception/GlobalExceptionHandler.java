@@ -40,4 +40,14 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(errors);
     }
-}
+     
+    // 이메일 인증, 중복 요청 처리
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalStateException(
+            IllegalStateException ex) {
+        Map<String, String> body = new LinkedHashMap<>();
+        body.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+    }

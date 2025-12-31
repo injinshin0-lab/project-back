@@ -1,5 +1,8 @@
 package kr.co.kosmo.project_back.auth.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +38,27 @@ public class AuthService {
         return userMapper.selectById(id);
     }
     public void sendEmailCode(String email) {
-        // 컨트롤러로부터 지시받은 업무 처리하는 단계 //
+        // 컨트롤러로부터 지시받은 업무 처리(인증번호 발송을 위한 단계) //
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime lastIssuedAt = 
+            (LocalDateTime) session.getAttribute("EMAIL_AUTH_ISSUED_AT");
+        // 재발송 1분 제한
+        if( lastIssuedAt != null) {
+            long seconds =
+                Duration.between(lastIssuedAt, now).getSeconds();
+            if(seconds < 60) {
+                throw new IllegalStateException(
+                    "인증번호는 1분 후에 재발송할 수 있습니다."
+                );
+            }
+        }
         // 인증번호 생성
         String authcode = createAuthCode();
         // 세션에 저장
         session.setAttribute("EMAIL_AUTH_CODE", authcode);
         session.setAttribute("EMAIL_AUTH_EMAIL", email);
-        // 유효시간 1분
-        session.setMaxInactiveInterval(60);
+        session.setAttribute("EMAIL_AUTH_ISSUED_AT", now);
+        
         // 이메일 발송
         mailService.sendAuthCode(email, authcode);
     }
@@ -56,11 +72,30 @@ public class AuthService {
     public boolean checkEmailCode(String email, String inputCode) {
         String savedCode = (String) session.getAttribute("EMAIL_AUTH_CODE");
         String savedEmail = (String) session.getAttribute("EMAIL_AUTH_EMAIL");
+        LocalDateTime issuedAt = (LocalDateTime) session.getAttribute("EMAIL_AUTH_ISSUED_AT");
         
-        if(savedCode == null || savedEmail == null) {
-            return false;
+        if(savedCode == null || savedEmail == null || issuedAt == null) {
+            throw new IllegalStateException("인증번호를 다시 발급받아주세요.");
         } 
-        return savedEmail.equals(email) && savedCode.equals(inputCode);
+        if(!savedEmail.equals(email)) {
+            return false;
+        }
+        
+        // 1분 유효
+        long seconds =
+            Duration.between(issuedAt, LocalDateTime.now()).getSeconds();
+        if(seconds > 60) {
+            session.removeAttribute("EMAIL_AUTH_CODE");
+            session.removeAttribute("EMAIL_AUTH_EMAIL");
+            session.removeAttribute("EMAIL_AUTH_ISSUED_AT");
+
+            throw new IllegalStateException("인증번호가 만료되었습니다. 재발급 해주세요.");
+        }
+        if( !savedEmail.equals(email)) return false;
+        if( !savedCode.equals(inputCode)) return false;
+
+        session.setAttribute("EMAIL_AUTH_SUCCESS",true);
+        return true;
     }
 
     // 아이디 찾기 로직
