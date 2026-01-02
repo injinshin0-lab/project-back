@@ -38,7 +38,7 @@ public class UserJoinDto {
     private String phone;
 
     @NotBlank(message = "우편번호는 필수 입력값입니다.")
-    private String zipcode;
+    private String postcode;
 
     @NotBlank(message = "기본주소는 필수 입력값입니다.")
     private String address;

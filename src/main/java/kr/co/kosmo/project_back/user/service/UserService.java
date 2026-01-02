@@ -54,7 +54,7 @@ public class UserService {
         AddressVO address = new AddressVO();
         address.setUserId(userId);
         address.setRecipient(dto.getName());
-        address.setPostcode(dto.getZipcode());
+        address.setPostcode(dto.getPostcode());
         address.setAddress(dto.getAddress());
         address.setDetailAddress(dto.getAddressDetail());
         address.setRecipientPhone(dto.getPhone());

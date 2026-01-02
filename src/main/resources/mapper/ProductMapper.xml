@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.product.mapper.ProductMapper">
+
+<!-- 상품목록 조회 -->
+<select id="findAllProducts"
+        resultType="kr.co.kosmo.project_back.product.vo.ProductVO">
+    SELECT
+        id,
+        product_name    As productName,
+        content,
+        price,
+        product_status  As productStatus,
+        origin_name     As originName,
+        image_url       AS imageUrl,
+        created_at      As createdAt,
+        updated_at      As updatedAt
+    FROM Bg_Product
+    WHERE product_status = 'SELL'
+    ORDER By created_at DESC
+</select>
+
+<!-- 상품상세 조회 -->
+<select id="findByProductId"
+        parameterType="int"
+        resultType="kr.co.kosmo.project_back.product.vo.ProductVO">
+    SELECT
+        id,
+        product_name    As productName,
+        content,
+        price,
+        product_status  As productStatus,
+        origin_name     As originName,
+        image_url       AS imageUrl,
+        created_at      As createdAt,
+        updated_at      As updatedAt
+    FROM Bg_Product
+    WHERE id = #{productId}
+</select>
+
+<!-- 검색결과 전체 개수 구하는 기능 -->
+<select id="countProductList"
+        parameterType="kr.co.kosmo.project_back.product.dto.ProductSearchDto"
+        resultType="int">
+    SELECT COUNT(*)
+    FROM Bg_Product
+    WHERE product_status = 'SELL'
+    <if test="keyword != null and keyword != ''">
+        AND (
+            product_name LIKE '%' || #{keyword} || '%'
+            OR content LIKE '%' || #{keyword} || '%'
+        )   <!-- 키워드가 상품이름에 있던 내용에 있던 일단 다 검색 -->
+    </if>
+</select>
+
+<!-- 검색결과 목록 조회 -->
+<select id="findProductList"
+        parameterType="kr.co.kosmo.project_back.product.dto.ProductSearchDto"
+        resultType="kr.co.kosmo.project_back.product.dto.ProductDto">
+    SELECT 
+        id              AS productId,
+        product_name    AS productName,
+        content,
+        price,
+        origin_name     AS originName,
+        image_url       AS imageUrl
+    FROM Bg_Product
+    WHERE product_status = 'SELL'  
+    <if test="keyword != null and keyword != ''">
+        AND (
+            product_name LIKE '%' || #{keyword} || '%'
+            OR content LIKE '%' || #{keyword} || '%'
+        )
+    </if>
+    ORDER BY created_at DESC
+    LIMIT #{size}
+    OFFSET #{offset}
+</select>
+</mapper>
+        
+
+
+

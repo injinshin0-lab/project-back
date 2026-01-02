@@ -3,6 +3,7 @@ package kr.co.kosmo.project_back.user.controller;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +46,7 @@ public class UserPasswordController {
             }
 
         // 비번 재설정
-        @PostMapping("/reset-password")
+        @PatchMapping("/reset-password")
         public ResponseEntity<MessageResponseDto> resetPassword(
                 @Valid @RequestBody ResetPasswordRequestDto dto) {
             authService.resetPasswordWithToken(
