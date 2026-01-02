@@ -10,10 +10,10 @@
             parameterType="kr.co.kosmo.project_back.user.vo.UserVO"
             useGeneratedKeys="true"
             keyProperty="id">
-        INSERT INTO bg_user
-        (login_id, password, name, phone, email, zipcode, address, address_detail )
+        INSERT INTO Bg_User
+        (login_id, password, user_name, phone, email)
         VALUES
-        (#{loginId}, #{password}, #{name}, #{phone}, #{email}, #{zipcode}, #{address}, #{addressDetail})
+        (#{loginId}, #{password}, #{userName}, #{phone}, #{email})
     </insert>
     
     <!-- 아이디로 회원조회 -->
@@ -24,20 +24,20 @@
             id,
             login_id        AS loginId,
             password,
-            name,
+            user_name       AS userName,
             phone,
             email,
             role,
             created_at      AS createdAt,
             updated_at      AS updatedAt,
             last_login_at   AS lastLoginAt
-        FROM bg_user
+        FROM Bg_User
         WHERE login_id = #{loginId}
     </select>
 
     <!-- 아이디 중복 체크 -->
     <select id="existsByLoginId" parameterType="string" resultType="int">
-        SELECT COUNT(*) FROM bg_user
+        SELECT COUNT(*) FROM Bg_User
         WHERE login_id = #{loginId}
     </select>
 
@@ -49,14 +49,14 @@
             id,
             login_id        AS loginId,
             password,
-            name,
+            user_name       AS userName,
             phone,
             email,
             role,
             created_at      AS createdAt,
             updated_at      AS updatedAt,
             last_login_at   AS lastLoginAt
-        FROM bg_user
+        FROM Bg_User
         WHERE id = #{id}
     </select>
 
@@ -65,8 +65,15 @@
         SELECT 
             id,
             login_id        AS loginId,
-            email,
-            password
-        FROM bg_user WHERE name = #{name} AND email = #{email}
+            email
+        FROM Bg_User WHERE user_name = #{name} AND email = #{email}
     </select>
+
+    <!-- 바뀐 비번 저장 -->
+    <update id="updatePasswordByEmail">
+        UPDATE Bg_User
+        SET password = #{password},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE email = #{email}
+    </update>
 </mapper>

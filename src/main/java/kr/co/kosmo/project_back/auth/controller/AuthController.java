@@ -69,13 +69,8 @@ public class AuthController {
         // 로그인 시 세션 생성
         HttpSession session = request.getSession();
         session.setAttribute("LOGIN_USER", user.getId());
-        return ResponseEntity.ok(
-            new LoginResponseDto(
-                "로그인 성공",
-                user.getId(),
-                user.getName()
-            )
-        );
+        return ResponseEntity.ok( new LoginResponseDto( "로그인 성공",
+                user.getId(), user.getUserName()));
     }
 
     // 자동 로그인
@@ -94,13 +89,8 @@ public class AuthController {
             return ResponseEntity.status(401).body(new MessageResponseDto("로그인 상태가 아닙니다."));
         }
         UserVO user = authService.findById(userId);
-        return ResponseEntity.ok(
-            new AutoLoginResponseDto(
-                true,
-                userId,
-                user.getName()
-            )
-        );
+        return ResponseEntity.ok(new AutoLoginResponseDto( true,
+                userId, user.getUserName()));
     }
     
     // 로그아웃
@@ -115,7 +105,6 @@ public class AuthController {
         );
     }
 }
-
 
 
 

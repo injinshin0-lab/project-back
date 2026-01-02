@@ -2,6 +2,7 @@ package kr.co.kosmo.project_back.auth.service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class AuthService {
         // 아이디 없으면 에러
         if( user == null ) return null;
         // 비번 틀려도 에러
-        if( !passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        if(!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             return null;
         }
         return user;
@@ -43,7 +44,7 @@ public class AuthService {
         LocalDateTime lastIssuedAt = 
             (LocalDateTime) session.getAttribute("EMAIL_AUTH_ISSUED_AT");
         // 재발송 1분 제한
-        if( lastIssuedAt != null) {
+        if(lastIssuedAt != null) {
             long seconds =
                 Duration.between(lastIssuedAt, now).getSeconds();
             if(seconds < 60) {
@@ -91,8 +92,8 @@ public class AuthService {
 
             throw new IllegalStateException("인증번호가 만료되었습니다. 재발급 해주세요.");
         }
-        if( !savedEmail.equals(email)) return false;
-        if( !savedCode.equals(inputCode)) return false;
+        if(!savedEmail.equals(email)) return false;
+        if(!savedCode.equals(inputCode)) return false;
 
         session.setAttribute("EMAIL_AUTH_SUCCESS",true);
         return true;
@@ -116,6 +117,67 @@ public class AuthService {
             user.getLoginId()
         );
     }
+
+    // 인증번호 검증 + Reset Token 발급
+    public String verifyEmailCodeAndIssueResetToken(String email, String authCode) {
+        boolean success = checkEmailCode(email, authCode);
+        if(!success) {
+            throw new IllegalStateException("인증번호가 올바르지 않습니다.");
+        }
+        // Reset Token
+        String resetToken = UUID.randomUUID().toString();
+        // session 저장
+        session.setAttribute("RESET_PW_TOKEN", resetToken);
+        session.setAttribute("RESET_PW_EMAIL", email);
+        session.setAttribute("RESET_PW_ISSUED_AT", LocalDateTime.now());
+
+        return resetToken;
+    }
+
+     // Reset Token으로 비밀번호 재설정
+     public void resetPasswordWithToken(String token, String newPassword) {
+
+        String savedToken = (String) session.getAttribute("RESET_PW_TOKEN");
+        String email = (String) session.getAttribute("RESET_PW_EMAIL");
+        LocalDateTime issuedAt = 
+            (LocalDateTime) session.getAttribute("RESET_PW_ISSUED_AT");
+        if(savedToken == null || email == null || issuedAt == null) {
+            throw new IllegalStateException("비밀번호 재설정 인증이 필요합니다.");
+        }
+
+        // 토큰 일치 확인
+        if(!savedToken.equals(token)) {
+            throw new IllegalStateException("유효하지 않은 토큰입니다.");
+        }
+
+        // 토큰 만료 (5분)
+        long seconds = 
+            Duration.between(issuedAt, LocalDateTime.now()).getSeconds();
+        if (seconds > 300) {
+            clearResetSession();
+            throw new IllegalStateException("토큰이 만료되었습니다.");
+        }
+
+        // 비밀번호 암호화
+        String encodedPw = passwordEncoder.encode(newPassword);
+
+        // DB 업뎃
+        userMapper.updatePasswordByEmail(email, encodedPw);
+
+        // 사용 끝난 인증 정보 제거
+        clearResetSession();
+     }
+
+     private void clearResetSession() {
+        session.removeAttribute("RESET_PW_TOKEN");
+        session.removeAttribute("RESET_PW_EMAIL");
+        session.removeAttribute("RESET_PW_ISSUED_AT");
+
+        session.removeAttribute("EMAIL_AUTH_CODE");
+        session.removeAttribute("EMAIL_AUTH_EMAIL");
+        session.removeAttribute("EMAIL_AUTH_ISSUED_AT");
+        session.removeAttribute("EMAIL_AUTH_SUCCESS");
+     }
 }
 
 

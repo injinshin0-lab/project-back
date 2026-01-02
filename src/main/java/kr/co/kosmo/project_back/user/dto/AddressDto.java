@@ -8,7 +8,7 @@ import lombok.Setter;
 public class AddressDto {
     private String recipient;
     private String address;
-    private String datail;
+    private String detail;
     private String postcode;
     private String recipientPhone;
 }
