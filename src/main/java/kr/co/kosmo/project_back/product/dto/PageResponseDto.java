@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class PageResponseDto<T> {
+public class PageResponseDto<T> {   // 어떤 타입이든 가능하도록 제너릭 <T> 사용
     private List<T> list;
     private int totalPage;
     private int currentPage;

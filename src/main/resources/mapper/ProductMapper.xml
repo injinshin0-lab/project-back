@@ -19,7 +19,6 @@
         created_at      As createdAt,
         updated_at      As updatedAt
     FROM Bg_Product
-    WHERE product_status = 'SELL'
     ORDER By created_at DESC
 </select>
 
@@ -47,7 +46,7 @@
         resultType="int">
     SELECT COUNT(*)
     FROM Bg_Product
-    WHERE product_status = 'SELL'
+    WHERE 1 = 1
     <if test="keyword != null and keyword != ''">
         AND (
             product_name LIKE '%' || #{keyword} || '%'
@@ -68,14 +67,33 @@
         origin_name     AS originName,
         image_url       AS imageUrl
     FROM Bg_Product
-    WHERE product_status = 'SELL'  
+    WHERE 1 = 1
     <if test="keyword != null and keyword != ''">
         AND (
             product_name LIKE '%' || #{keyword} || '%'
             OR content LIKE '%' || #{keyword} || '%'
         )
     </if>
-    ORDER BY created_at DESC
+    ORDER BY 
+    <choose>
+        <!-- 가격순 -->
+        <when test="sort == 'price'">
+            price
+        </when>
+        <!-- 최신순 -->
+        <otherwise>
+            created_at
+        </otherwise>
+    </choose>
+
+    <choose>
+        <when test="order == 'asc'">
+            ASC 
+        </when>
+        <otherwise>
+            DESC 
+        </otherwise>
+    </choose>
     LIMIT #{size}
     OFFSET #{offset}
 </select>
