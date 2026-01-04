@@ -49,5 +49,5 @@ public class UserJoinDto {
     @NotNull(message = "관심분야는 필수 선택항목입니다.")
     @Size(min = 1, message = "관심분야는 최소 1개 이상 선택해주세요.")
     @JsonProperty("categories")
-    private List<String> categories;
+    private List<Integer> categories;
 }

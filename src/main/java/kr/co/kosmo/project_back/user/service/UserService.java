@@ -3,6 +3,7 @@ package kr.co.kosmo.project_back.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -10,6 +11,7 @@ import kr.co.kosmo.project_back.address.mapper.AddressMapper;
 import kr.co.kosmo.project_back.address.vo.AddressVO;
 import kr.co.kosmo.project_back.user.dto.UserJoinDto;
 import kr.co.kosmo.project_back.user.mapper.UserMapper;
+import kr.co.kosmo.project_back.user.mapper.UserSelectedCategoryMapper;
 import kr.co.kosmo.project_back.user.vo.UserVO;
 
 @Service
@@ -18,7 +20,9 @@ public class UserService {
    private final UserMapper userMapper;
    private final PasswordEncoder passwordEncoder;
    private final AddressMapper addressMapper;
+   private final UserSelectedCategoryMapper userSelectedCategoryMapper;
 
+   @Transactional       // 회원저장 + 관심분야 저장 + 주소저장 = 하나의 회원가입으로 묶음 
    public Integer join(UserJoinDto dto, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         // 이메일 인증 여부 확인
@@ -50,6 +54,8 @@ public class UserService {
 
         userMapper.insertUser(user);   // DB 저장해 -> user_id 생성
         Integer userId = user.getId();
+
+        userSelectedCategoryMapper.insertUserCategories(userId, dto.getCategories());
 
         AddressVO address = new AddressVO();
         address.setUserId(userId);
