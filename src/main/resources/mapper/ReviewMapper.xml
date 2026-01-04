@@ -26,8 +26,46 @@
                 created_at DESC 
             </otherwise>
         </choose>
-
     </select>
+
+    <!-- 리뷰 작성 -->
+    <insert id="insertReview"
+            parameterType="kr.co.kosmo.project_back.review.vo.ReviewVO"
+            useGeneratedKeys="true"
+            keyProperty="reviewId">
+        INSERT INTO Bg_Review (
+            user_id,
+            product_id,
+            content,
+            rating,
+            created_at
+        )
+        VALUES (
+            #{userId},
+            #{productId},
+            #{content},
+            #{rating},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 리뷰 수정 -->
+    <update id="updateReview"
+            parameterType="kr.co.kosmo.project_back.review.vo.ReviewVO">
+        UPDATE Bg_Review
+        SET
+            content = #{content},
+            rating = #{rating},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{reviewId}
+    </update>
+
+    <!-- 리뷰 삭제 -->
+    <delete id="deleteReview"
+            parameterType="kr.co.kosmo.project_back.review.vo.ReviewVO">
+        DELETE FROM Bg_Review
+        WHERE id = #{reviewId}
+    </delete>
 
 </mapper>
 
