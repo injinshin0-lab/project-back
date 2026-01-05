@@ -1,11 +1,15 @@
 package kr.co.kosmo.project_back.product.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpSession;
 import kr.co.kosmo.project_back.product.dto.PageResponseDto;
 import kr.co.kosmo.project_back.product.dto.ProductDto;
 import kr.co.kosmo.project_back.product.dto.ProductSearchDto;
@@ -30,7 +34,8 @@ public class ProductController {
 
     // 상품 목록 + 상품 검색 + 페이징
     @GetMapping
-    public PageResponseDto<ProductDto> searchProducts(ProductSearchDto searchDto) {
+    public PageResponseDto<ProductDto> searchProducts(
+        ProductSearchDto searchDto, HttpSession session) {
         // 페이지 값이 없거나 0 이하로 들어오면 기본값으로 돌림
         if(searchDto.getPage() == null || searchDto.getPage() <= 0) {
             searchDto.setPage(1);
@@ -39,7 +44,19 @@ public class ProductController {
         if(searchDto.getSize() == null || searchDto.getSize() <= 0) {
             searchDto.setSize(10);
         }
-        // 검색조건을 서비스에 넘겨 로직 수행 후 결과 반환
+        // 검색 기록 세션 저장
+        if(searchDto.getKeyword() != null && !searchDto.getKeyword().isBlank()) {
+            List<String> history = 
+                (List<String>) session.getAttribute("searchHistory");
+             if (history == null) {
+            history = new ArrayList<>();
+        }   
+        history.add(searchDto.getKeyword());
+        if(history.size() > 10) {
+            history.remove(0);
+        }
+        session.setAttribute("searchHistory", history);
+        }
         return productService.searchProducts(searchDto);
     }
 }

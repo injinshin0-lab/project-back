@@ -20,7 +20,9 @@ public class ProductService {
     public ProductVO getProduct(Integer productId) {
         return productMapper.findByProductId(productId);
     }
-    public PageResponseDto<ProductDto> searchProducts(ProductSearchDto searchDto) {
+    // 상픔 검색 
+    public PageResponseDto<ProductDto> searchProducts
+        (ProductSearchDto searchDto) {
         // 전체개수
         int totalCount = productMapper.countProductList(searchDto);
         // 현재 페이지 목록
