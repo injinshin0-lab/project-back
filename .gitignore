@@ -41,3 +41,6 @@ src/main/resources/application.properties
 # logs
 logs/
 *.log
+
+# 업로드 이미지 전체 무시
+uploads/
