@@ -2,9 +2,11 @@ package kr.co.kosmo.project_back.review.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpSession;
+import kr.co.kosmo.project_back.order.service.OrderService;
 import kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewCreateResponseDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto;
@@ -24,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
+    private final OrderService orderService;
 
     // 상품별 리뷰 목록 조회
     @GetMapping("/{productId}/reviews")
@@ -37,11 +42,40 @@ public class ReviewController {
     }
 
     // 리뷰 작성
-    @PostMapping("/{productId}/reviews")
+    @PostMapping(value = "/{productId}/reviews", consumes = "multipart/form-data")
     public ResponseEntity<ReviewCreateResponseDto> insertReview(
         @PathVariable Integer productId,
-        @RequestBody ReviewRequestDto dto
+        @ModelAttribute ReviewRequestDto dto,
+        HttpSession session
     ) {
+        Object loginUser = session.getAttribute("LOGIN_USER");
+        if(loginUser == null) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ReviewCreateResponseDto(null, "로그인이 필요합니다."));
+        }
+        Long userId = Long.valueOf(loginUser.toString());
+
+        // 구매 확정 검증
+        if(!orderService.hasConfirmedPurchase(userId, productId)) {
+            return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ReviewCreateResponseDto(null, "구매 확정 후 작성 가능합니다."));
+        }
+        // 이미지 제한
+        if( dto.getImages() != null ) {
+            if(dto.getImages().size() > 5) {
+                return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ReviewCreateResponseDto(null, "이미지는 최대 5장까지 가능합니다."));
+            }
+            dto.getImages().forEach(file -> {
+                if(file.getSize() > 10 * 1024 * 1024) {
+                    throw new IllegalArgumentException("이미지 용량은 10mb 이하만 가능합니다.");
+                }
+            });
+        }
+
         Long reviewId = reviewService.insertReview(productId, dto);
         return ResponseEntity
             .status(201)
