@@ -13,18 +13,19 @@
         VALUES (
             #{reviewId},
             #{imageUrl},
-            CURRENT_TIMESTAMP
+            datetime('now','+9 hours')
         )
     </insert>
 
     <select id="findByReviewId"
-            parameterType="int"
+            parameterType="long"
             resultType="kr.co.kosmo.project_back.review.dto.response.ReviewImageDto">
         SELECT 
-            review_image_id AS reviewImageId,
+            id              AS reviewImageId,
             image_url       AS imageUrl
         FROM Bg_Review_Image
         WHERE review_id = #{reviewId}
+        ORDER BY created_at ASC
     </select>
 
 
