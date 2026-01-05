@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.product.mapper.SearchMapper">
+
+    <!-- 인기검색어 조회 -->
+    <select id="findPopularKeywords" resultType="String">
+        SELECT 
+            p.product_name 
+        FROM Bg_Recent_product rp 
+        JOIN Bg_Product p
+            ON rp.product_id = p.id 
+        GROUP By rp.product_id, p.product_name 
+        ORDER By COUNT(*) DESC 
+        LIMIT 10
+    </select>
+</mapper>
+
+
+
+

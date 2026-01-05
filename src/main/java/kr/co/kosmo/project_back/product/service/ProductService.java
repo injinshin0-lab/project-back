@@ -8,6 +8,7 @@ import kr.co.kosmo.project_back.product.dto.PageResponseDto;
 import kr.co.kosmo.project_back.product.dto.ProductDto;
 import kr.co.kosmo.project_back.product.dto.ProductSearchDto;
 import kr.co.kosmo.project_back.product.mapper.ProductMapper;
+import kr.co.kosmo.project_back.product.mapper.SearchMapper;
 import kr.co.kosmo.project_back.product.vo.ProductVO;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductMapper productMapper;
+    private final SearchMapper searchMapper;
 
     // 상품상세 조회
     public ProductVO getProduct(Integer productId) {
@@ -35,8 +37,10 @@ public class ProductService {
             searchDto.getSize()
         );
     }
+    // 인기 검색어 
+    public List<String> getPopularKeywords() {
+        return searchMapper.findPopularKeywords();
+    }
 }
 
     
-
-// 검색결과 가공 
