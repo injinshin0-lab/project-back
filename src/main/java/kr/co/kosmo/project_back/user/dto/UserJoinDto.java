@@ -14,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserJoinDto {
+    private Integer id;
     @NotBlank(message = "아이디는 필수 입력값입니다.")
     // 규칙: 영문 소문자 및 숫자 조합 4~12자 (한글 X)
     @Pattern(regexp = "^[a-z0-9]{4,12}$", message = "아이디는 영문 소문자 및 숫자 4~12자여야 합니다.")

@@ -76,7 +76,10 @@ public class ReviewController {
             });
         }
 
-        Long reviewId = reviewService.insertReview(productId, dto);
+        dto.setUserId(productId);
+        dto.setProductId(productId);
+
+        Long reviewId = reviewService.insertReview(dto);
         return ResponseEntity
             .status(201)
             .body(new ReviewCreateResponseDto(reviewId, "후기 등록 완료"));

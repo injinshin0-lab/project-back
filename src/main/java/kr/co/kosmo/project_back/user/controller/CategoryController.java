@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.co.kosmo.project_back.user.dto.CategoryDto;
 import kr.co.kosmo.project_back.user.service.CategoryService;
-import kr.co.kosmo.project_back.user.vo.CategoryVO;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,7 +18,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryVO>> getCatgegories() {
+    public ResponseEntity<List<CategoryDto>> getCatgegories() {
         return ResponseEntity.ok(categoryService.getCategories());
     }
 }

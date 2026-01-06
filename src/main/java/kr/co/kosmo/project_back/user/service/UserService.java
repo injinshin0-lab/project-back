@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import kr.co.kosmo.project_back.address.dto.AddressDto;
 import kr.co.kosmo.project_back.address.mapper.AddressMapper;
-import kr.co.kosmo.project_back.address.vo.AddressVO;
+import kr.co.kosmo.project_back.user.dto.UserDto;
 import kr.co.kosmo.project_back.user.dto.UserJoinDto;
 import kr.co.kosmo.project_back.user.mapper.UserMapper;
 import kr.co.kosmo.project_back.user.mapper.UserSelectedCategoryMapper;
-import kr.co.kosmo.project_back.user.vo.UserVO;
 
 @Service
 @RequiredArgsConstructor
@@ -43,21 +43,14 @@ public class UserService {
         if( userMapper.existsByLoginId(dto.getUserId()) > 0 ) {
             throw new IllegalStateException( "이미 존재하는 아이디입니다." );
         }
-        // DTO -> VO 변환
-        UserVO user = new UserVO();
-        user.setLoginId(dto.getUserId());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setUserName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setPhone(dto.getPhone());
-        user.setRole("USER");
-
-        userMapper.insertUser(user);   // DB 저장해 -> user_id 생성
-        Integer userId = user.getId();
+    
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userMapper.insertUser(dto);
+        Integer userId = dto.getId();
 
         userSelectedCategoryMapper.insertUserCategories(userId, dto.getCategories());
 
-        AddressVO address = new AddressVO();
+        AddressDto address = new AddressDto();
         address.setUserId(userId);
         address.setRecipient(dto.getName());
         address.setPostcode(dto.getPostcode());

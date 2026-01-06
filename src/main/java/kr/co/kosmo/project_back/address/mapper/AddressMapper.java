@@ -2,9 +2,9 @@ package kr.co.kosmo.project_back.address.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import kr.co.kosmo.project_back.address.vo.AddressVO;
+import kr.co.kosmo.project_back.address.dto.AddressDto;
 
 @Mapper
 public interface AddressMapper {
-    void insertAddress(AddressVO address);
+    void insertAddress(AddressDto address);
 }

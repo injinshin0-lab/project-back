@@ -6,7 +6,7 @@
 
     <!-- 전체 카테고리 -->
     <select id="findCategories"
-            resultType="kr.co.kosmo.project_back.user.vo.CategoryVO">
+            resultType="kr.co.kosmo.project_back.user.dto.CategoryDto">
         SELECT
             id,
             category_name  AS categoryName,

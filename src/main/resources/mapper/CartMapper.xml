@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.cart.mapper.CartMapper">
+
+    <!-- 장바구니 항목 조회 -->
+    <select id="findCartListByUserId"
+            resultType="kr.co.kosmo.project_back.cart.dto.CartDto">
+        SELECT 
+            c.id              AS cartItemId,
+            c.user_id         AS userId,
+            c.product_id      AS productId,
+            c.quantity,
+            p.product_name    AS productName,
+            p.price,
+            p.image_url       AS imageUrl 
+        FROM Bg_Cart c
+        JOIN Bg_Product p
+            ON c.product_id = p.id 
+        WHERE c.user_id = #{userId}        
+    </select>
+
+    <!-- 장바구니 항목 추가 -->
+    <insert id="insertOrUpdateCartItem"
+            parameterType="kr.co.kosmo.project_back.cart.dto.CartDto">
+        INSERT INTO Bg_Cart (user_id, product_id, quantity)
+        VALUES (#{userId}, #{productId}, #{quantity})
+        ON CONFLICT(user_id, product_id)    <!-- 장바구니에 이미 담겨있다면 수량에 추가함 -->
+        DO UPDATE SET
+            quantity = quantity + #{quantity}
+    </insert>
+</mapper>
+
+
+
+
+
+
+

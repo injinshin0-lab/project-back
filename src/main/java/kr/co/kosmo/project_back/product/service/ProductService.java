@@ -9,7 +9,6 @@ import kr.co.kosmo.project_back.product.dto.ProductDto;
 import kr.co.kosmo.project_back.product.dto.ProductSearchDto;
 import kr.co.kosmo.project_back.product.mapper.ProductMapper;
 import kr.co.kosmo.project_back.product.mapper.SearchMapper;
-import kr.co.kosmo.project_back.product.vo.ProductVO;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -19,7 +18,7 @@ public class ProductService {
     private final SearchMapper searchMapper;
 
     // 상품상세 조회
-    public ProductVO getProduct(Integer productId) {
+    public ProductDto getProduct(Integer productId) {
         return productMapper.findByProductId(productId);
     }
     // 상픔 검색 

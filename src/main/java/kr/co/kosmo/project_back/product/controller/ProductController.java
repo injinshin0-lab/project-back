@@ -16,7 +16,6 @@ import kr.co.kosmo.project_back.product.dto.PageResponseDto;
 import kr.co.kosmo.project_back.product.dto.ProductDto;
 import kr.co.kosmo.project_back.product.dto.ProductSearchDto;
 import kr.co.kosmo.project_back.product.service.ProductService;
-import kr.co.kosmo.project_back.product.vo.ProductVO;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,10 +26,10 @@ public class ProductController {
 
     // 상품상세 조회
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductVO> getProduct(
+    public ResponseEntity<ProductDto> getProduct(
         @PathVariable Integer productId // URL 속 값을 꺼내 쓰기 위함
     ) {
-        ProductVO product = productService.getProduct(productId);
+        ProductDto product = productService.getProduct(productId);
         return ResponseEntity.ok(product);
     }
 

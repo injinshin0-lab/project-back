@@ -16,7 +16,7 @@ import kr.co.kosmo.project_back.auth.dto.response.AutoLoginResponseDto;
 import kr.co.kosmo.project_back.auth.dto.response.LoginResponseDto;
 import kr.co.kosmo.project_back.auth.dto.response.MessageResponseDto;
 import kr.co.kosmo.project_back.auth.service.AuthService;
-import kr.co.kosmo.project_back.user.vo.UserVO;
+import kr.co.kosmo.project_back.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -60,7 +60,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto dto,
         HttpServletRequest request) {
-        UserVO user = authService.login(dto);
+        UserDto user = authService.login(dto);
         if(user == null) {
             return ResponseEntity.status(401)
             .body(new MessageResponseDto("아이디 또는 비밀번호가 일치하지 않습니다."));
@@ -88,7 +88,7 @@ public class AuthController {
         if(userId == null) {    // 로그인 안 한 상태
             return ResponseEntity.status(401).body(new MessageResponseDto("로그인 상태가 아닙니다."));
         }
-        UserVO user = authService.findById(userId);
+        UserDto user = authService.findById(userId);
         return ResponseEntity.ok(new AutoLoginResponseDto( true,
                 userId, user.getUserName()));
     }

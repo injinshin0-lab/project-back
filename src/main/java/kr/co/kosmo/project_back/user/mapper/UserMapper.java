@@ -3,7 +3,8 @@ package kr.co.kosmo.project_back.user.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import kr.co.kosmo.project_back.user.vo.UserVO;
+import kr.co.kosmo.project_back.user.dto.UserDto;
+import kr.co.kosmo.project_back.user.dto.UserJoinDto;
 
 @Mapper
 public interface UserMapper {
@@ -11,14 +12,14 @@ public interface UserMapper {
     int existsByLoginId(@Param("loginId") String loginId);
 
     // 회원 저장
-    void insertUser(UserVO user);  
+    void insertUser(UserJoinDto dto);  
     
     // 로그인용 조회
-    UserVO selectByLoginId(@Param("loginId") String loginId);
-    UserVO selectById(@Param("id") Integer id);
+    UserDto selectByLoginId(@Param("loginId") String loginId);
+    UserDto selectById(@Param("id") Integer id);
 
     // 아이디 찾기
-    UserVO findByNameAndEmail(
+    UserDto findByNameAndEmail(
         @Param("name") String name,
         @Param("email") String email
     );

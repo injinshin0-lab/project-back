@@ -11,8 +11,8 @@ import jakarta.servlet.http.HttpSession;
 import kr.co.kosmo.project_back.auth.dto.request.FindUserIdRequestDto;
 import kr.co.kosmo.project_back.auth.dto.request.LoginRequestDto;
 import kr.co.kosmo.project_back.mail.service.MailService;
+import kr.co.kosmo.project_back.user.dto.UserDto;
 import kr.co.kosmo.project_back.user.mapper.UserMapper;
-import kr.co.kosmo.project_back.user.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,9 +24,9 @@ public class AuthService {
     private final MailService mailService;
     
 
-    public UserVO login(LoginRequestDto dto) {
+    public UserDto login(LoginRequestDto dto) {
         // 로그인 아이디로 회원 조회
-        UserVO user = userMapper.selectByLoginId(dto.getLoginId());
+        UserDto user = userMapper.selectByLoginId(dto.getLoginId());
         // 아이디 없으면 에러
         if( user == null ) return null;
         // 비번 틀려도 에러
@@ -35,7 +35,7 @@ public class AuthService {
         }
         return user;
     }
-    public UserVO findById(Integer id) {
+    public UserDto findById(Integer id) {
         return userMapper.selectById(id);
     }
     public void sendEmailCode(String email) {
@@ -101,7 +101,7 @@ public class AuthService {
 
     // 아이디 찾기 로직
     public void findUserId(FindUserIdRequestDto dto) {
-        UserVO user = userMapper.findByNameAndEmail(
+        UserDto user = userMapper.findByNameAndEmail(
             dto.getName(),
             dto.getEmail()
         );
@@ -179,9 +179,6 @@ public class AuthService {
         session.removeAttribute("EMAIL_AUTH_SUCCESS");
      }
 }
-
-
-
 
 
 

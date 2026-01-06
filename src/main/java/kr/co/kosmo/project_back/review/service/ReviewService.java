@@ -13,7 +13,6 @@ import kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto;
 import kr.co.kosmo.project_back.review.mapper.ReviewImageMapper;
 import kr.co.kosmo.project_back.review.mapper.ReviewMapper;
-import kr.co.kosmo.project_back.review.vo.ReviewVO;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -40,16 +39,10 @@ public class ReviewService {
     }
 
     // 상품 리뷰 작성
-    public Long insertReview(Integer productId, ReviewRequestDto dto) {
+    public Long insertReview(ReviewRequestDto dto) {
     
-        // 리뷰 저장
-        ReviewVO review = new ReviewVO();
-        review.setUserId(1L);  // 임시처리
-        review.setProductId(productId);
-        review.setContent(dto.getContent());
-        review.setRating(dto.getRating());
-        reviewMapper.insertReview(review);
-        Long reviewId = review.getReviewId();
+        reviewMapper.insertReview(dto);
+        Long reviewId = dto.getReviewId();
 
         // 이미지 파일 저장 + DB 저장
         if(dto.getImages() != null && !dto.getImages().isEmpty()) {
@@ -93,17 +86,12 @@ public class ReviewService {
             throw new RuntimeException("리뷰 이미지 저장 실패", e);
         }
     }
-
-    // 상품 리뷰 수정
+    // 리뷰 수정
     public void updateReview(Long reviewId, ReviewRequestDto dto) {
-        ReviewVO review = new ReviewVO();
-        review.setReviewId(reviewId);
-        review.setContent(dto.getContent());
-        review.setRating(dto.getRating());
-        reviewMapper.updateReview(review);
+        dto.setReviewId(reviewId);
+        reviewMapper.updateReview(dto);
     }
-
-    // 상품 리뷰 삭제
+    // 리뷰 삭제
     public void deleteReview(Long reviewId) {
         reviewMapper.deleteReview(reviewId);
     }

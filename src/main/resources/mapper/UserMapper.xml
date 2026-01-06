@@ -7,19 +7,19 @@
 
     <!-- 회원가입 -->
     <insert id="insertUser"
-            parameterType="kr.co.kosmo.project_back.user.vo.UserVO"
+            parameterType="kr.co.kosmo.project_back.user.dto.UserJoinDto"
             useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO Bg_User
         (login_id, password, user_name, phone, email)
         VALUES
-        (#{loginId}, #{password}, #{userName}, #{phone}, #{email})
+        (#{userId}, #{password}, #{name}, #{phone}, #{email})
     </insert>
     
     <!-- 아이디로 회원조회 -->
     <select id="selectByLoginId"
             parameterType="string"
-            resultType="kr.co.kosmo.project_back.user.vo.UserVO">
+            resultType="kr.co.kosmo.project_back.user.dto.UserDto">
         SELECT
             id,
             login_id        AS loginId,
@@ -44,7 +44,7 @@
     <!-- 자동로그인용: id로 회원 조회 -->
     <select id="selectById"
             parameterType="int"
-            resultType="kr.co.kosmo.project_back.user.vo.UserVO">
+            resultType="kr.co.kosmo.project_back.user.dto.UserDto">
         SELECT
             id,
             login_id        AS loginId,
@@ -61,7 +61,7 @@
     </select>
 
     <!-- 아이디 찾기 -->
-    <select id="findByNameAndEmail" resultType="kr.co.kosmo.project_back.user.vo.UserVO">
+    <select id="findByNameAndEmail" resultType="kr.co.kosmo.project_back.user.dto.UserDto">
         SELECT 
             id,
             login_id        AS loginId,
