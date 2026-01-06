@@ -27,7 +27,16 @@ public class ReviewService {
 
     // 상품별 리뷰 목록 조회
     public List<ReviewResponseDto> getReviewsByProduct(Integer productId, String sort) {
-        return reviewMapper.findReviewsByProductId(productId, sort);
+        // 리뷰 목록 조회
+        List<ReviewResponseDto> reviews = 
+            reviewMapper.findReviewsByProductId(productId, sort);
+        // 각 리뷰에 이미지 목록 붙이기
+        for (ReviewResponseDto review : reviews) {
+            review.setReviewImages(
+                reviewImageMapper.findByReviewId(review.getReviewId())
+            );
+        }
+        return reviews;
     }
 
     // 상품 리뷰 작성

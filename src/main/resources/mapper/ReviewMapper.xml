@@ -7,23 +7,34 @@
 
     <!-- 상품별 리뷰 조회 -->
     <select id="findReviewsByProductId"
-            parameterType="int"
             resultType="kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto">
         SELECT 
-            id          AS reviewId,
-            user_id     AS userId,
-            content,
-            rating,
-            created_at  AS createdAt 
-        FROM Bg_Review 
-        WHERE product_id = #{productId}
+            r.id          AS reviewId,
+            r.user_id     AS userId,
+            r.content,
+            r.rating,
+            r.created_at  AS createdAt, 
+            COUNT(ri.id)  AS imageCount
+        FROM Bg_Review r
+        LEFT JOIN Bg_Review_Image ri
+            ON r.id = ri.review_id
+        WHERE r.product_id = #{productId}
+        GROUP BY r.id
         ORDER BY 
         <choose>
-            <when test="sort == 'rating'">
-                rating DESC
+            <!-- 사진 리뷰 우선 -->
+            <when test="sort == 'photo'">
+                imageCount DESC,
+                r.created_at DESC
             </when>
+            <!-- 평점순 -->
+            <when test="sort == 'rating'">
+                r.rating DESC,
+                r.created_at DESC
+            </when>
+            <!-- 최신순 -->
             <otherwise>
-                created_at DESC 
+                r.created_at DESC 
             </otherwise>
         </choose>
     </select>
