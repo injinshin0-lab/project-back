@@ -1,7 +1,5 @@
 package kr.co.kosmo.project_back.auth.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginRequestDto {
-    @JsonProperty("userId")
     @NotBlank(message = "아이디는 필수입력 항목입니다.")
     private String loginId;
     @NotBlank(message = "비밀번호는 필수입력 항목입니다.")

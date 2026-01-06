@@ -1,7 +1,6 @@
 package kr.co.kosmo.project_back.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.co.kosmo.project_back.address.dto.AddressDto;
 import kr.co.kosmo.project_back.address.mapper.AddressMapper;
-import kr.co.kosmo.project_back.user.dto.UserDto;
 import kr.co.kosmo.project_back.user.dto.UserJoinDto;
 import kr.co.kosmo.project_back.user.mapper.UserMapper;
 import kr.co.kosmo.project_back.user.mapper.UserSelectedCategoryMapper;
@@ -18,7 +16,6 @@ import kr.co.kosmo.project_back.user.mapper.UserSelectedCategoryMapper;
 @RequiredArgsConstructor
 public class UserService {
    private final UserMapper userMapper;
-   private final PasswordEncoder passwordEncoder;
    private final AddressMapper addressMapper;
    private final UserSelectedCategoryMapper userSelectedCategoryMapper;
 
@@ -40,11 +37,11 @@ public class UserService {
         }
 
         // // 아이디 중복 체크 시작
-        if( userMapper.existsByLoginId(dto.getUserId()) > 0 ) {
+        if( userMapper.existsByLoginId(dto.getLoginId()) > 0 ) {
             throw new IllegalStateException( "이미 존재하는 아이디입니다." );
         }
     
-        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+        dto.setPassword(dto.getPassword());
         userMapper.insertUser(dto);
         Integer userId = dto.getId();
 

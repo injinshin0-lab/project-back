@@ -16,14 +16,13 @@ import lombok.Setter;
 public class UserJoinDto {
     private Integer id;
     @NotBlank(message = "아이디는 필수 입력값입니다.")
-    // 규칙: 영문 소문자 및 숫자 조합 4~12자 (한글 X)
-    @Pattern(regexp = "^[a-z0-9]{4,12}$", message = "아이디는 영문 소문자 및 숫자 4~12자여야 합니다.")
-    private String userId;
+    // 규칙: 제한없음(한글ㅇ)
+    private String loginId;
 
     @NotBlank(message = "비밀번호는 필수 입력값입니다.")
-    // 규칙: 8~16자, 영문/숫자/특수문자 필수 포함
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,16}$", 
-             message = "비밀번호는 8~16자이며, 영문/숫자/특수문자를 모두 포함해야 합니다.")
+    // 규칙: 4글자 이상(한글X)
+    @Pattern(regexp = "^[^가-힣]{4,}$", 
+             message = "비밀번호는 4자 이상이며 한글은 사용할 수 없습니다.")
     private String password;
 
     @NotBlank(message = "이름은 필수 입력값입니다.")

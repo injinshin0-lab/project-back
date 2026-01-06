@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpSession;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
     private final HttpSession session;
     private final MailService mailService;
     
@@ -30,7 +28,7 @@ public class AuthService {
         // 아이디 없으면 에러
         if( user == null ) return null;
         // 비번 틀려도 에러
-        if(!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        if(!dto.getPassword().equals(user.getPassword())) {
             return null;
         }
         return user;
@@ -158,11 +156,8 @@ public class AuthService {
             throw new IllegalStateException("토큰이 만료되었습니다.");
         }
 
-        // 비밀번호 암호화
-        String encodedPw = passwordEncoder.encode(newPassword);
-
         // DB 업뎃
-        userMapper.updatePasswordByEmail(email, encodedPw);
+        userMapper.updatePasswordByEmail(email, newPassword);
 
         // 사용 끝난 인증 정보 제거
         clearResetSession();
