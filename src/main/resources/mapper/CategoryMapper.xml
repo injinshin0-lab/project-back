@@ -5,27 +5,15 @@
 <mapper namespace="kr.co.kosmo.project_back.user.mapper.CategoryMapper">
 
     <!-- 전체 카테고리 -->
-    <select id="findAllCategories"
+    <select id="findCategories"
             resultType="kr.co.kosmo.project_back.user.vo.CategoryVO">
         SELECT
             id,
-            category_name,
-            parent_id,
+            category_name  AS categoryName,
+            parent_id      AS parentId,
             depth
         FROM Bg_Interest_category
         ORDER By depth, parent_id, id
     </select>
 
-    <!-- 소분류만 -->
-    <select id="findLeafCategories"
-            resultType="kr.co.kosmo.project_back.user.vo.CategoryVO">
-        SELECT
-            id,
-            category_name,
-            parent_id,
-            depth
-        FROM Bg_Interest_category
-        WHERE depth = 3
-        ORDER By id
-    </select>
 </mapper>
