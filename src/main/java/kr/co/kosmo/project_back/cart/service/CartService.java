@@ -19,6 +19,7 @@ public class CartService {
     }
     // 장바구니 목록 추가
     public void addCartItem(CartDto dto) {
-        cartMapper.insertOrUpdateCartItem(dto);
+            cartMapper.insertOrUpdateCartItem(dto);
+        }        
     }
-}
+

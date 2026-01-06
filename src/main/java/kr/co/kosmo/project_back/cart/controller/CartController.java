@@ -23,11 +23,13 @@ public class CartController {
     // 장바구니 조회
     @GetMapping
     public Map<String, Object> getCartList(HttpSession session) {
-        Integer userId = 
-            (Integer) session.getAttribute("LOGIN_USER");
+        Object loginUser = session.getAttribute("LOGIN_USER");
+        if(loginUser == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        Integer userId = Integer.valueOf(loginUser.toString());
         // 해당 사용자 장바구니 목록 조회
-        List<CartDto> cartItems = 
-            cartService.getCartList(userId);
+        List<CartDto> cartItems = cartService.getCartList(userId);
         // 장바구니 총 금액 계산
         int totalPrice = 
             cartItems.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum();
@@ -42,13 +44,15 @@ public class CartController {
         @RequestBody CartDto dto,
         HttpSession session
     ) {
-        Integer userId = 
-            (Integer) session.getAttribute("LOGIN_USER");
+        Object loginUser = session.getAttribute("LOGIN_USER");
+        if(loginUser == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        Integer userId = Integer.valueOf(loginUser.toString());
         dto.setUserId(userId);
+
         cartService.addCartItem(dto);
-        return Map.of(
-                "message",
-                "장바구니에 추가되었습니다."
-        );
+
+        return Map.of("message", "장바구니에 추가되었습니다.");
     }
 }

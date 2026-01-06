@@ -17,19 +17,23 @@
             p.price,
             p.image_url       AS imageUrl 
         FROM Bg_Cart c
-        JOIN Bg_Product p
-            ON c.product_id = p.id 
+        JOIN Bg_Product p ON c.product_id = p.id 
         WHERE c.user_id = #{userId}        
     </select>
 
-    <!-- 장바구니 항목 추가 -->
+    <!-- 추가 / 수량증가 -->
     <insert id="insertOrUpdateCartItem"
             parameterType="kr.co.kosmo.project_back.cart.dto.CartDto">
+        WITH updated AS (
+            UPDATE Bg_Cart
+            SET quantity = quantity + #{quantity} 
+            WHERE user_id = #{userId}
+            AND product_id = #{productId}
+            RETURNING 1
+        )
         INSERT INTO Bg_Cart (user_id, product_id, quantity)
-        VALUES (#{userId}, #{productId}, #{quantity})
-        ON CONFLICT(user_id, product_id)    <!-- 장바구니에 이미 담겨있다면 수량에 추가함 -->
-        DO UPDATE SET
-            quantity = quantity + #{quantity}
+        SELECT #{userId}, #{productId}, #{quantity}
+        WHERE NOT EXISTS (SELECT 1 FROM updated)
     </insert>
 </mapper>
 
