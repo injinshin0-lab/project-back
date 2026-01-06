@@ -12,4 +12,6 @@ public interface CartMapper {
     List<CartDto> findCartListByUserId(Integer userId);
     // 장바구니 추가
     void insertOrUpdateCartItem(CartDto dto);
+    // 수정
+    void updateCartQuantity(CartDto dto);
 }

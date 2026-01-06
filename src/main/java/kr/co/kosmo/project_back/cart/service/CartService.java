@@ -17,9 +17,13 @@ public class CartService {
     public List<CartDto> getCartList(Integer userId) {
        return cartMapper.findCartListByUserId(userId);
     }
-    // 장바구니 목록 추가
+    // 장바구니 추가
     public void addCartItem(CartDto dto) {
-            cartMapper.insertOrUpdateCartItem(dto);
-        }        
+         cartMapper.insertOrUpdateCartItem(dto);
+        }    
+    // 수정
+    public void updateCartQuantity(CartDto dto) {
+        cartMapper.updateCartQuantity(dto);
+    }
     }
 
