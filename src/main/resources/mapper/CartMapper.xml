@@ -6,8 +6,7 @@
 <mapper namespace="kr.co.kosmo.project_back.cart.mapper.CartMapper">
 
     <!-- 장바구니 항목 조회 -->
-    <select id="findCartListByUserId"
-            resultType="kr.co.kosmo.project_back.cart.dto.CartDto">
+    <select id="findCartListByUserId" resultType="map">
         SELECT 
             c.id              AS cartItemId,
             c.product_id      AS productId,
@@ -20,14 +19,13 @@
     </select>
 
     <!-- 장바구니 추가 -->
-    <insert id="insertOrUpdateCartItem"
-            parameterType="kr.co.kosmo.project_back.cart.dto.CartDto">
+    <insert id="insertCartItem">
         INSERT INTO Bg_Cart (user_id, product_id, quantity)
         VALUES (#{userId}, #{productId}, #{quantity})
     </insert>
 
     <!-- 수량 수정 -->
-    <update id="updateCartQuantity"> 
+    <update id="updateCartItemByCartItemId"> 
         UPDATE Bg_Cart
         SET quantity = #{quantity}
         WHERE id = #{cartItemId}

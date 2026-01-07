@@ -1,6 +1,8 @@
 package kr.co.kosmo.project_back.cart.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -14,16 +16,24 @@ public class CartService {
     private final CartMapper cartMapper;
 
     // 장바구니 목록 조회
-    public List<CartDto> getCartList(Integer userId) {
+    public List<Map<String, Object>> getCartList(Integer userId) {
        return cartMapper.findCartListByUserId(userId);
     }
     // 장바구니 추가
     public void addCartItem(CartDto dto) {
-         cartMapper.insertOrUpdateCartItem(dto);
+         cartMapper.insertCartItem(dto);
         }    
     // 수정
-    public void updateCartQuantity(CartDto dto) {
-        cartMapper.updateCartQuantity(dto);
+    public void updateCartItem(
+            Integer userId,
+            Integer cartItemId,
+            Integer quantity
+    ) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("cartItemId", cartItemId);
+        params.put("quantity", quantity);
+        cartMapper.updateCartItemByCartItemId(params);
     }
-    }
+}
 

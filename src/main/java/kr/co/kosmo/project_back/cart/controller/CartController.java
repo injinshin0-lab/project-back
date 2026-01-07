@@ -32,25 +32,14 @@ public class CartController {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
         // 해당 사용자 장바구니 목록 조회
-        List<CartDto> cartItems = cartService.getCartList(userId);
+        List<Map<String, Object>> cartItems = cartService.getCartList(userId);
         
         // 장바구니 총 금액 계산
         int totalPrice = cartItems.stream()
-            .mapToInt(item -> item.getPrice() * item.getQuantity())
+            .mapToInt(item -> (int) item.get("price") * (int) item.get("quantity"))
             .sum();
-        List<Map<String, Object>> responseItems = cartItems.stream()
-                .map(item -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("cartItemId", item.getCartItemId());
-                    map.put("productId", item.getProductId());
-                    map.put("productName", item.getProductName());
-                    map.put("quantity", item.getQuantity());
-                    map.put("price", item.getPrice());
-                    return map;
-                })
-                .collect(Collectors.toList());
         return Map.of(
-                "cartItems", responseItems,
+                "cartItems", cartItems,
                 "totalPrice", totalPrice
         );
     }
@@ -67,7 +56,7 @@ public class CartController {
     }
     // 수량 수정
     @PatchMapping("/{cartId}/quantity")
-    public Map<String, Object> addCartItem(
+    public Map<String, Object> updateCartItem(
             @PathVariable Integer cartId,
             @RequestBody Map<String, Integer> body,
             HttpSession session
@@ -77,13 +66,13 @@ public class CartController {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 
-        CartDto dto = new CartDto();
-        dto.setCartItemId(cartId);
-        dto.setUserId(userId);
-        dto.setQuantity(body.get("quantity"));
-        cartService.updateCartQuantity(dto);
+        cartService.updateCartItem(
+            userId,
+            cartId,
+            body.get("quantity")
+        );
         return Map.of(
-            "message", "징바구니에 수량 수정됨",
+            "message", "장바구니에 수량 수정됨",
             "cartItemId", cartId);
     }
 }
