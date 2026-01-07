@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.user.mapper.QuestionMapper">
+
+    <select id="findQuestionByUserId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.user.dto.QuestionResponseDto">
+        SELECT
+            q.id AS questionId,
+            q.user_id AS userId,
+            q.product_id AS productId,
+            q.title,
+            q.content,
+            q.question_status AS questionStatus,
+            q.type,
+            q.created_at AS createdAt
+        FROM Bg_Question q
+        WHERE q.user_id = #{userId}
+        ORDER BY q.created_at DESC
+    </select>
+
+    <select id="findByQuestionId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.user.dto.QuestionResponseDto">
+        SELECT
+            q.id AS questionId,
+            q.user_id AS userId,
+            q.product_id AS productId,
+            q.title,
+            q.content,
+            q.question_status AS questionStatus,
+            q.type,
+            q.created_at AS createdAt
+        FROM Bg_Question q
+        WHERE q.id = #{questionId}
+    </select>
+
+    <insert id="insertQuestion" parameterType="kr.co.kosmo.project_back.user.dto.QuestionRequestDto"
+            useGeneratedKeys="true" keyProperty="questionId">
+        INSERT INTO Bg_Question (user_id, product_id, title, content, type, question_status, created_at)
+        VALUES (#{userId}, #{productId}, #{title}, #{content}, #{type}, 'PENDING', datetime('now', 'localtime'))
+    </insert>
+
+    <select id="findAnswerByQuestionId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.user.dto.QuestionAnswerDto">
+        SELECT
+            question_id AS questionid,
+            content
+        FROM Bg_Answer
+        WHERE question_id = #{questionId}
+        LIMIT 1
+    </select>
+
+</mapper>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.user.mapper.LoginMapper">
+
+    <select id="findByAutoLoginToken" parameterType="string" resultType="kr.co.kosmo.project_back.user.dto.UserResponseDto">
+        SELECT
+            id,
+            login_id AS loginId,
+            password,
+            user_name AS name,
+            phone,
+            email,
+            role,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            last_login_at AS lastLoginAt
+        FROM Bg_User
+        WHERE auto_login_token = #{token}
+    </select>
+
+    <select id="findByLoginId" parameterType="string" resultType="kr.co.kosmo.project_back.user.dto.UserResponseDto">
+        SELECT
+            id,
+            login_id AS loginId,
+            password,
+            user_name AS name,
+            phone,
+            email,
+            role,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            last_login_at AS lastLoginAt
+        FROM Bg_User
+        WHERE login_id = #{loginId}
+    </select>
+
+    <select id="countByLoginId" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM Bg_User WHERE login_id = #{loginId}
+    </select>
+
+    <insert id="insertAuthCodeByEmail" parameterType="kr.co.kosmo.project_back.user.dto.EmailCodeDto">
+        INSERT OR REPLACE INTO Bg_Email_Auth (email, auth_code, created_at)
+        VALUES (#{email}, #{authCode}, datetime('now', 'localtime'))
+    </insert>
+
+    <select id="findAuthCodeByEmail" parameterType="string" resultType="string">
+        SELECT auth_code
+        FROM Bg_Email_Auth
+        WHERE email = #{email}
+        AND datetime('now', 'localtime') - datetime(created_at) &lt; 10
+        ORDER BY created_at DESC
+        LIMIT 1
+    </select>
+
+    <insert id="insertUser" parameterType="kr.co.kosmo.project_back.user.dto.SignUpDto"
+            useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO Bg_User (login_id, password, user_name, email, phone, created_at)
+        VALUES (#{loginId}, #{password}, #{name}, #{email}, #{phone}, datetime('now', 'localtime'))
+    </insert>
+    
+    <insert id="insertAddress" parameterType="kr.co.kosmo.project_back.user.dto.AddressDto"
+            useGeneratedKeys="true" keyProperty="addressId">
+        INSERT INTO Bg_Address (user_id, recipient, recipient_phone, postcode, address, detail_address, is_default)
+        VALUES (#{userId}, #{recipient}, #{recipientPhone}, #{postcode}, #{address}, #{detailAddress}, #{isDefault})
+    </insert>
+
+    <update id="updatePassword">
+        UPDATE Bg_User SET password = #{password} WHERE login_id = #{loginId}
+    </update>
+
+    <update id="updatePasswordByUserId">
+        UPDATE Bg_User SET password = #{newPassword} WHERE id = #{userId}
+    </update>
+
+    <select id="findById" parameterType="int" resultType="kr.co.kosmo.project_back.user.dto.UserResponseDto">
+        SELECT
+            id,
+            login_id AS loginId,
+            password,
+            user_name AS name,
+            phone,
+            email,
+            role,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            last_login_at AS lastLoginAt
+        FROM Bg_User
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByNameAndEmail" resultType="kr.co.kosmo.project_back.user.dto.UserResponseDto">
+        SELECT 
+            id,
+            login_id AS loginId,
+            email,
+            password,
+            user_name AS name,
+            phone,
+            role,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            last_login_at AS lastLoginAt
+        FROM Bg_User WHERE user_name = #{name} AND email = #{email}
+    </select>
+
+    <select id="findByLoginIdAndEmail" resultType="kr.co.kosmo.project_back.user.dto.UserResponseDto">
+        SELECT 
+            id,
+            login_id AS loginId,
+            email,
+            password,
+            user_name AS name,
+            phone,
+            role,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            last_login_at AS lastLoginAt
+        FROM Bg_User WHERE login_id = #{loginId} AND email = #{email}
+    </select>
+
+</mapper>
+

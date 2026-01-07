@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.user.mapper.ReviewMapper">
+
+    <select id="findReviewsByProductId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.user.dto.ReviewResponseDto">
+        SELECT
+            r.id AS reviewId,
+            r.user_id AS userId,
+            r.product_id AS productId,
+            COALESCE(u.login_id, '익명') AS loginId,
+            r.content,
+            r.rating,
+            r.created_at AS createdAt
+        FROM Bg_Review r
+        LEFT JOIN Bg_User u ON r.user_id = u.id
+        WHERE r.product_id = #{productId}
+        ORDER BY r.created_at DESC
+    </select>
+
+    <select id="findAllReviews"
+            resultType="kr.co.kosmo.project_back.user.dto.ReviewResponseDto">
+        SELECT
+            r.id AS reviewId,
+            r.user_id AS userId,
+            u.login_id AS loginId,
+            r.content,
+            r.rating,
+            r.created_at AS createdAt,
+            r.product_id AS productId
+        FROM Bg_Review r
+        LEFT JOIN Bg_User u ON r.user_id = u.id
+        ORDER BY r.created_at DESC
+    </select>
+
+    <select id="findReviewsByUserId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.user.dto.ReviewResponseDto">
+        SELECT
+            r.id AS reviewId,
+            r.user_id AS userId,
+            u.login_id AS loginId,
+            r.content,
+            r.rating,
+            r.created_at AS createdAt,
+            r.product_id AS productId
+        FROM Bg_Review r
+        LEFT JOIN Bg_User u ON r.user_id = u.id
+        WHERE r.user_id = #{userId}
+        ORDER BY r.created_at DESC
+    </select>
+
+    <select id="findByReviewId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.user.dto.ReviewResponseDto">
+        SELECT
+            r.id AS reviewId,
+            r.user_id AS userId,
+            r.product_id AS productId,
+            COALESCE(u.login_id, '익명') AS loginId,
+            r.content,
+            r.rating,
+            r.created_at AS createdAt
+        FROM Bg_Review r
+        LEFT JOIN Bg_User u ON r.user_id = u.id
+        WHERE r.id = #{reviewId}
+    </select>
+
+    <insert id="insertReview" parameterType="kr.co.kosmo.project_back.user.dto.ReviewRequestDto"
+            useGeneratedKeys="true" keyProperty="reviewId">
+        INSERT INTO Bg_Review (user_id, product_id, content, rating, created_at)
+        VALUES (#{userId}, #{productId}, #{content}, #{rating}, datetime('now', 'localtime'))
+    </insert>
+
+    <select id="hasDeliveredOrder" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM Bg_Order o
+        INNER JOIN Bg_Order_item oi ON o.id = oi.order_id
+        WHERE o.user_id = #{userId}
+          AND oi.product_id = #{productId}
+          AND o.order_status = 'DELIVERED'
+    </select>
+
+    <select id="hasExistingReview" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM Bg_Review
+        WHERE user_id = #{userId}
+          AND product_id = #{productId}
+    </select>
+
+</mapper>
+
+

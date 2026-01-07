@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.admin.mapper.AdminQuestionMapper">
+
+    <select id="countQuestionList" parameterType="kr.co.kosmo.project_back.admin.dto.QuestionSearchDto" resultType="int">
+        SELECT COUNT(*)
+        FROM Bg_Question q
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND date(q.created_at) &gt;= date(#{startDate})
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND date(q.created_at) &lt;= date(#{endDate})
+            </if>
+            <if test="questionStatus != null and questionStatus != ''">
+                AND q.question_status = #{questionStatus}
+            </if>
+            <if test="type != null and type != ''">
+                AND q.type = #{type}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="keywordType == 'title'">
+                        AND q.title LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <when test="keywordType == 'content'">
+                        AND q.content LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <otherwise>
+                        AND (q.title LIKE '%' || #{keyword} || '%' OR q.content LIKE '%' || #{keyword} || '%')
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="findQuestionList" parameterType="kr.co.kosmo.project_back.admin.dto.QuestionSearchDto"
+            resultType="kr.co.kosmo.project_back.admin.dto.QuestionResponseDto">
+        SELECT
+            q.id,
+            q.user_id AS userId,
+            q.product_id AS productId,
+            q.title,
+            q.content,
+            q.question_status AS questionStatus,
+            q.type,
+            q.created_at AS createdAt
+        FROM Bg_Question q
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND date(q.created_at) &gt;= date(#{startDate})
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND date(q.created_at) &lt;= date(#{endDate})
+            </if>
+            <if test="questionStatus != null and questionStatus != ''">
+                AND q.question_status = #{questionStatus}
+            </if>
+            <if test="type != null and type != ''">
+                AND q.type = #{type}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="keywordType == 'title'">
+                        AND q.title LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <when test="keywordType == 'content'">
+                        AND q.content LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <otherwise>
+                        AND (q.title LIKE '%' || #{keyword} || '%' OR q.content LIKE '%' || #{keyword} || '%')
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        ORDER BY q.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findById" parameterType="int" resultType="kr.co.kosmo.project_back.admin.dto.QuestionResponseDto">
+        SELECT
+            id,
+            user_id AS userId,
+            product_id AS productId,
+            title,
+            content,
+            question_status AS questionStatus,
+            type,
+            created_at AS createdAt
+        FROM Bg_Question
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertAnswer" parameterType="kr.co.kosmo.project_back.admin.dto.QuestionAnswerDto">
+        INSERT INTO Bg_Answer (question_id, content)
+        VALUES (#{questionid}, #{content})
+    </insert>
+
+    <update id="updateQuestionStatus" parameterType="int">
+        UPDATE Bg_Question
+        SET question_status = 'ANSWERED'
+        WHERE id = #{questionId}
+    </update>
+
+    <select id="findAnswerByQuestionId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.admin.dto.QuestionAnswerDto">
+        SELECT
+            question_id AS questionid,
+            content
+        FROM Bg_Answer
+        WHERE question_id = #{questionId}
+        LIMIT 1
+    </select>
+
+</mapper>
+
+
+
+
+
+
+

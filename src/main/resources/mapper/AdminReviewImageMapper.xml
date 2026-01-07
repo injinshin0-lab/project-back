@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.admin.mapper.AdminReviewImageMapper">
+
+    <select id="findImagesByReviewId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.admin.dto.AdminReviewImageDto">
+        SELECT
+            id AS reviewImageId,
+            image_url AS imageUrl
+        FROM Bg_Review_Image
+        WHERE review_id = #{reviewId}
+    </select>
+
+    <delete id="deleteImagesByReviewId" parameterType="int">
+        DELETE FROM Bg_Review_Image WHERE review_id = #{reviewId}
+    </delete>
+
+</mapper>
+
+

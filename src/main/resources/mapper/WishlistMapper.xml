@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.user.mapper.WishlistMapper">
+
+    <resultMap id="productResultMap" type="kr.co.kosmo.project_back.user.dto.ProductDto">
+        <id property="productId" column="productId"/>
+        <result property="productName" column="productName"/>
+        <result property="originName" column="originName"/>
+        <result property="content" column="content"/>
+        <result property="price" column="price"/>
+        <result property="imageUrl" column="imageUrl"/>
+        <result property="isWished" column="isWished"/>
+        <association property="category" javaType="kr.co.kosmo.project_back.admin.dto.CategoryDto">
+            <id property="id" column="cat_id"/>
+            <result property="categoryName" column="cat_categoryName"/>
+            <result property="parentId" column="cat_parentId"/>
+            <result property="depth" column="cat_depth"/>
+        </association>
+    </resultMap>
+
+    <select id="findWishListByUserId" parameterType="int"
+            resultMap="productResultMap">
+        SELECT
+            p.id AS productId,
+            p.product_name AS productName,
+            p.origin_name AS originName,
+            p.content,
+            p.price,
+            p.image_url AS imageUrl,
+            c.id AS cat_id,
+            c.category_name AS cat_categoryName,
+            c.parent_id AS cat_parentId,
+            c.depth AS cat_depth,
+            1 AS isWished
+        FROM Bg_Wishlist w
+        LEFT JOIN Bg_Product p ON w.product_id = p.id
+        LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+        LEFT JOIN Bg_Interest_category c ON cpm.interest_category_id = c.id
+        WHERE w.user_id = #{userId}
+        ORDER BY w.created_at DESC
+    </select>
+
+    <insert id="insertWish">
+        INSERT INTO Bg_Wishlist (user_id, product_id)
+        VALUES (#{userId}, #{productId})
+    </insert>
+
+    <delete id="deleteWish">
+        DELETE FROM Bg_Wishlist
+        WHERE user_id = #{userId} AND product_id = #{productId}
+    </delete>
+
+    <select id="existsWish" resultType="int">
+        SELECT COUNT(*)
+        FROM Bg_Wishlist
+        WHERE user_id = #{userId} AND product_id = #{productId}
+    </select>
+
+</mapper>
+

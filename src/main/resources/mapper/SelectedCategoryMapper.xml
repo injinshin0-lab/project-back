@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.user.mapper.SelectedCategoryMapper">
+
+    <select id="findUserCategory" parameterType="int"
+            resultType="kr.co.kosmo.project_back.admin.dto.CategoryDto">
+        SELECT
+            c.id,
+            c.category_name AS categoryName,
+            c.parent_id AS parentId,
+            c.depth
+        FROM Bg_User_category_mapping ucm
+        LEFT JOIN Bg_Interest_category c ON ucm.interest_category_id = c.id
+        WHERE ucm.user_id = #{userId}
+    </select>
+
+    <delete id="deleteCategoriesByUserId" parameterType="int">
+        DELETE FROM Bg_User_category_mapping WHERE user_id = #{userId}
+    </delete>
+
+    <insert id="insertUserCategories">
+        INSERT INTO Bg_User_category_mapping (user_id, interest_category_id)
+        VALUES
+        <foreach collection="categoryIds" item="categoryId" separator=",">
+            (#{userId}, #{categoryId})
+        </foreach>
+    </insert>
+
+</mapper>
+
+

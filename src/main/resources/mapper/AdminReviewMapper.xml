@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.admin.mapper.AdminReviewMapper">
+
+    <select id="findReviewsByProductId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.admin.dto.AdminReviewResponseDto">
+        SELECT
+            r.id AS reviewId,
+            r.user_id AS userId,
+            u.login_id AS loginId,
+            r.content,
+            r.rating
+        FROM Bg_Review r
+        LEFT JOIN Bg_User u ON r.user_id = u.id
+        WHERE r.product_id = #{productId}
+        ORDER BY r.id DESC
+    </select>
+
+    <select id="findByReviewId" parameterType="int"
+            resultType="kr.co.kosmo.project_back.admin.dto.AdminReviewResponseDto">
+        SELECT
+            r.id AS reviewId,
+            r.user_id AS userId,
+            u.login_id AS loginId,
+            r.content,
+            r.rating
+        FROM Bg_Review r
+        LEFT JOIN Bg_User u ON r.user_id = u.id
+        WHERE r.id = #{reviewId}
+    </select>
+
+    <delete id="deleteReviewByReviewId" parameterType="int">
+        DELETE FROM Bg_Review WHERE id = #{reviewId}
+    </delete>
+
+</mapper>
+
+

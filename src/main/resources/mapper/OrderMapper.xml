@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.user.mapper.OrderMapper">
+
+    <insert id="insertOrder" parameterType="kr.co.kosmo.project_back.user.dto.OrderRequestDto"
+            useGeneratedKeys="true" keyProperty="orderId" keyColumn="id">
+        INSERT INTO Bg_Order (user_id, address_id, payment_method, payment_price, order_status)
+        VALUES (#{userId}, #{addressId}, #{payType}, #{totalPrice}, 'ORDERED')
+    </insert>
+
+    <insert id="insertOrderItems">
+        INSERT INTO Bg_Order_item (order_id, product_id, amount, price)
+        VALUES
+        <foreach collection="items" item="item" separator=",">
+            (#{orderId}, #{item.productId}, #{item.quantity}, #{item.price})
+        </foreach>
+    </insert>
+
+    <select id="countOrderList" parameterType="kr.co.kosmo.project_back.admin.dto.OrderSearchDto" resultType="int">
+        SELECT COUNT(*)
+        FROM Bg_Order o
+        <where>
+            <if test="userId != null">
+                AND o.user_id = #{userId}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND date(o.created_at) &gt;= date(#{startDate})
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND date(o.created_at) &lt;= date(#{endDate})
+            </if>
+        </where>
+    </select>
+
+    <select id="findOrderList" parameterType="kr.co.kosmo.project_back.admin.dto.OrderSearchDto"
+            resultType="kr.co.kosmo.project_back.admin.dto.OrderResponseDto">
+        SELECT
+            o.id AS id,
+            o.user_id AS userId,
+            u.login_id AS loginId,
+            a.recipient AS recipient,
+            a.recipient_phone AS recipientPhone,
+            o.payment_method AS payType,
+            o.payment_price AS totalPrice,
+            a.postcode AS postcode,
+            a.address AS address,
+            a.detail_address AS detailAddress,
+            o.order_status AS status,
+            o.created_at AS createdAt
+        FROM Bg_Order o
+        LEFT JOIN Bg_Address a ON o.address_id = a.id
+        LEFT JOIN Bg_User u ON o.user_id = u.id
+        <where>
+            <if test="userId != null">
+                AND o.user_id = #{userId}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND date(o.created_at) &gt;= date(#{startDate})
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND date(o.created_at) &lt;= date(#{endDate})
+            </if>
+        </where>
+        ORDER BY o.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+</mapper>

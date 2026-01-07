@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.user.mapper.AddressMapper">
+
+    <resultMap id="addressResultMap" type="kr.co.kosmo.project_back.user.dto.AddressDto">
+        <id property="addressId" column="addressId"/>
+        <result property="userId" column="userId"/>
+        <result property="recipient" column="recipient"/>
+        <result property="postcode" column="postcode"/>
+        <result property="address" column="address"/>
+        <result property="detailAddress" column="detailAddress"/>
+        <result property="recipientPhone" column="recipientPhone"/>
+        <result property="isDefault" column="isDefault"/>
+    </resultMap>
+
+    <select id="findByUserId" parameterType="int" resultMap="addressResultMap">
+        SELECT
+            id AS addressId,
+            user_id AS userId,
+            recipient,
+            postcode,
+            address,
+            detail_address AS detailAddress,
+            recipient_phone AS recipientPhone,
+            is_default AS isDefault
+        FROM Bg_Address
+        WHERE user_id = #{userId}
+        ORDER BY is_default DESC, id DESC
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="addressResultMap">
+        SELECT
+            id AS addressId,
+            user_id AS userId,
+            recipient,
+            postcode,
+            address,
+            detail_address AS detailAddress,
+            recipient_phone AS recipientPhone,
+            is_default AS isDefault
+        FROM Bg_Address
+        WHERE id = #{addressId}
+        LIMIT 1
+    </select>
+
+    <insert id="insertAddress" parameterType="kr.co.kosmo.project_back.user.dto.AddressDto"
+            useGeneratedKeys="true" keyProperty="addressId">
+        INSERT INTO Bg_Address (user_id, recipient, recipient_phone, postcode, address, detail_address, is_default)
+        VALUES (#{userId}, #{recipient}, #{recipientPhone}, #{postcode}, #{address}, #{detailAddress}, #{isDefault})
+    </insert>
+
+    <update id="updateAddress" parameterType="kr.co.kosmo.project_back.user.dto.AddressDto">
+        UPDATE Bg_Address
+        SET recipient = #{recipient},
+            recipient_phone = #{recipientPhone},
+            postcode = #{postcode},
+            address = #{address},
+            detail_address = #{detailAddress},
+            is_default = #{isDefault}
+        WHERE id = #{addressId} AND user_id = #{userId}
+    </update>
+
+    <delete id="deleteAddress">
+        DELETE FROM Bg_Address
+        WHERE id = #{addressId} AND user_id = #{userId}
+    </delete>
+
+    <update id="updateDefaultAddress">
+        -- 먼저 모든 주소를 기본 주소 해제
+        UPDATE Bg_Address SET is_default = 0 WHERE user_id = #{userId}
+    </update>
+    
+    <update id="setDefaultAddress">
+        -- 선택한 주소를 기본 주소로 설정
+        UPDATE Bg_Address SET is_default = 1 WHERE id = #{addressId} AND user_id = #{userId}
+    </update>
+
+</mapper>
+
