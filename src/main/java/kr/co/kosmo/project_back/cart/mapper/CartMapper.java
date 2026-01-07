@@ -15,4 +15,8 @@ public interface CartMapper {
     void insertCartItem(CartDto dto);
     // 수정
     void updateCartItemByCartItemId(Map<String, Object>params);
+    // 장바구니 항목 삭제(단건)
+    void deleteCartItem(Integer userId, Integer productId);
+    // 장바구니 전체 삭제
+    void deleteCart(Integer userId);
 }

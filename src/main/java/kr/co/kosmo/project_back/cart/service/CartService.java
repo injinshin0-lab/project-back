@@ -35,5 +35,14 @@ public class CartService {
         params.put("quantity", quantity);
         cartMapper.updateCartItemByCartItemId(params);
     }
+    // 장바구니 항목 삭제(단건)
+    public void removeCartItem(Integer userId, Integer productId) {
+        cartMapper.deleteCartItem(userId, productId);
+    }
+    // 장바구니 전체 삭제
+    public void removeCart(Integer userId) {
+        cartMapper.deleteCart(userId);
+    }
+
 }
 

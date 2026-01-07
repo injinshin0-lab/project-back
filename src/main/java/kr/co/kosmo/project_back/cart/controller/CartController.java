@@ -1,10 +1,9 @@
 package kr.co.kosmo.project_back.cart.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,5 +73,34 @@ public class CartController {
         return Map.of(
             "message", "장바구니에 수량 수정됨",
             "cartItemId", cartId);
+    }
+    // 장바구니 항목 삭제(단건)
+    @DeleteMapping("/{productId}")
+    public Map<String, Object> removeCartItem(
+            @PathVariable Integer productId,
+            HttpSession session
+    ) {
+        Integer userId = (Integer) session.getAttribute("LOGIN_USER");
+        if(userId == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        cartService.removeCartItem(userId, productId);
+        return Map.of(
+                "message", "장바구니 항목 삭제됨",
+                "productId", productId);
+    }
+    // 장바구니 전체 삭제
+    @DeleteMapping("/user/{userId}")
+    public Map<String, Object> removeCart(
+            @PathVariable Integer userId,
+            HttpSession session
+    ) {
+        Integer loginUserId = (Integer) session.getAttribute("LOGIN_USER");
+        if(loginUserId == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        cartService.removeCart(loginUserId);
+        return Map.of(
+                 "message", "장바구니 항목 삭제됨");
     }
 }
