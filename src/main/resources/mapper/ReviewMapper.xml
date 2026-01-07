@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.review.mapper.ReviewMapper">
+
+    <!-- 상품별 리뷰 조회 -->
+    <select id="findReviewsByProductId"
+            resultType="kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto">
+        SELECT 
+            r.id          AS reviewId,
+            r.user_id     AS userId,
+            r.content,
+            r.rating,
+            r.created_at  AS createdAt, 
+            COUNT(ri.id)  AS imageCount
+        FROM Bg_Review r
+        LEFT JOIN Bg_Review_Image ri
+            ON r.id = ri.review_id
+        WHERE r.product_id = #{productId}
+        GROUP BY r.id
+        ORDER BY 
+        <choose>
+            <!-- 사진 리뷰 우선 -->
+            <when test="sort == 'photo'">
+                imageCount DESC,
+                r.created_at DESC
+            </when>
+            <!-- 평점순 -->
+            <when test="sort == 'rating'">
+                r.rating DESC,
+                r.created_at DESC
+            </when>
+            <!-- 최신순 -->
+            <otherwise>
+                r.created_at DESC 
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 리뷰 작성 -->
+    <insert id="insertReview"
+            parameterType="kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto"
+            useGeneratedKeys="true"
+            keyProperty="reviewId">
+        INSERT INTO Bg_Review (
+            user_id,
+            product_id,
+            content,
+            rating,
+            created_at
+        )
+        VALUES (
+            #{userId},
+            #{productId},
+            #{content},
+            #{rating},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 리뷰 수정 -->
+    <update id="updateReview"
+            parameterType="kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto">
+        UPDATE Bg_Review
+        SET
+            content = #{content},
+            rating = #{rating},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{reviewId}
+    </update>
+
+    <!-- 리뷰 삭제 -->
+    <delete id="deleteReview"
+            parameterType="kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto">
+        DELETE FROM Bg_Review
+        WHERE id = #{reviewId}
+    </delete>
+
+</mapper>
+
+
