@@ -22,7 +22,8 @@
             id AS faqId,
             title,
             content,
-            created_at AS createdAt
+            created_at AS createdAt,
+            updated_at AS updatedAt
         FROM Bg_FAQ
         <where>
             <if test="keyword != null and keyword != ''">
@@ -40,7 +41,8 @@
             id AS faqId,
             title,
             content,
-            created_at AS createdAt
+            created_at AS createdAt,
+            updated_at AS updatedAt
         FROM Bg_FAQ
         WHERE id = #{faqId}
     </select>
@@ -54,7 +56,8 @@
     <update id="updateFaq" parameterType="kr.co.kosmo.project_back.admin.dto.FaqDto">
         UPDATE Bg_FAQ
         SET title = #{title},
-            content = #{content}
+            content = #{content},
+            updated_at = datetime('now')
         WHERE id = #{faqId}
     </update>
 

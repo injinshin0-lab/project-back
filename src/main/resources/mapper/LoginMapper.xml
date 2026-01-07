@@ -75,6 +75,12 @@
         UPDATE Bg_User SET password = #{newPassword} WHERE id = #{userId}
     </update>
 
+    <update id="updateLastLoginAt">
+        UPDATE Bg_User
+        SET last_login_at = datetime('now', 'localtime')
+        WHERE id = #{userId}
+    </update>
+
     <select id="findById" parameterType="int" resultType="kr.co.kosmo.project_back.user.dto.UserResponseDto">
         SELECT
             id,
