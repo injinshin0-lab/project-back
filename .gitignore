@@ -52,6 +52,3 @@ logs/
 *.log
 
 *.puml
-
-# 압축파일
-*.zip
