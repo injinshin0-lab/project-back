@@ -38,7 +38,7 @@ build/
 .vscode/
 
 # 특정 패키지(user) 내의 모든 파일 제외
-# src/main/java/kr/co/kosmo/project_back/user/
+src/main/java/kr/co/kosmo/project_back/user/
 /uploads/
 
 # sqlite database
