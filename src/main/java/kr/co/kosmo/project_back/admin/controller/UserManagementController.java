@@ -3,12 +3,9 @@ package kr.co.kosmo.project_back.admin.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import kr.co.kosmo.project_back.admin.dto.AdminUserResponseDto;
@@ -47,14 +44,6 @@ public class UserManagementController {
         return ResponseEntity.ok(userManagementService.getUser(userId));
     }
 
-    @PatchMapping("/{userId}/status")
-    public ResponseEntity<Integer> updateUserStatus(
-            @PathVariable Integer userId,
-            @RequestBody Map<String, String> request) {
-        String status = request.get("status");
-        // TODO: 회원 상태 변경 로직 구현 필요 (정지/탈퇴)
-        return ResponseEntity.ok(1);
-    }
 }
 
 

@@ -43,11 +43,11 @@ public class AdminOrderService {
         
         return response;
     }
-
+    String oldStatus = null;
     public Integer updateOrderStatus(Integer orderId, String status) {
         // 주문 정보 조회하여 사용자 ID 확인
         OrderResponseDto order = orderMapper.findOrderById(orderId);
-        String oldStatus = null;
+        
         if (order != null) {
             oldStatus = order.getStatus();
             // 각 주문 항목 추가

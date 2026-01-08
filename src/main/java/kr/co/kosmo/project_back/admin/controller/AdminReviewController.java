@@ -22,7 +22,7 @@ public class AdminReviewController {
         return ResponseEntity.ok(adminReviewService.getReviewsByProduct(productId));
     }
 
-    @GetMapping("/{reviewId}")
+    @GetMapping("/review/product/{reviewId}")
     public ResponseEntity<AdminReviewResponseDto> getReview(@PathVariable Integer reviewId) {
         return ResponseEntity.ok(adminReviewService.getReview(reviewId));
     }
