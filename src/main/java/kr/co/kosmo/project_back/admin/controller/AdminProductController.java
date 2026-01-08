@@ -18,7 +18,7 @@ import kr.co.kosmo.project_back.admin.dto.ProductSearchDto;
 import kr.co.kosmo.project_back.admin.service.AdminProductService;
 
 @RestController
-@RequestMapping("/api/v1/admin/product")
+@RequestMapping("/api/v1/admin/products")
 @RequiredArgsConstructor
 public class AdminProductController {
     private final AdminProductService adminProductService;
