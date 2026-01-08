@@ -6,7 +6,7 @@ import kr.co.kosmo.project_back.admin.dto.FaqDto;
 import kr.co.kosmo.project_back.admin.dto.FaqSearchDto;
 import kr.co.kosmo.project_back.admin.dto.PageResponseDto;
 import kr.co.kosmo.project_back.admin.mapper.AdminFaqMapper;
-import java.util.List;
+// import java.util.List;
 
 @Service
 @RequiredArgsConstructor

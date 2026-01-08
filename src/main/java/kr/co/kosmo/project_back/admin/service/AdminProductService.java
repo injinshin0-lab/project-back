@@ -114,11 +114,12 @@ public class AdminProductService {
     
     /**
      * 이미지 파일을 저장하고 URL 반환
+     * 상품 이미지는 uploads/product 하위에 저장
      */
     private String saveImageFile(MultipartFile file) {
         try {
-            // 업로드 디렉토리 생성
-            Path uploadPath = Paths.get(uploadDir);
+            // 상품 이미지는 uploads/product 하위에 저장
+            Path uploadPath = Paths.get(uploadDir, "product");
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
@@ -135,7 +136,7 @@ public class AdminProductService {
             Files.copy(file.getInputStream(), filePath);
             
             // URL 반환 (프론트엔드에서 접근 가능한 경로)
-            return "/uploads/" + filename;
+            return "/uploads/product/" + filename;
         } catch (IOException e) {
             throw new RuntimeException("이미지 파일 저장 실패: " + e.getMessage(), e);
         }
