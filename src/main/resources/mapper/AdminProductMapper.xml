@@ -18,7 +18,14 @@
     <select id="countProductList" parameterType="kr.co.kosmo.project_back.admin.dto.ProductSearchDto" resultType="int">
         SELECT COUNT(DISTINCT p.id)
         FROM Bg_Product p
-        LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+        <choose>
+            <when test="categoryIds != null and categoryIds.size() > 0 or categoryId != null">
+                INNER JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+            </when>
+            <otherwise>
+                LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+            </otherwise>
+        </choose>
         <where>
             <if test="keyword != null and keyword != ''">
                 (p.product_name LIKE '%' || #{keyword} || '%' 
@@ -66,8 +73,16 @@
             MAX(c.parent_id) AS cat_parentId,
             MAX(c.depth) AS cat_level
         FROM Bg_Product p
-        LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
-        LEFT JOIN Bg_Interest_category c ON cpm.interest_category_id = c.id
+        <choose>
+            <when test="categoryIds != null and categoryIds.size() > 0 or categoryId != null">
+                INNER JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+                LEFT JOIN Bg_Interest_category c ON cpm.interest_category_id = c.id
+            </when>
+            <otherwise>
+                LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+                LEFT JOIN Bg_Interest_category c ON cpm.interest_category_id = c.id
+            </otherwise>
+        </choose>
         <where>
             <if test="keyword != null and keyword != ''">
                 (p.product_name LIKE '%' || #{keyword} || '%' 

@@ -56,6 +56,8 @@ public class AdminProductService {
         // 디버깅: 총 개수와 페이지 정보 출력
         System.out.println("=== 검색 결과 디버깅 ===");
         System.out.println("Keyword: " + searchDto.getKeyword());
+        System.out.println("CategoryId: " + searchDto.getCategoryId());
+        System.out.println("CategoryIds: " + searchDto.getCategoryIds());
         System.out.println("TotalCount: " + totalCount);
         System.out.println("Size: " + searchDto.getSize());
         System.out.println("TotalPage: " + totalPage);
