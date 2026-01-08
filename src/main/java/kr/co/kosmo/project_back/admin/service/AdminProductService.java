@@ -53,8 +53,18 @@ public class AdminProductService {
         Integer totalCount = adminProductMapper.countProductList(searchDto);
         Integer totalPage = totalCount > 0 ? (int) Math.ceil((double) totalCount / searchDto.getSize()) : 1;
         
+        // 디버깅: 총 개수와 페이지 정보 출력
+        System.out.println("=== 검색 결과 디버깅 ===");
+        System.out.println("Keyword: " + searchDto.getKeyword());
+        System.out.println("TotalCount: " + totalCount);
+        System.out.println("Size: " + searchDto.getSize());
+        System.out.println("TotalPage: " + totalPage);
+        System.out.println("CurrentPage: " + searchDto.getPage());
+        System.out.println("Offset: " + searchDto.getOffset());
+        
         PageResponseDto<AdminProductResponseDto> response = new PageResponseDto<>();
         List<AdminProductResponseDto> productList = adminProductMapper.findProductList(searchDto);
+        System.out.println("실제 조회된 상품 개수: " + productList.size());
         // 이미지 URL에 uploads/ 접두사 추가
         productList.forEach(product -> {
             if (product.getImageUrl() != null && !product.getImageUrl().startsWith("/uploads/") && !product.getImageUrl().startsWith("uploads/")) {
