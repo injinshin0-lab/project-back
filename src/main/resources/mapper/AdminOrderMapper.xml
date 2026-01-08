@@ -6,11 +6,25 @@
 <mapper namespace="kr.co.kosmo.project_back.admin.mapper.AdminOrderMapper">
 
     <select id="countOrderList" parameterType="kr.co.kosmo.project_back.admin.dto.OrderSearchDto" resultType="int">
-        SELECT COUNT(*)
+        SELECT COUNT(DISTINCT o.id)
         FROM Bg_Order o
+        LEFT JOIN Bg_User u ON o.user_id = u.id
+        <if test="productName != null and productName != ''">
+            INNER JOIN Bg_Order_item oi ON o.id = oi.order_id
+            INNER JOIN Bg_Product p ON oi.product_id = p.id
+        </if>
         <where>
             <if test="userId != null">
                 AND o.user_id = #{userId}
+            </if>
+            <if test="loginId != null and loginId != ''">
+                AND u.login_id LIKE '%' || #{loginId} || '%'
+            </if>
+            <if test="productName != null and productName != ''">
+                AND p.product_name LIKE '%' || #{productName} || '%'
+            </if>
+            <if test="status != null and status != ''">
+                AND o.order_status = #{status}
             </if>
             <if test="startDate != null and startDate != ''">
                 AND date(o.created_at) &gt;= date(#{startDate})
@@ -55,9 +69,22 @@
         FROM Bg_Order o
         LEFT JOIN Bg_User u ON o.user_id = u.id
         LEFT JOIN Bg_Address a ON o.address_id = a.id
+        <if test="productName != null and productName != ''">
+            INNER JOIN Bg_Order_item oi ON o.id = oi.order_id
+            INNER JOIN Bg_Product p ON oi.product_id = p.id
+        </if>
         <where>
             <if test="userId != null">
                 AND o.user_id = #{userId}
+            </if>
+            <if test="loginId != null and loginId != ''">
+                AND u.login_id LIKE '%' || #{loginId} || '%'
+            </if>
+            <if test="productName != null and productName != ''">
+                AND p.product_name LIKE '%' || #{productName} || '%'
+            </if>
+            <if test="status != null and status != ''">
+                AND o.order_status = #{status}
             </if>
             <if test="startDate != null and startDate != ''">
                 AND date(o.created_at) &gt;= date(#{startDate})
@@ -66,7 +93,24 @@
                 AND date(o.created_at) &lt;= date(#{endDate})
             </if>
         </where>
-        ORDER BY o.created_at DESC
+        GROUP BY o.id, o.user_id, u.login_id, a.recipient, a.recipient_phone, 
+                 o.payment_method, a.postcode, a.address, a.detail_address, 
+                 o.payment_price, o.order_status, o.created_at
+        <choose>
+            <when test="sort != null and sort == 'totalPrice'">
+                ORDER BY o.payment_price 
+                <if test="order != null and order == 'asc'">ASC</if>
+                <if test="order == null or order == 'desc'">DESC</if>
+            </when>
+            <when test="sort != null and sort == 'createdAt'">
+                ORDER BY o.created_at 
+                <if test="order != null and order == 'asc'">ASC</if>
+                <if test="order == null or order == 'desc'">DESC</if>
+            </when>
+            <otherwise>
+                ORDER BY o.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 

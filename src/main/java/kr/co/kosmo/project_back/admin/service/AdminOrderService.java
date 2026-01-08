@@ -18,10 +18,24 @@ public class AdminOrderService {
     private final AlarmService alarmService;
 
     public PageResponseDto<OrderResponseDto> getOrderList(OrderSearchDto searchDto) {
+        // 디버깅: 검색 조건 출력
+        System.out.println("=== 주문 검색 디버깅 ===");
+        System.out.println("UserId: " + searchDto.getUserId());
+        System.out.println("LoginId: " + searchDto.getLoginId());
+        System.out.println("ProductName: " + searchDto.getProductName());
+        System.out.println("Status: " + searchDto.getStatus());
+        System.out.println("StartDate: " + searchDto.getStartDate());
+        System.out.println("EndDate: " + searchDto.getEndDate());
+        System.out.println("Sort: " + searchDto.getSort());
+        System.out.println("Order: " + searchDto.getOrder());
+        
         Integer totalCount = orderMapper.countOrderList(searchDto);
         Integer totalPage = (int) Math.ceil((double) totalCount / searchDto.getSize());
         
+        System.out.println("TotalCount: " + totalCount);
+        
         List<OrderResponseDto> orderList = orderMapper.findOrderList(searchDto);
+        System.out.println("실제 조회된 주문 개수: " + orderList.size());
         
         // 각 주문에 주문 항목 리스트 추가
         for (OrderResponseDto order : orderList) {
@@ -43,13 +57,10 @@ public class AdminOrderService {
         
         return response;
     }
-    String oldStatus = null;
     public Integer updateOrderStatus(Integer orderId, String status) {
         // 주문 정보 조회하여 사용자 ID 확인
         OrderResponseDto order = orderMapper.findOrderById(orderId);
-        
         if (order != null) {
-            oldStatus = order.getStatus();
             // 각 주문 항목 추가
             List<kr.co.kosmo.project_back.admin.dto.CartDto> orderItems = 
                 orderItemMapper.findOrderItemsByOrderId(order.getId());

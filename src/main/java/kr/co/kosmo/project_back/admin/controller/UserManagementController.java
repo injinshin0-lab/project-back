@@ -3,6 +3,8 @@ package kr.co.kosmo.project_back.admin.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,12 +14,14 @@ import kr.co.kosmo.project_back.admin.dto.AdminUserResponseDto;
 import kr.co.kosmo.project_back.admin.dto.PageResponseDto;
 import kr.co.kosmo.project_back.admin.dto.UserSearchDto;
 import kr.co.kosmo.project_back.admin.service.AdminUserManagementService;
+import kr.co.kosmo.project_back.user.service.AlarmService;
 
 @RestController
 @RequestMapping("/api/v1/admin/user")
 @RequiredArgsConstructor
 public class UserManagementController {
     private final AdminUserManagementService userManagementService;
+    private final AlarmService alarmService;
 
     @GetMapping
     public ResponseEntity<PageResponseDto<AdminUserResponseDto>> getUserList(
@@ -42,6 +46,25 @@ public class UserManagementController {
     @GetMapping("/{userId}")
     public ResponseEntity<AdminUserResponseDto> getUser(@PathVariable Integer userId) {
         return ResponseEntity.ok(userManagementService.getUser(userId));
+    }
+
+    @PostMapping("/{userId}/alarm")
+    public ResponseEntity<Integer> sendAlarm(
+            @PathVariable Integer userId,
+            @RequestBody AlarmRequestDto request) {
+        return ResponseEntity.ok(alarmService.insertAdminAlarm(userId, request.getMessage()));
+    }
+
+    public static class AlarmRequestDto {
+        private String message;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
 }

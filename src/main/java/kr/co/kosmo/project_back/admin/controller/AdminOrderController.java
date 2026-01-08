@@ -22,15 +22,25 @@ public class AdminOrderController {
     @GetMapping
     public ResponseEntity<PageResponseDto<OrderResponseDto>> getOrderList(
             @RequestParam(required = false) Integer userId,
+            @RequestParam(required = false) String loginId,
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) String status,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String order,
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
         
         OrderSearchDto searchDto = new OrderSearchDto();
         searchDto.setUserId(userId);
+        searchDto.setLoginId(loginId);
+        searchDto.setProductName(productName);
+        searchDto.setStatus(status);
         searchDto.setStartDate(startDate);
         searchDto.setEndDate(endDate);
+        searchDto.setSort(sort);
+        searchDto.setOrder(order);
         searchDto.setPage(page);
         searchDto.setSize(size);
         
