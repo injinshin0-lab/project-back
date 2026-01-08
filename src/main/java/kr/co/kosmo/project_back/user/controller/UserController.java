@@ -39,7 +39,7 @@ public class UserController {
     // 아이디 중복체크
     @PostMapping("/check-username")
     public ResponseEntity<?> checkUsername(@Valid @RequestBody Map<String, String> request) {
-        String loginId = request.get("userId");
+        String loginId = request.get("loginId");
         boolean isDuplicate = userService.isIdDuplicate(loginId);
 
         if(isDuplicate) {
@@ -48,9 +48,6 @@ public class UserController {
         return ResponseEntity.ok("사용 가능한 아이디입니다.");
     }
 }
-
-
-
 
 
 // 회원 되기 전 단계(회원가입 시작점)를 담당

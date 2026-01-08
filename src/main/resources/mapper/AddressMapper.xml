@@ -5,6 +5,22 @@
 
 <mapper namespace="kr.co.kosmo.project_back.address.mapper.AddressMapper">
 
+    <select id="selectAddressesByUserId" 
+        resultType="kr.co.kosmo.project_back.address.dto.AddressDto">
+        SELECT 
+            id,
+            user_id as userId,
+            recipient,
+            postcode,
+            address,
+            detail_address as detailAddress,
+            recipient_phone as recipientPhone,
+            is_default as isDefault
+        FROM Bg_Address
+        WHERE user_id = #{userId}
+        ORDER BY is_default DESC, id DESC
+    </select>
+
     <insert id="insertAddress"
             parameterType="kr.co.kosmo.project_back.address.dto.AddressDto">
         INSERT INTO Bg_Address

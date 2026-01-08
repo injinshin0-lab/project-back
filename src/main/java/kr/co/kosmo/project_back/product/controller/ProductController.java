@@ -16,20 +16,31 @@ import kr.co.kosmo.project_back.product.dto.PageResponseDto;
 import kr.co.kosmo.project_back.product.dto.ProductDto;
 import kr.co.kosmo.project_back.product.dto.ProductSearchDto;
 import kr.co.kosmo.project_back.product.service.ProductService;
+import kr.co.kosmo.project_back.recentproduct.service.RecentProductService;
+import kr.co.kosmo.project_back.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
+
+    private final RecentProductService recentProductService;
     private final ProductService productService;
+    private final ReviewService reviewService;
 
     // 상품상세 조회
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto> getProduct(
-        @PathVariable Integer productId // URL 속 값을 꺼내 쓰기 위함
+        @PathVariable Integer productId, // URL 속 값을 꺼내 쓰기 위함
+        HttpSession session
     ) {
         ProductDto product = productService.getProduct(productId);
+        // 로그인 된 사용자만 최근 본 상품 저장
+        Integer userId = (Integer) session.getAttribute("LOGIN_USER");
+        if(userId != null) {
+            recentProductService.insertOrUpdateRecentProduct(userId, productId);
+        }
         return ResponseEntity.ok(product);
     }
 

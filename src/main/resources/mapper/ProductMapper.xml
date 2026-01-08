@@ -5,37 +5,17 @@
 
 <mapper namespace="kr.co.kosmo.project_back.product.mapper.ProductMapper">
 
-<!-- 상품목록 조회 -->
-<select id="findAllProducts"
-        resultType="kr.co.kosmo.project_back.product.dto.ProductDto">
-    SELECT
-        id,
-        product_name    As productName,
-        content,
-        price,
-        product_status  As productStatus,
-        origin_name     As originName,
-        image_url       AS imageUrl,
-        created_at      As createdAt,
-        updated_at      As updatedAt
-    FROM Bg_Product
-    ORDER By created_at DESC
-</select>
-
 <!-- 상품상세 조회 -->
 <select id="findByProductId"
         parameterType="int"
         resultType="kr.co.kosmo.project_back.product.dto.ProductDto">
     SELECT
-        id,
-        product_name    As productName,
+        id              AS productId,           
+        product_name    AS productName,
         content,
         price,
-        product_status  As productStatus,
-        origin_name     As originName,
-        image_url       AS imageUrl,
-        created_at      As createdAt,
-        updated_at      As updatedAt
+        origin_name     AS originName,
+        image_url       AS imageUrl
     FROM Bg_Product
     WHERE id = #{productId}
 </select>
