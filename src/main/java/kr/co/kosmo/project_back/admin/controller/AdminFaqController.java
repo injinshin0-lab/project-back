@@ -47,8 +47,12 @@ public class AdminFaqController {
         return ResponseEntity.ok(faqService.insertFaq(dto));
     }
 
-    @PutMapping
-    public ResponseEntity<Integer> updateFaq(@RequestBody FaqDto dto) {
+    @PutMapping("/{faqId}")
+    public ResponseEntity<Integer> updateFaq(
+        @PathVariable Integer faqId,
+        @RequestBody FaqDto dto
+    ) {
+        dto.setFaqId(faqId);
         return ResponseEntity.ok(faqService.updateFaq(dto));
     }
 
