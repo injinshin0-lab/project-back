@@ -14,6 +14,9 @@
         <result property="createdAt" column="createdAt" />
         
         <association property="answer" column="id" javaType="kr.co.kosmo.project_back.admin.dto.QuestionAnswerDto" select="findAnswerByQuestionId" />
+        
+        <collection property="questionImages" column="id" ofType="kr.co.kosmo.project_back.admin.dto.QuestionImageDto" 
+                select="kr.co.kosmo.project_back.admin.mapper.AdminQuestionImageMapper.findImagesByQuestionId" />
     </resultMap>
 
     <select id="countQuestionList" parameterType="kr.co.kosmo.project_back.admin.dto.QuestionSearchDto" resultType="int">
