@@ -2,6 +2,7 @@ package kr.co.kosmo.project_back.admin.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ import kr.co.kosmo.project_back.admin.dto.QuestionSearchDto;
 import kr.co.kosmo.project_back.admin.service.AdminQuestionService;
 
 @RestController
-@RequestMapping("/api/v1/admin/question")
+@RequestMapping("/api/v1/admin/inquiries")
 @RequiredArgsConstructor
 public class AdminQuestionController {
     private final AdminQuestionService questionService;
@@ -50,8 +51,13 @@ public class AdminQuestionController {
         return ResponseEntity.ok(questionService.getQuestion(id));
     }
 
-    @PostMapping("/answer")
-    public ResponseEntity<Integer> insertAnswer(@RequestBody QuestionAnswerDto dto) {
+    @PatchMapping("/{inquiriesId}/reply")
+    public ResponseEntity<Integer> insertAnswer(
+        @PathVariable("inquiriesId") Integer inquiriesId,
+        @RequestBody QuestionAnswerDto dto
+    ) {
+        dto.setQuestionid(inquiriesId);
+        
         return ResponseEntity.ok(questionService.insertAnswer(dto));
     }
 }

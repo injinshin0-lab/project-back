@@ -17,7 +17,7 @@ import kr.co.kosmo.project_back.admin.dto.PageResponseDto;
 import kr.co.kosmo.project_back.admin.service.AdminFaqService;
 
 @RestController
-@RequestMapping("/api/v1/admin/faq")
+@RequestMapping("/api/v1/admin/faqs")
 @RequiredArgsConstructor
 public class AdminFaqController {
     
