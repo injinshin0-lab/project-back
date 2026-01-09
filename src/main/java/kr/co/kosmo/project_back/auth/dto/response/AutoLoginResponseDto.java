@@ -14,6 +14,7 @@ public class AutoLoginResponseDto {
     private boolean authenticated;
     private Integer user_id;
     private String name;
+    private String role;
 }
 
 // 자동로그인 응답 단계

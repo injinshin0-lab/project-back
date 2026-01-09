@@ -16,7 +16,7 @@ public class CartService {
     private final CartMapper cartMapper;
 
     // 장바구니 목록 조회
-    public List<Map<String, Object>> getCartList(Integer userId) {
+    public List<CartDto> getCartList(Integer userId) {
        return cartMapper.findCartListByUserId(userId);
     }
     // 장바구니 추가

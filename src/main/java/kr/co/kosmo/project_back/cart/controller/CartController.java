@@ -31,11 +31,11 @@ public class CartController {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
         // 해당 사용자 장바구니 목록 조회
-        List<Map<String, Object>> cartItems = cartService.getCartList(userId);
+        List<CartDto> cartItems = cartService.getCartList(userId);
         
         // 장바구니 총 금액 계산
         int totalPrice = cartItems.stream()
-            .mapToInt(item -> (int) item.get("price") * (int) item.get("quantity"))
+            .mapToInt(item -> (int) item.getPrice() * (int) item.getQuantity())
             .sum();
         return Map.of(
                 "cartItems", cartItems,
