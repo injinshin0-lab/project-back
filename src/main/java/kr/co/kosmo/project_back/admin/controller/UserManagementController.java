@@ -48,12 +48,12 @@ public class UserManagementController {
         return ResponseEntity.ok(userManagementService.getUser(userId));
     }
 
-    @PostMapping("/{userId}/alarm")
-    public ResponseEntity<Integer> sendAlarm(
-            @PathVariable Integer userId,
-            @RequestBody AlarmRequestDto request) {
-        return ResponseEntity.ok(alarmService.insertAdminAlarm(userId, request.getMessage()));
-    }
+    // @PostMapping("/{userId}/alarm")
+    // public ResponseEntity<Integer> sendAlarm(
+    //         @PathVariable Integer userId,
+    //         @RequestBody AlarmRequestDto request) {
+    //     return ResponseEntity.ok(alarmService.insertAdminAlarm(userId, request.getMessage()));
+    // }
 
     public static class AlarmRequestDto {
         private String message;

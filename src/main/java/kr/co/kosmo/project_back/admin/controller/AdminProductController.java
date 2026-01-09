@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,8 +54,13 @@ public class AdminProductController {
         return ResponseEntity.ok(adminProductService.insertProduct(dto));
     }
 
-    @PutMapping
-    public ResponseEntity<Integer> updateProduct(@ModelAttribute AdminProductRequestDto dto) {
+    @PatchMapping("/{productId}")
+    public ResponseEntity<Integer> updateProduct(
+        @PathVariable("productId") Integer productId, 
+        @ModelAttribute AdminProductRequestDto dto
+    ) {
+        // URL로 넘어온 ID를 DTO에 강제로 세팅해주는 것이 안전합니다.
+        dto.setProductId(productId);
         return ResponseEntity.ok(adminProductService.updateProduct(dto));
     }
 
