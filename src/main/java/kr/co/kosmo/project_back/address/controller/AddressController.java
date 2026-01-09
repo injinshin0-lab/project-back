@@ -23,7 +23,7 @@ public class AddressController {
     @GetMapping("/{userId}/addresses")
     public ResponseEntity<List<AddressDto>> getAddresses(@PathVariable("userId") Integer userId) {
         // Mapper에 select 기능이 없다면 추가가 필요합니다.
-        List<AddressDto> list = addressMapper.selectAddressByUserId(userId);
+        List<AddressDto> list = addressMapper.selectAddressesByUserId(userId);
         return ResponseEntity.ok(list);
     }
 
