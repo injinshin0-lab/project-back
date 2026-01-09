@@ -6,12 +6,12 @@
 <mapper namespace="kr.co.kosmo.project_back.cart.mapper.CartMapper">
 
     <!-- 장바구니 항목 조회 -->
-    <select id="findCartListByUserId" resultType="map">
+    <select id="findCartListByUserId" resultType="kr.co.kosmo.project_back.cart.dto.CartDto">
         SELECT 
             c.id              AS cartItemId,
             c.product_id      AS productId,
-            c.quantity,
             p.product_name    AS productName,
+            c.quantity,
             p.price
         FROM Bg_Cart c
         JOIN Bg_Product p ON c.product_id = p.id 

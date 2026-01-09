@@ -70,7 +70,7 @@ public class AuthController {
         HttpSession session = request.getSession();
         session.setAttribute("LOGIN_USER", user.getId());
         return ResponseEntity.ok( new LoginResponseDto( "로그인 성공",
-                user.getId(), user.getUserName()));
+                user.getId(), user.getUserName(), user.getRole()));
     }
 
     // 자동 로그인
@@ -90,7 +90,7 @@ public class AuthController {
         }
         UserDto user = authService.findById(userId);
         return ResponseEntity.ok(new AutoLoginResponseDto( true,
-                userId, user.getUserName()));
+                userId, user.getUserName(), user.getRole()));
     }
     
     // 로그아웃

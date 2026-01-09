@@ -56,12 +56,6 @@ public class ReviewController {
         }
         Long userId = Long.valueOf(loginUser.toString());
 
-        // 구매 확정 검증
-        if(!orderService.hasConfirmedPurchase(userId, productId)) {
-            return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(new ReviewCreateResponseDto(null, "구매 확정 후 작성 가능합니다."));
-        }
         // 이미지 제한
         if( dto.getImages() != null ) {
             if(dto.getImages().size() > 5) {
