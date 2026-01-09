@@ -76,4 +76,11 @@
             updated_at = CURRENT_TIMESTAMP
         WHERE email = #{email}
     </update>
+
+    <!-- 마지막 로그인 시간 업뎃 -->
+    <update id="updateLastLoginAt">
+        UPDATE Bg_User 
+        SET last_login_at = CURRENT_TIMESTAMP
+        WHERE id = #{userId} 
+    </update>
 </mapper>

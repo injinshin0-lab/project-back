@@ -29,4 +29,6 @@ public interface UserMapper {
         @Param("email") String email,
         @Param("password") String password
     );
+    // 마지막 로그인 시간 업뎃
+    void updateLastLoginAt(@Param("userId") Integer userId);
 }

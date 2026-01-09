@@ -1,10 +1,9 @@
 package kr.co.kosmo.project_back.cart.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,21 +35,10 @@ public class CartController {
         
         // 장바구니 총 금액 계산
         int totalPrice = cartItems.stream()
-            .mapToInt(item -> item.getPrice() * item.getQuantity())
+            .mapToInt(item -> (int) item.getPrice() * (int) item.getQuantity())
             .sum();
-        List<Map<String, Object>> responseItems = cartItems.stream()
-                .map(item -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("cartItemId", item.getCartItemId());
-                    map.put("productId", item.getProductId());
-                    map.put("productName", item.getProductName());
-                    map.put("quantity", item.getQuantity());
-                    map.put("price", item.getPrice());
-                    return map;
-                })
-                .collect(Collectors.toList());
         return Map.of(
-                "cartItems", responseItems,
+                "cartItems", cartItems,
                 "totalPrice", totalPrice
         );
     }
@@ -67,7 +55,7 @@ public class CartController {
     }
     // 수량 수정
     @PatchMapping("/{cartId}/quantity")
-    public Map<String, Object> addCartItem(
+    public Map<String, Object> updateCartItem(
             @PathVariable Integer cartId,
             @RequestBody Map<String, Integer> body,
             HttpSession session
@@ -77,13 +65,42 @@ public class CartController {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 
-        CartDto dto = new CartDto();
-        dto.setCartItemId(cartId);
-        dto.setUserId(userId);
-        dto.setQuantity(body.get("quantity"));
-        cartService.updateCartQuantity(dto);
+        cartService.updateCartItem(
+            userId,
+            cartId,
+            body.get("quantity")
+        );
         return Map.of(
-            "message", "징바구니에 수량 수정됨",
+            "message", "장바구니에 수량 수정됨",
             "cartItemId", cartId);
+    }
+    // 장바구니 항목 삭제(단건)
+    @DeleteMapping("/{productId}")
+    public Map<String, Object> removeCartItem(
+            @PathVariable Integer productId,
+            HttpSession session
+    ) {
+        Integer userId = (Integer) session.getAttribute("LOGIN_USER");
+        if(userId == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        cartService.removeCartItem(userId, productId);
+        return Map.of(
+                "message", "장바구니 항목 삭제됨",
+                "productId", productId);
+    }
+    // 장바구니 전체 삭제
+    @DeleteMapping("/user/{userId}")
+    public Map<String, Object> removeCart(
+            @PathVariable Integer userId,
+            HttpSession session
+    ) {
+        Integer loginUserId = (Integer) session.getAttribute("LOGIN_USER");
+        if(loginUserId == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        cartService.removeCart(loginUserId);
+        return Map.of(
+                 "message", "장바구니 항목 삭제됨");
     }
 }
