@@ -13,14 +13,14 @@ import lombok.RequiredArgsConstructor;
 import kr.co.kosmo.project_back.admin.dto.AdminUserResponseDto;
 import kr.co.kosmo.project_back.admin.dto.PageResponseDto;
 import kr.co.kosmo.project_back.admin.dto.UserSearchDto;
-import kr.co.kosmo.project_back.admin.service.AdminUserManagementService;
+import kr.co.kosmo.project_back.admin.service.AdminUserService;
 import kr.co.kosmo.project_back.user.service.AlarmService;
 
 @RestController
 @RequestMapping("/api/v1/admin/users")
 @RequiredArgsConstructor
-public class UserManagementController {
-    private final AdminUserManagementService userManagementService;
+public class AdminUserController {
+    private final AdminUserService userService;
     private final AlarmService alarmService;
 
     @GetMapping
@@ -40,20 +40,20 @@ public class UserManagementController {
         dto.setPage(page);
         dto.setSize(size);
         
-        return ResponseEntity.ok(userManagementService.getUserList(dto));
+        return ResponseEntity.ok(userService.getUserList(dto));
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<AdminUserResponseDto> getUser(@PathVariable Integer userId) {
-        return ResponseEntity.ok(userManagementService.getUser(userId));
+        return ResponseEntity.ok(userService.getUser(userId));
     }
 
-    // @PostMapping("/{userId}/alarm")
-    // public ResponseEntity<Integer> sendAlarm(
-    //         @PathVariable Integer userId,
-    //         @RequestBody AlarmRequestDto request) {
-    //     return ResponseEntity.ok(alarmService.insertAdminAlarm(userId, request.getMessage()));
-    // }
+    @PostMapping("/{userId}/alarm")
+    public ResponseEntity<Integer> sendAlarm(
+            @PathVariable Integer userId,
+            @RequestBody AlarmRequestDto request) {
+        return ResponseEntity.ok(alarmService.insertAdminAlarm(userId, request.getMessage()));
+    }
 
     public static class AlarmRequestDto {
         private String message;
@@ -68,5 +68,4 @@ public class UserManagementController {
     }
 
 }
-
 

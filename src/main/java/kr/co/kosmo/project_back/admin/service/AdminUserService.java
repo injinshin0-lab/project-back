@@ -6,18 +6,18 @@ import lombok.RequiredArgsConstructor;
 import kr.co.kosmo.project_back.admin.dto.AdminUserResponseDto;
 import kr.co.kosmo.project_back.admin.dto.PageResponseDto;
 import kr.co.kosmo.project_back.admin.dto.UserSearchDto;
-import kr.co.kosmo.project_back.admin.mapper.AdminUserManagementMapper;
+import kr.co.kosmo.project_back.admin.mapper.AdminUserMapper;
 
 @Service
 @RequiredArgsConstructor
-public class AdminUserManagementService {
-    private final AdminUserManagementMapper userManagementMapper;
+public class AdminUserService {
+    private final AdminUserMapper userMapper;
 
     public PageResponseDto<AdminUserResponseDto> getUserList(UserSearchDto dto) {
-        Integer totalCount = userManagementMapper.countUserList(dto);
+        Integer totalCount = userMapper.countUserList(dto);
         Integer totalPage = (int) Math.ceil((double) totalCount / dto.getSize());
         
-        List<AdminUserResponseDto> userList = userManagementMapper.findUserList(dto);
+        List<AdminUserResponseDto> userList = userMapper.findUserList(dto);
         
         PageResponseDto<AdminUserResponseDto> response = new PageResponseDto<>();
         response.setList(userList);
@@ -28,13 +28,7 @@ public class AdminUserManagementService {
     }
 
     public AdminUserResponseDto getUser(Integer id) {
-        return userManagementMapper.findById(id);
+        return userMapper.findById(id);
     }
 }
-
-
-
-
-
-
 
