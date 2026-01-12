@@ -21,7 +21,6 @@ import kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewCreateResponseDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto;
 import kr.co.kosmo.project_back.review.service.ReviewService;
-import kr.co.kosmo.project_back.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
