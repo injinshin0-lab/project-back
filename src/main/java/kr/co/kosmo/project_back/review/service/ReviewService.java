@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.kosmo.project_back.order.mapper.OrderMapper;
 import kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto;
 import kr.co.kosmo.project_back.review.mapper.ReviewImageMapper;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class ReviewService {
     private final ReviewMapper reviewMapper;
     private final ReviewImageMapper reviewImageMapper;
+    private final OrderMapper orderMapper;
 
     @Value("${file.upload.review-path}")
     private String reviewUploadPath;
@@ -40,6 +42,15 @@ public class ReviewService {
 
     // 상품 리뷰 작성
     public Long insertReview(ReviewRequestDto dto) {
+
+        // 구매 여부 확인
+        int count = orderMapper.countCompletedOrder(
+                dto.getUserId(),
+                dto.getProductId());
+
+        if(count == 0) {
+            throw new IllegalStateException("구매확정 후 리뷰를 작성할 수 있습니다.");
+        }
     
         reviewMapper.insertReview(dto);
         Long reviewId = dto.getReviewId();
