@@ -6,10 +6,9 @@
 <mapper namespace="kr.co.kosmo.project_back.user.mapper.AlarmMapper">
 
     <select id="findAlarmsByUserId" parameterType="int"
-            resultType="kr.co.kosmo.project_back.user.dto.AlarmDto">
+            resultType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
         SELECT
-            id AS inquiryAlarmId,
-            id AS deliveryAlarmId,
+            id,
             user_id AS userId,
             message AS title,
             type,
@@ -20,7 +19,7 @@
         ORDER BY created_at DESC
     </select>
 
-    <insert id="insertAlarm" parameterType="kr.co.kosmo.project_back.user.dto.AlarmDto">
+    <insert id="insertAlarm" parameterType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
         INSERT INTO Bg_Alarm (user_id, type, message, created_at)
         VALUES (#{userId}, #{type}, #{content}, datetime('now', 'localtime'))
     </insert>

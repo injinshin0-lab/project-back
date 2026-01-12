@@ -62,22 +62,22 @@
 
     <select id="findProductList" parameterType="kr.co.kosmo.project_back.admin.dto.ProductSearchDto"
             resultMap="productResultMap">
-        SELECT DISTINCT
+        SELECT
             p.id AS productId,
             p.product_name AS productName,
             p.origin_name AS originName,
             p.content,
             p.price,
             p.image_url AS imageUrl,
-            c.id AS cat_id,
-            c.category_name AS cat_categoryName,
-            c.parent_id AS cat_parentId,
-            c.depth AS cat_depth,
-            CASE 
+            MAX(c.id) AS cat_id,
+            MAX(c.category_name) AS cat_categoryName,
+            MAX(c.parent_id) AS cat_parentId,
+            MAX(c.depth) AS cat_depth,
+            MAX(CASE 
                 WHEN #{userId} IS NULL THEN 0
                 WHEN w.user_id IS NOT NULL THEN 1 
                 ELSE 0 
-            END AS isWished,
+            END) AS isWished,
             COALESCE((SELECT AVG(rating) FROM Bg_Review WHERE product_id = p.id), 0) AS averageRating,
             COALESCE((SELECT COUNT(*) FROM Bg_Review WHERE product_id = p.id), 0) AS reviewCount
         FROM Bg_Product p
@@ -106,6 +106,7 @@
                 AND cpm.interest_category_id = #{categoryId}
             </if>
         </where>
+        GROUP BY p.id, p.product_name, p.origin_name, p.content, p.price, p.image_url
         <choose>
             <when test="sort != null and sort == 'productName'">
                 ORDER BY p.product_name 
