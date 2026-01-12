@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.question.mapper.QuestionImageMapper">
+    
+    <!-- 문의 이미지 조회 -->
+    <select id="findImagesByQuestionId"
+            resultType="kr.co.kosmo.project_back.question.dto.QuestionImageDto">
+        SELECT
+            qi.id           AS questionImageId,
+            qi.image_url    AS imageUrl
+        FROM Bg_Question_Image qi
+        WHERE qi.question_id = #{questionId}
+    </select>
+
+    <!-- 문의 이미지 저장 --> 
+    <insert id="insertQuestionImage">
+        INSERT INTO Bg_Question_Image (
+            question_id,
+            image_url
+        ) VALUES (
+            #{questionId},
+            #{imageUrl}
+        )
+    </insert>
+
+
+</mapper>
+
+
+
