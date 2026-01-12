@@ -12,6 +12,9 @@
         <result property="questionStatus" column="questionStatus" />
         <result property="type" column="type" />
         <result property="createdAt" column="createdAt" />
+
+        <result property="productName" column="productName" />
+        <result property="productImageUrl" column="productImageUrl" />
         
         <association property="answer" column="id" javaType="kr.co.kosmo.project_back.admin.dto.QuestionAnswerDto" select="findAnswerByQuestionId" />
         
@@ -38,29 +41,32 @@
 
     <select id="findQuestionList" parameterType="kr.co.kosmo.project_back.admin.dto.QuestionSearchDto" resultMap="QuestionResponseMap">
         SELECT 
-            id, 
-            user_id AS userId, 
-            product_id AS productId, 
-            title, 
-            content, 
-            question_status AS questionStatus, 
-            type, 
-            created_at AS createdAt
-        FROM Bg_Question
+            q.id, 
+            q.user_id AS userId, 
+            q.product_id AS productId, 
+            q.title, 
+            q.content, 
+            q.question_status AS questionStatus, 
+            q.type, 
+            q.created_at AS createdAt,
+            p.product_name AS productName,
+            p.image_url AS productImageUrl
+        FROM Bg_Question q
+        LEFT JOIN Bg_Product p ON q.product_id = p.id
         <where>
-            <if test="startDate != null and startDate != ''"> AND date(created_at) &gt;= date(#{startDate}) </if>
-            <if test="endDate != null and endDate != ''"> AND date(created_at) &lt;= date(#{endDate}) </if>
-            <if test="questionStatus != null and questionStatus != ''"> AND question_status = #{questionStatus} </if>
-            <if test="type != null and type != ''"> AND type = #{type} </if>
+            <if test="startDate != null and startDate != ''"> AND date(q.created_at) &gt;= date(#{startDate}) </if>
+            <if test="endDate != null and endDate != ''"> AND date(q.created_at) &lt;= date(#{endDate}) </if>
+            <if test="questionStatus != null and questionStatus != ''"> AND q.question_status = #{questionStatus} </if>
+            <if test="type != null and type != ''"> AND q.type = #{type} </if>
             <if test="keyword != null and keyword != ''">
                 <choose>
-                    <when test="keywordType == 'title'"> AND title LIKE '%' || #{keyword} || '%' </when>
-                    <when test="keywordType == 'content'"> AND content LIKE '%' || #{keyword} || '%' </when>
-                    <otherwise> AND (title LIKE '%' || #{keyword} || '%' OR content LIKE '%' || #{keyword} || '%') </otherwise>
+                    <when test="keywordType == 'title'"> AND q.title LIKE '%' || #{keyword} || '%' </when>
+                    <when test="keywordType == 'content'"> AND q.content LIKE '%' || #{keyword} || '%' </when>
+                    <otherwise> AND (q.title LIKE '%' || #{keyword} || '%' OR q.content LIKE '%' || #{keyword} || '%') </otherwise>
                 </choose>
             </if>
         </where>
-        ORDER BY created_at DESC
+        ORDER BY q.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -75,10 +81,13 @@
 
     <select id="findById" parameterType="int" resultMap="QuestionResponseMap">
         SELECT 
-            id, user_id AS userId, product_id AS productId, title, content, 
-            question_status AS questionStatus, type, created_at AS createdAt
-        FROM Bg_Question 
-        WHERE id = #{id}
+            q.id, q.user_id AS userId, q.product_id AS productId, q.title, q.content, 
+            q.question_status AS questionStatus, q.type, q.created_at AS createdAt,
+            p.product_name AS productName,
+            p.image_url AS productImageUrl
+        FROM Bg_Question q
+        LEFT JOIN Bg_Product p ON q.product_id = p.id
+        WHERE q.id = #{id}
     </select>
 
     <insert id="insertAnswer" parameterType="kr.co.kosmo.project_back.admin.dto.QuestionAnswerDto">

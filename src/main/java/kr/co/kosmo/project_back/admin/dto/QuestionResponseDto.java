@@ -20,6 +20,11 @@ public class QuestionResponseDto {
     private String content;
     private String questionStatus;
     private String type;
+
+    private String productName;     // 상품명
+    private String productImageUrl; // 상품 대표 이미지 경로
+
+
     private List<QuestionImageDto> questionImages;
     private QuestionAnswerDto answer; // 답변 정보
     
