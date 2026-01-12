@@ -14,6 +14,7 @@ import kr.co.kosmo.project_back.admin.dto.AdminUserResponseDto;
 import kr.co.kosmo.project_back.admin.dto.PageResponseDto;
 import kr.co.kosmo.project_back.admin.dto.UserSearchDto;
 import kr.co.kosmo.project_back.admin.service.AdminUserService;
+import kr.co.kosmo.project_back.admin.dto.AlarmDto;
 import kr.co.kosmo.project_back.user.service.AlarmService;
 
 @RestController
@@ -51,20 +52,8 @@ public class AdminUserController {
     @PostMapping("/{userId}/alarm")
     public ResponseEntity<Integer> sendAlarm(
             @PathVariable Integer userId,
-            @RequestBody AlarmRequestDto request) {
-        return ResponseEntity.ok(alarmService.insertAdminAlarm(userId, request.getMessage()));
-    }
-
-    public static class AlarmRequestDto {
-        private String message;
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
+            @RequestBody AlarmDto request) {
+        return ResponseEntity.ok(alarmService.insertAdminAlarm(userId, request.getContent()));
     }
 
 }
