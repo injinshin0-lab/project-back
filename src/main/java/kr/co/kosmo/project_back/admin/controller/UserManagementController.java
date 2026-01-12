@@ -17,7 +17,7 @@ import kr.co.kosmo.project_back.admin.service.AdminUserManagementService;
 import kr.co.kosmo.project_back.user.service.AlarmService;
 
 @RestController
-@RequestMapping("/api/v1/admin/user")
+@RequestMapping("/api/v1/admin/users")
 @RequiredArgsConstructor
 public class UserManagementController {
     private final AdminUserManagementService userManagementService;
