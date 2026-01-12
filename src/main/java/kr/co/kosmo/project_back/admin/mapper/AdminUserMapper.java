@@ -6,15 +6,9 @@ import kr.co.kosmo.project_back.admin.dto.AdminUserResponseDto;
 import kr.co.kosmo.project_back.admin.dto.UserSearchDto;
 
 @Mapper
-public interface AdminUserManagementMapper {
+public interface AdminUserMapper {
     List<AdminUserResponseDto> findUserList(UserSearchDto dto);
     Integer countUserList(UserSearchDto dto);
     AdminUserResponseDto findById(Integer id);
 }
-
-
-
-
-
-
 

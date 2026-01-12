@@ -49,15 +49,14 @@
 
     <insert id="insertFaq" parameterType="kr.co.kosmo.project_back.admin.dto.FaqDto"
             useGeneratedKeys="true" keyProperty="faqId">
-        INSERT INTO Bg_FAQ (title, content, created_at)
-        VALUES (#{title}, #{content}, datetime('now'))
+        INSERT INTO Bg_FAQ (title, content)
+        VALUES (#{title}, #{content})
     </insert>
 
     <update id="updateFaq" parameterType="kr.co.kosmo.project_back.admin.dto.FaqDto">
         UPDATE Bg_FAQ
         SET title = #{title},
-            content = #{content},
-            updated_at = datetime('now')
+            content = #{content}
         WHERE id = #{faqId}
     </update>
 
