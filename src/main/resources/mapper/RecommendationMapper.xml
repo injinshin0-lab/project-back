@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.user.mapper.RecommendationMapper">
+
+    <resultMap id="productResultMap" type="kr.co.kosmo.project_back.user.dto.ProductDto">
+        <id property="productId" column="productId"/>
+        <result property="productName" column="productName"/>
+        <result property="originName" column="originName"/>
+        <result property="content" column="content"/>
+        <result property="price" column="price"/>
+        <result property="imageUrl" column="imageUrl"/>
+        <result property="isWished" column="isWished"/>
+        <result property="averageRating" column="averageRating"/>
+        <result property="reviewCount" column="reviewCount"/>
+    </resultMap>
+
+    <select id="findRecommendedProducts" resultMap="productResultMap">
+        SELECT
+            p.id AS productId,
+            p.product_name AS productName,
+            p.origin_name AS originName,
+            p.content,
+            p.price,
+            p.image_url AS imageUrl,
+            CASE WHEN w.user_id IS NOT NULL THEN 1 ELSE 0 END AS isWished,
+            COALESCE(r.avg_rating, 0.0) AS averageRating,
+            COALESCE(r.review_count, 0) AS reviewCount
+        FROM Bg_AI_recommendation rec
+        INNER JOIN Bg_Product p ON rec.product_id = p.id
+        LEFT JOIN Bg_Wishlist w ON w.product_id = p.id AND w.user_id = #{userId}
+        LEFT JOIN (
+            SELECT 
+                product_id,
+                AVG(rating) AS avg_rating,
+                COUNT(*) AS review_count
+            FROM Bg_Review
+            GROUP BY product_id
+        ) r ON r.product_id = p.id
+        WHERE rec.user_id = #{userId}
+        AND (rec.expired_at IS NULL OR rec.expired_at &gt; datetime('now'))
+        ORDER BY rec.score DESC, rec.created_at DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+</mapper>
