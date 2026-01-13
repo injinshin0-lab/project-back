@@ -31,6 +31,9 @@ public class AuthService {
         if(!dto.getPassword().equals(user.getPassword())) {
             return null;
         }
+        // 마지막 로그인 시간 업뎃
+        userMapper.updateLastLoginAt(user.getId());
+        session.setAttribute("userId", user.getId());
         return user;
     }
     public UserDto findById(Integer id) {

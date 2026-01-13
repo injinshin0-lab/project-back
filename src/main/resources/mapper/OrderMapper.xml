@@ -9,9 +9,9 @@
     <insert id="insertOrder"
             parameterType="kr.co.kosmo.project_back.order.dto.OrderRequestDto">
         INSERT INTO Bg_Order
-            (user_id, payment_method, address_id, payment_price)
+            (user_id, payment_method, order_status, address_id, payment_price)
         VALUES
-            (#{userId}, #{paymentMethod}, #{addressId}, #{paymentPrice});
+            (#{userId}, #{paymentMethod}, '결제 완료', #{addressId}, #{paymentPrice});
             <!-- 방금 생성된 값 가져오기 -->
         <selectKey keyProperty="orderId" resultType="int" order="AFTER">
             SELECT last_insert_rowid()
@@ -66,6 +66,19 @@
         JOIN Bg_Product p ON p.id = oi.product_id 
         WHERE oi.order_id = #{orderId} 
     </select>
+
+    <!-- 리뷰작성 가능 여부 확인 -->
+    <select id="countCompletedOrder" resultType="int">
+        SELECT COUNT(*)
+        FROM Bg_Order o 
+        JOIN Bg_Order_item oi
+            ON o.id = oi.order_id 
+        WHERE o.user_id = #{userId}
+            AND oi.product_id = #{productId} 
+            AND TRIM(o.order_status) = '결제 완료'
+    </select>
+
+
 </mapper>
 
 

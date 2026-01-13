@@ -11,6 +11,7 @@ import kr.co.kosmo.project_back.order.dto.OrderRequestDto;
 import kr.co.kosmo.project_back.order.dto.OrderResponseDto;
 import kr.co.kosmo.project_back.order.dto.OrderSearchDto;
 import kr.co.kosmo.project_back.order.mapper.OrderMapper;
+import kr.co.kosmo.project_back.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderService {
     private final OrderMapper orderMapper;
     private final CartMapper cartMapper;
+    private final ProductMapper productMapper;
 
     // 주문 생성
     public Integer order(OrderRequestDto dto) {
@@ -35,6 +37,12 @@ public class OrderService {
         // 주문 상품 없을때 방어
         if(orderItems == null || orderItems.isEmpty()) {
             throw new IllegalStateException("주문할 상품이 없습니다.");
+        }
+        for(CartDto item : orderItems) {
+            if(item.getPrice() == null) {
+                Integer price = productMapper.findPriceByProductId(item.getProductId());
+                item.setPrice(price);
+            }
         }
         // 총 결제 금액 계산
         int totalPrice = orderItems.stream()

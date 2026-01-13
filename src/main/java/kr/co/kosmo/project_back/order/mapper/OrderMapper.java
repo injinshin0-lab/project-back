@@ -25,4 +25,9 @@ public interface OrderMapper {
     List<OrderResponseDto> findOrderList(OrderSearchDto searchDto);
     // 주문 상세 상품 조회
     List<CartDto> findOrderItemsByOrderId(Integer orderId);
+    // 리뷰 작성 가능 여부 확인(구매완료여부)
+    int countCompletedOrder(
+        @Param("userId") Integer usdrId,
+        @Param("productId") Integer productId 
+    );
 }
