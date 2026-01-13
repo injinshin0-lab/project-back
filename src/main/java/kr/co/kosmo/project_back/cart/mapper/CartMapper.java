@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import kr.co.kosmo.project_back.cart.dto.CartDto;
 
@@ -16,7 +17,8 @@ public interface CartMapper {
     // 수정
     void updateCartItemByCartItemId(Map<String, Object>params);
     // 장바구니 항목 삭제(단건)
-    void deleteCartItem(Integer userId, Integer productId);
+    void deleteCartItem(@Param("userId") Integer userId, @Param("productId") Integer productId);
     // 장바구니 전체 삭제
     void deleteCart(Integer userId);
+    
 }

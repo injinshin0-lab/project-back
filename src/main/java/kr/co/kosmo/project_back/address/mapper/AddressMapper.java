@@ -14,4 +14,10 @@ public interface AddressMapper {
 
     // 목록 조회를 위해 추가 (프론트 연동 필수 기능)
     List<AddressDto> selectAddressesByUserId(@Param("userId") Integer userId);
+    AddressDto findExistingAddress(
+        @Param("userId") Integer userId, 
+        @Param("postcode") String postcode, 
+        @Param("address") String address, 
+        @Param("detailAddress") String detailAddress
+    );
 }

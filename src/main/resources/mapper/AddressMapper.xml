@@ -22,7 +22,9 @@
     </select>
 
     <insert id="insertAddress"
-            parameterType="kr.co.kosmo.project_back.address.dto.AddressDto">
+            parameterType="kr.co.kosmo.project_back.address.dto.AddressDto"
+            useGeneratedKeys="true" 
+            keyProperty="id">
         INSERT INTO Bg_Address
         (
             user_id,
@@ -44,5 +46,15 @@
             #{isDefault}
         )
     </insert>
+
+    <select id="findExistingAddress" resultType="kr.co.kosmo.project_back.address.dto.AddressDto">
+        SELECT id, user_id as userId, recipient, postcode, address, detail_address as detailAddress 
+        FROM Bg_Address
+        WHERE user_id = #{userId} 
+            AND postcode = #{postcode}
+            AND address = #{address}
+            AND detail_address = #{detailAddress}
+        LIMIT 1
+    </select>
 
 </mapper>

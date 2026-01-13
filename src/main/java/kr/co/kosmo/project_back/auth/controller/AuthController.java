@@ -47,7 +47,7 @@ public class AuthController {
                 dto.getAuthCode()
             );
             if (!result) {
-                return ResponseEntity.status(401)
+                return ResponseEntity.status(400)
                 .body(new MessageResponseDto("인증번호가 올바르지 않거나 만료되었습니다."));
             }
             HttpSession session = request.getSession();
@@ -63,7 +63,7 @@ public class AuthController {
         HttpServletRequest request) {
         UserDto user = authService.login(dto);
         if(user == null) {
-            return ResponseEntity.status(401)
+            return ResponseEntity.status(400)
             .body(new MessageResponseDto("아이디 또는 비밀번호가 일치하지 않습니다."));
         }
 
