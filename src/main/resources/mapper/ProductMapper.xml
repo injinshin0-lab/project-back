@@ -77,6 +77,17 @@
     LIMIT #{size}
     OFFSET #{offset}
 </select>
+
+    <!-- 상품 가격만 조회 -->
+    <select id="findPriceByProductId" 
+            parameterType="int"
+            resultType="int">
+        SELECT price
+        FROM Bg_Product
+        WHERE id = #{productId} 
+    </select>
+
+
 </mapper>
         
 

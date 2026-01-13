@@ -14,6 +14,7 @@ import kr.co.kosmo.project_back.order.dto.OrderRequestDto;
 import kr.co.kosmo.project_back.order.dto.OrderResponseDto;
 import kr.co.kosmo.project_back.order.dto.OrderSearchDto;
 import kr.co.kosmo.project_back.order.mapper.OrderMapper;
+import kr.co.kosmo.project_back.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service

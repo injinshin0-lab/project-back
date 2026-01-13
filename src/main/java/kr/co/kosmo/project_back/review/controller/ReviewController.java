@@ -48,13 +48,12 @@ public class ReviewController {
         @ModelAttribute ReviewRequestDto dto,
         HttpSession session
     ) {
-        Object loginUser = session.getAttribute("LOGIN_USER");
-        if(loginUser == null) {
+        Integer userId = (Integer) session.getAttribute("LOGIN_USER");
+        if(userId == null) {
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ReviewCreateResponseDto(null, "로그인이 필요합니다."));
         }
-        Long userId = Long.valueOf(loginUser.toString());
 
         // 이미지 제한
         if( dto.getImages() != null ) {
@@ -70,7 +69,7 @@ public class ReviewController {
             });
         }
 
-        dto.setUserId(productId);
+        dto.setUserId(userId);
         dto.setProductId(productId);
 
         Long reviewId = reviewService.insertReview(dto);
