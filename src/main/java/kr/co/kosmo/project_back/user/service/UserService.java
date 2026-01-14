@@ -8,7 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.co.kosmo.project_back.address.dto.AddressDto;
 import kr.co.kosmo.project_back.address.mapper.AddressMapper;
+import kr.co.kosmo.project_back.user.dto.UserDto;
 import kr.co.kosmo.project_back.user.dto.UserJoinDto;
+import kr.co.kosmo.project_back.user.dto.UserPasswordChangeRequestDto;
+import kr.co.kosmo.project_back.user.dto.UserUpdateRequestDto;
 import kr.co.kosmo.project_back.user.mapper.UserMapper;
 import kr.co.kosmo.project_back.user.mapper.UserSelectedCategoryMapper;
 
@@ -62,5 +65,40 @@ public class UserService {
    }
    public boolean isIdDuplicate(String loginId) {
        return userMapper.existsByLoginId(loginId) > 0;
+   }
+
+   @Transactional
+   public void updateUserInfo(Integer userId, UserUpdateRequestDto dto) {
+        // 이름 / 전화번호 수정
+        if(dto.getUserName() != null || dto.getPhone() != null) {
+            userMapper.updateUserInfo(userId, dto);
+        }
+        // 관심분야 수정
+        if(dto.getCategory() != null) {
+            if(dto.getCategory().size() > 5) {
+                throw new IllegalArgumentException("관심분야는 최대 5개까지 선택 가능합니다.");
+            }
+            userSelectedCategoryMapper.deleteCategoriesByUser(userId);
+            if(!dto.getCategory().isEmpty()) {
+                userSelectedCategoryMapper.insertUserCategories(
+                    userId, dto.getCategory());
+            }
+        }
+    }
+    // 비밀번호 변경
+   @Transactional
+   public void changePassword(
+         Integer userId, UserPasswordChangeRequestDto dto) {
+    // 사용자 조회
+    UserDto user = userMapper.selectById(userId);
+    if(user == null) {
+        throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+    }
+    // 현재 비번 확인
+    if(!user.getPassword().equals(dto.getCurrentPassword())) {
+        throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+    }
+    // 새 비번 업뎃
+    userMapper.updatePasswordByUserId(userId, dto.getNewPassword());
    }
 }

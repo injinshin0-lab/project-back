@@ -2,22 +2,24 @@ package kr.co.kosmo.project_back.address.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import org.apache.ibatis.annotations.Param; // 추가
+import org.apache.ibatis.annotations.Param; 
 import kr.co.kosmo.project_back.address.dto.AddressDto;
-import java.util.List; // 추가
+import java.util.List; 
 
 @Mapper
 public interface AddressMapper {
-    // 기존 유지
-    void insertAddress(AddressDto address);
 
-
-    // 목록 조회를 위해 추가 (프론트 연동 필수 기능)
+    // 주소 목록 조회
     List<AddressDto> selectAddressesByUserId(@Param("userId") Integer userId);
-    AddressDto findExistingAddress(
-        @Param("userId") Integer userId, 
-        @Param("postcode") String postcode, 
-        @Param("address") String address, 
-        @Param("detailAddress") String detailAddress
+    // 주소 추가
+    void insertAddress(AddressDto address);
+    // 주소 수정
+    void updateAddress(AddressDto dto);
+    // 주소 삭제
+    void deleteAddress(
+        @Param("userId") Integer userId,
+        @Param("addressId") Integer addressId
     );
+    // 기본 배송지 해제
+    void clearDefaultAddress(@Param("userId") Integer userId);
 }
