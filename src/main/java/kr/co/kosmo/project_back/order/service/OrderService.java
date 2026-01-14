@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.kosmo.project_back.address.dto.AddressDto;
 import kr.co.kosmo.project_back.address.mapper.AddressMapper;
 import kr.co.kosmo.project_back.cart.dto.CartDto;
 import kr.co.kosmo.project_back.cart.mapper.CartMapper;
@@ -14,7 +13,6 @@ import kr.co.kosmo.project_back.order.dto.OrderRequestDto;
 import kr.co.kosmo.project_back.order.dto.OrderResponseDto;
 import kr.co.kosmo.project_back.order.dto.OrderSearchDto;
 import kr.co.kosmo.project_back.order.mapper.OrderMapper;
-import kr.co.kosmo.project_back.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -94,32 +92,8 @@ public class OrderService {
 
     private void processAddress(OrderRequestDto dto) {
         if (dto.getShippingAddressId() == null) {
-            // 동일한 주소(우편번호, 기본주소, 상세주소)가 이미 있는지 확인
-            AddressDto existingAddr = addressMapper.findExistingAddress(
-                dto.getUserId(), 
-                dto.getPostcode(), 
-                dto.getAddress1(), 
-                dto.getAddress2()
-            );
-    
-            if (existingAddr != null) {
-                // 이미 존재하면 해당 ID 사용
-                dto.setAddressId(existingAddr.getId());
-            } else {
-                // 없으면 새로 저장
-                AddressDto newAddr = new AddressDto();
-                newAddr.setUserId(dto.getUserId());
-                newAddr.setRecipient("구매자");
-                newAddr.setPostcode(dto.getPostcode());
-                newAddr.setAddress(dto.getAddress1());
-                newAddr.setDetailAddress(dto.getAddress2());
-                newAddr.setIsDefault(0);
-                
-                addressMapper.insertAddress(newAddr);
-                dto.setAddressId(newAddr.getId());
-            }
-        } else {
-            dto.setAddressId(dto.getShippingAddressId());
+            throw new IllegalStateException("배송지를 선택해주세요.");
         }
+        dto.setAddressId(dto.getShippingAddressId());
     }
 }
