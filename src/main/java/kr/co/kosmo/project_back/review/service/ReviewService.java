@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.kosmo.project_back.order.mapper.OrderMapper;
 import kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto;
+import kr.co.kosmo.project_back.review.dto.response.MyReviewResponseDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto;
 import kr.co.kosmo.project_back.review.mapper.ReviewImageMapper;
 import kr.co.kosmo.project_back.review.mapper.ReviewMapper;
@@ -105,5 +106,10 @@ public class ReviewService {
     // 리뷰 삭제
     public void deleteReview(Long reviewId) {
         reviewMapper.deleteReview(reviewId);
+    }
+
+    // 내 리뷰 조회
+    public List<MyReviewResponseDto> getMyReviews(Integer userId) {
+        return reviewMapper.findReviewsByUserId(userId);
     }
 }

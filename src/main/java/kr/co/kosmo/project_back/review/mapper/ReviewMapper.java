@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto;
+import kr.co.kosmo.project_back.review.dto.response.MyReviewResponseDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto;
 
 @Mapper
@@ -24,4 +25,7 @@ public interface ReviewMapper {
 
    // 상품 리뷰 삭제
    int deleteReview(@Param("reviewId") Long reviewId);
+
+   // 마이페이지 내 리뷰 조회
+   List<MyReviewResponseDto> findReviewsByUserId(Integer userId);
 }

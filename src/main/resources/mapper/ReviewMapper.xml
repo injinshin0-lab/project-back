@@ -78,6 +78,53 @@
         WHERE id = #{reviewId}
     </delete>
 
+    <!-- 리뷰(1) - 리뷰이미지(N) 결과를 하나의 객체 + 리스트로 묶기 위함 -->
+    <resultMap id="MyReviewResultMap"
+            type="kr.co.kosmo.project_back.review.dto.response.MyReviewResponseDto">
+        
+        <id property="reviewId" column="review_id"/>
+        <result property="content" column="content"/>
+        <result property="rating" column="rating"/>
+        <result property="createdAt" column="created_at"/>
+
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="productImage" column="product_image"/>
+
+  
+        <collection property="reviewImages"
+            ofType="kr.co.kosmo.project_back.review.dto.response.ReviewImageDto">
+        <id property="reviewImageId" column="review_image_id"/>
+        <result property="imageUrl" column="image_url"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="findReviewsByUserId"
+            resultMap="MyReviewResultMap">
+
+        SELECT
+            r.id                AS review_id,
+            r.content,
+            r.rating,
+            r.created_at,
+
+            p.id                AS product_id,
+            p.product_name      AS product_name,
+            p.image_url         AS product_image,
+
+            ri.id               AS review_image_id,
+            ri.image_url        AS image_url
+
+        FROM Bg_Review r
+        JOIN Bg_Product p 
+            ON r.product_id = p.id 
+        LEFT JOIN Bg_Review_Image ri 
+            ON r.id = ri.review_id 
+
+        WHERE r.user_id = #{userId} 
+        ORDER BY r.created_at DESC
+    </select>
 </mapper>
 
 
