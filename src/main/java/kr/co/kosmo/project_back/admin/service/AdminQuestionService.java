@@ -9,14 +9,14 @@ import kr.co.kosmo.project_back.admin.dto.QuestionResponseDto;
 import kr.co.kosmo.project_back.admin.dto.QuestionSearchDto;
 import kr.co.kosmo.project_back.admin.mapper.AdminQuestionMapper;
 import kr.co.kosmo.project_back.admin.mapper.AdminQuestionImageMapper;
-import kr.co.kosmo.project_back.user.service.AlarmService;
+import kr.co.kosmo.project_back.admin.service.AdminAlarmService;
 
 @Service
 @RequiredArgsConstructor
 public class AdminQuestionService {
     private final AdminQuestionMapper questionMapper;
     private final AdminQuestionImageMapper questionImageMapper;
-    private final AlarmService alarmService;
+    private final AdminAlarmService alarmService;
 
     public PageResponseDto<QuestionResponseDto> getQuestionList(QuestionSearchDto searchDto) {
         Integer totalCount = questionMapper.countQuestionList(searchDto);

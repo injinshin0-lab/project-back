@@ -15,14 +15,14 @@ import kr.co.kosmo.project_back.admin.dto.PageResponseDto;
 import kr.co.kosmo.project_back.admin.dto.UserSearchDto;
 import kr.co.kosmo.project_back.admin.service.AdminUserService;
 import kr.co.kosmo.project_back.admin.dto.AlarmDto;
-import kr.co.kosmo.project_back.user.service.AlarmService;
+import kr.co.kosmo.project_back.admin.service.AdminAlarmService;
 
 @RestController
 @RequestMapping("/api/v1/admin/user")
 @RequiredArgsConstructor
 public class AdminUserController {
     private final AdminUserService userService;
-    private final AlarmService alarmService;
+    private final AdminAlarmService alarmService;
 
     @GetMapping
     public ResponseEntity<PageResponseDto<AdminUserResponseDto>> getUserList(
