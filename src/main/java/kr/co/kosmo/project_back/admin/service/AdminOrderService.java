@@ -8,14 +8,14 @@ import kr.co.kosmo.project_back.admin.dto.OrderSearchDto;
 import kr.co.kosmo.project_back.admin.dto.PageResponseDto;
 import kr.co.kosmo.project_back.admin.mapper.AdminOrderMapper;
 import kr.co.kosmo.project_back.admin.mapper.AdminOrderItemMapper;
-import kr.co.kosmo.project_back.user.service.AlarmService;
+import kr.co.kosmo.project_back.admin.service.AdminAlarmService;
 
 @Service
 @RequiredArgsConstructor
 public class AdminOrderService {
     private final AdminOrderMapper orderMapper;
     private final AdminOrderItemMapper orderItemMapper;
-    private final AlarmService alarmService;
+    private final AdminAlarmService alarmService;
 
     public PageResponseDto<OrderResponseDto> getOrderList(OrderSearchDto searchDto) {
         // 디버깅: 검색 조건 출력
