@@ -78,6 +78,20 @@
             AND TRIM(o.order_status) = '결제 완료'
     </select>
 
+    <!-- 마이페이지 주문 내역 조회 -->
+    <select id="findOrderListByUserId"
+            resultType="kr.co.kosmo.project_back.order.dto.OrderResponseDto">
+        SELECT
+            id                  AS orderId,
+            user_id             AS userId,
+            payment_method      AS payType,
+            address_id          AS addressId,
+            payment_price       AS totalPrice,
+            created_at          AS createdAt
+        FROM Bg_Order
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
 
 </mapper>
 

@@ -96,4 +96,30 @@ public class OrderService {
         }
         dto.setAddressId(dto.getShippingAddressId());
     }
-}
+
+    // 마이페이지 주문 조회
+    public Map<String, Object> getOrderListByUserId(Integer userId) {
+        List<OrderResponseDto> orders = 
+            orderMapper.findOrderListByUserId(userId);
+        List<Map<String, Object>> orderList = orders.stream()
+            .map(o -> {
+                Map<String, Object> m = new java.util.HashMap<>();
+                m.put("id", "ORD-" + String.format("%03d", o.getOrderId()));
+                m.put("totalPrice", o.getTotalPrice());
+                m.put("status", "결제 완료");
+                m.put("orderDate", o.getCreatedAt());
+
+                List<CartDto> items = 
+                    orderMapper.findOrderItemsByOrderId(o.getOrderId());
+                m.put("orderItems", items);
+                return m;
+            })
+            .toList();
+            return Map.of(
+                "orders", orderList,
+                "pagination", Map.of(
+                        "totalCount", orders.size()
+                )
+            );
+        }
+    }

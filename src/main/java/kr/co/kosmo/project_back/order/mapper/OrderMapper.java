@@ -23,6 +23,8 @@ public interface OrderMapper {
     int countOrderList(OrderSearchDto searchDto);
     // 주문 / 구매 내역 조회
     List<OrderResponseDto> findOrderList(OrderSearchDto searchDto);
+    // 마이페이지 주문 내역 조회
+    List<OrderResponseDto> findOrderListByUserId(Integer userId);
     // 주문 상세 상품 조회
     List<CartDto> findOrderItemsByOrderId(Integer orderId);
     // 리뷰 작성 가능 여부 확인(구매완료여부)
