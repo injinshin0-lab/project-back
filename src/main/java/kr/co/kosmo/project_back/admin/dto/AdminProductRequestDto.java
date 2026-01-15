@@ -1,5 +1,8 @@
 package kr.co.kosmo.project_back.admin.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,5 +22,7 @@ public class AdminProductRequestDto {
     private Integer price;
     private MultipartFile imageFile;
     private String imageUrl;
+
+    private List<Integer> categoryId = new ArrayList<>();
 }
 

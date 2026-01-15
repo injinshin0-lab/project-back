@@ -51,16 +51,18 @@
         <result property="content" column="content"/>
         <result property="price" column="price"/>
         <result property="imageUrl" column="imageUrl"/>
-        <association property="category" javaType="kr.co.kosmo.project_back.admin.dto.AdminCategoryDto">
+        
+        <collection property="categories" 
+                    javaType="ArrayList" 
+                    ofType="kr.co.kosmo.project_back.admin.dto.AdminCategoryDto">
             <id property="categoryId" column="cat_categoryId"/>
             <result property="categoryName" column="cat_categoryName"/>
             <result property="parentId" column="cat_parentId"/>
             <result property="level" column="cat_level"/>
-        </association>
+        </collection>
     </resultMap>
 
-    <select id="findProductList" parameterType="kr.co.kosmo.project_back.admin.dto.ProductSearchDto"
-            resultMap="productResultMap">
+    <select id="findProductList" parameterType="kr.co.kosmo.project_back.admin.dto.ProductSearchDto" resultMap="productResultMap">
         SELECT
             p.id AS productId,
             p.product_name AS productName,
@@ -68,60 +70,39 @@
             p.content,
             p.price,
             p.image_url AS imageUrl,
-            MAX(c.id) AS cat_categoryId,
-            MAX(c.category_name) AS cat_categoryName,
-            MAX(c.parent_id) AS cat_parentId,
-            MAX(c.depth) AS cat_level
-        FROM Bg_Product p
-        <choose>
-            <when test="categoryIds != null and categoryIds.size() > 0 or categoryId != null">
-                INNER JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
-                LEFT JOIN Bg_Interest_category c ON cpm.interest_category_id = c.id
-            </when>
-            <otherwise>
-                LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
-                LEFT JOIN Bg_Interest_category c ON cpm.interest_category_id = c.id
-            </otherwise>
-        </choose>
-        <where>
-            <if test="keyword != null and keyword != ''">
-                (p.product_name LIKE '%' || #{keyword} || '%' 
-                     OR p.content LIKE '%' || #{keyword} || '%'
-                     OR p.origin_name LIKE '%' || #{keyword} || '%')
-            </if>
-            <if test="categoryIds != null and categoryIds.size() > 0">
-                AND cpm.interest_category_id IN
-                <foreach collection="categoryIds" item="id" open="(" separator="," close=")">
-                    #{id}
-                </foreach>
-            </if>
-            <if test="categoryIds == null and categoryId != null">
-                AND cpm.interest_category_id = #{categoryId}
-            </if>
-        </where>
-        GROUP BY p.id, p.product_name, p.origin_name, p.content, p.price, p.image_url
-        <choose>
-            <when test="sort != null and sort == 'productName'">
-                ORDER BY p.product_name 
-                <if test="order != null and order == 'asc'">ASC</if>
-                <if test="order == null or order == 'desc'">DESC</if>
-            </when>
-            <when test="sort != null and sort == 'price'">
-                ORDER BY p.price 
-                <if test="order != null and order == 'asc'">ASC</if>
-                <if test="order == null or order == 'desc'">DESC</if>
-            </when>
-            <when test="sort != null and (sort == 'id' or sort == 'productId')">
-                ORDER BY p.id 
-                <if test="order != null and order == 'asc'">ASC</if>
-                <if test="order == null or order == 'desc'">DESC</if>
-            </when>
-            <otherwise>
-                ORDER BY p.id DESC
-            </otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
+            c.id AS cat_categoryId,
+            c.category_name AS cat_categoryName,
+            c.parent_id AS cat_parentId,
+            c.depth AS cat_level
+        FROM (
+            /* 🚨 1. 여기서 먼저 상품 ID만 페이징으로 가져옵니다 */
+            SELECT DISTINCT p.id
+            FROM Bg_Product p
+            <choose>
+                <when test="categoryIds != null and categoryIds.size() > 0 or categoryId != null">
+                    INNER JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+                </when>
+                <otherwise>
+                    LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+                </otherwise>
+            </choose>
+            <where>
+                <if test="keyword != null and keyword != ''">
+                    AND (p.product_name LIKE '%' || #{keyword} || '%' 
+                    OR p.content LIKE '%' || #{keyword} || '%'
+                    OR p.origin_name LIKE '%' || #{keyword} || '%')
+                </if>
+                </where>
+            ORDER BY p.id DESC
+            LIMIT #{size} OFFSET #{offset}
+        ) AS base
+        /* 🚨 2. 뽑힌 ID를 가진 실제 상품 정보와 카테고리를 조인합니다 */
+        JOIN Bg_Product p ON base.id = p.id
+        LEFT JOIN Bg_Category_product_mapping cpm2 ON p.id = cpm2.product_id
+        LEFT JOIN Bg_Interest_category c ON cpm2.interest_category_id = c.id
+        ORDER BY p.id DESC
     </select>
+    
 
     <select id="findByProductId" parameterType="int"
             resultMap="productResultMap">
@@ -140,7 +121,6 @@
         LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
         LEFT JOIN Bg_Interest_category c ON cpm.interest_category_id = c.id
         WHERE p.id = #{productId}
-        LIMIT 1
     </select>
 
     <insert id="insertProduct" parameterType="kr.co.kosmo.project_back.admin.dto.AdminProductRequestDto"

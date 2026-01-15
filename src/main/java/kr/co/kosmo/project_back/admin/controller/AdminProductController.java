@@ -50,6 +50,9 @@ public class AdminProductController {
 
     @PostMapping
     public ResponseEntity<Integer> insertProduct(@ModelAttribute AdminProductRequestDto dto) {
+
+        System.out.println("전달받은 상품명: " + dto.getProductName());
+        System.out.println("전달받은 카테고리 리스트: " + dto.getCategoryId());
         return ResponseEntity.ok(adminProductService.insertProduct(dto));
     }
 

@@ -66,11 +66,22 @@ public class AdminProductService {
         
         PageResponseDto<AdminProductResponseDto> response = new PageResponseDto<>();
         List<AdminProductResponseDto> productList = adminProductMapper.findProductList(searchDto);
-        System.out.println("실제 조회된 상품 개수: " + productList.size());
-        // 이미지 URL에 uploads/ 접두사 추가
+        
         productList.forEach(product -> {
-            if (product.getImageUrl() != null && !product.getImageUrl().startsWith("/uploads/") && !product.getImageUrl().startsWith("uploads/")) {
-                product.setImageUrl("/uploads/" + product.getImageUrl());
+            String url = product.getImageUrl();
+            if (url != null && !url.isEmpty()) {
+                // 1. 만약 /uploads/ 로 시작하지 않는 데이터라면 (기존 데이터)
+                if (!url.startsWith("/uploads/") && !url.startsWith("http")) {
+                    
+                    // 2. 이미 product/ 로 시작하고 있다면 앞에 /uploads/만 붙임
+                    if (url.startsWith("product/")) {
+                        product.setImageUrl("/uploads/" + url);
+                    } 
+                    // 3. 그 외의 경우 (파일명만 있거나 할 때)
+                    else {
+                        product.setImageUrl("/uploads/product/" + url);
+                    }
+                }
             }
         });
         response.setList(productList);
@@ -90,24 +101,25 @@ public class AdminProductService {
     }
 
     public Integer insertProduct(AdminProductRequestDto dto) {
-        // 이미지 파일이 있으면 저장하고 URL 설정
+        // 1. 이미지 처리
         if (dto.getImageFile() != null && !dto.getImageFile().isEmpty()) {
             String imageUrl = saveImageFile(dto.getImageFile());
             dto.setImageUrl(imageUrl);
         }
         
+        // 2. 상품 본체 저장
         int result = adminProductMapper.insertProduct(dto);
         
-        // 상품 등록 성공 시 카테고리 매핑 저장
-        if (result > 0 && dto.getCategory() != null && dto.getCategory().getCategoryId() != null) {
-            categoryProductMappingMapper.insertMapping(dto.getProductId(), dto.getCategory().getCategoryId());
+        // 3. [핵심 수정] 다중 카테고리 매핑 저장
+        // 기존의 dto.getCategory() != null 체크를 삭제했습니다.
+        if (result > 0 && dto.getCategoryId() != null && !dto.getCategoryId().isEmpty()) {
+            categoryProductMappingMapper.insertMappings(dto.getProductId(), dto.getCategoryId());
         }
         
         return result > 0 ? 1 : 0;
     }
 
     public Integer updateProduct(AdminProductRequestDto dto) {
-        // 이미지 파일이 있으면 저장하고 URL 설정
         if (dto.getImageFile() != null && !dto.getImageFile().isEmpty()) {
             String imageUrl = saveImageFile(dto.getImageFile());
             dto.setImageUrl(imageUrl);
@@ -115,13 +127,18 @@ public class AdminProductService {
         
         int result = adminProductMapper.updateProduct(dto);
         
-        // 상품 수정 성공 시 기존 카테고리 매핑 삭제 후 새로 저장
-        if (result > 0 && dto.getCategory() != null && dto.getCategory().getCategoryId() != null) {
+        // ✅ 수정된 로직: 기존 매핑 삭제 후 새로운 리스트 저장
+        if (result > 0) {
+            // 기존 매핑은 무조건 일단 지우고
             categoryProductMappingMapper.deleteByProductId(dto.getProductId());
-            categoryProductMappingMapper.insertMapping(dto.getProductId(), dto.getCategory().getCategoryId());
+            
+            // 새로운 카테고리 리스트가 있으면 저장
+            if (dto.getCategoryId() != null && !dto.getCategoryId().isEmpty()) {
+                categoryProductMappingMapper.insertMappings(dto.getProductId(), dto.getCategoryId());
+            }
         }
         
-        return result > 0 ? 1 : 0;
+        return result;
     }
     
     /**

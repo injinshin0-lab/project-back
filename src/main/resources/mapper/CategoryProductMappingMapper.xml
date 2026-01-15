@@ -10,9 +10,12 @@
         WHERE product_id = #{productId}
     </delete>
 
-    <insert id="insertMapping">
+    <insert id="insertMappings">
         INSERT INTO Bg_Category_product_mapping (product_id, interest_category_id)
-        VALUES (#{productId}, #{interestCategoryId})
+        VALUES
+        <foreach collection="categoryId" item="catId" separator=",">
+            (#{productId}, #{catId})
+        </foreach>
     </insert>
 
     <select id="findCategoryIdsByProductId" parameterType="int" resultType="int">

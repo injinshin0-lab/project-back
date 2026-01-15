@@ -1,5 +1,7 @@
 package kr.co.kosmo.project_back.admin.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +19,7 @@ public class AdminProductResponseDto {
     private String content;
     private Integer price;
     private String imageUrl;
+
+    private List<AdminCategoryDto> categories;
 }
 
