@@ -23,6 +23,6 @@ public class AdminProductRequestDto {
     private MultipartFile imageFile;
     private String imageUrl;
 
-    private List<Integer> categoryId = new ArrayList<>();
+    private List<Integer> categoryIds = new ArrayList<>();
 }
 

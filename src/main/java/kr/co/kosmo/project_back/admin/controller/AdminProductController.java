@@ -25,22 +25,12 @@ public class AdminProductController {
 
     @GetMapping
     public ResponseEntity<PageResponseDto<AdminProductResponseDto>> getProductList(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String order,
-            @RequestParam(required = false) Integer categoryId,
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        
-        ProductSearchDto searchDto = new ProductSearchDto();
-        searchDto.setKeyword(keyword);
-        searchDto.setSort(sort);
-        searchDto.setOrder(order);
-        searchDto.setCategoryId(categoryId);
-        searchDto.setPage(page);
-        searchDto.setSize(size);
-        
-        return ResponseEntity.ok(adminProductService.getProductList(searchDto));
+        @ModelAttribute ProductSearchDto searchDto) {
+    
+    System.out.println("검색어: " + searchDto.getKeyword());
+    System.out.println("카테고리 리스트: " + searchDto.getCategoryIds());
+    
+    return ResponseEntity.ok(adminProductService.getProductList(searchDto));
     }
 
     @GetMapping("/{productId}")
@@ -52,7 +42,7 @@ public class AdminProductController {
     public ResponseEntity<Integer> insertProduct(@ModelAttribute AdminProductRequestDto dto) {
 
         System.out.println("전달받은 상품명: " + dto.getProductName());
-        System.out.println("전달받은 카테고리 리스트: " + dto.getCategoryId());
+        System.out.println("전달받은 카테고리 리스트: " + dto.getCategoryIds());
         return ResponseEntity.ok(adminProductService.insertProduct(dto));
     }
 

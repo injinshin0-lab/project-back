@@ -18,17 +18,12 @@
     <select id="countProductList" parameterType="kr.co.kosmo.project_back.admin.dto.ProductSearchDto" resultType="int">
         SELECT COUNT(DISTINCT p.id)
         FROM Bg_Product p
-        <choose>
-            <when test="categoryIds != null and categoryIds.size() > 0 or categoryId != null">
-                INNER JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
-            </when>
-            <otherwise>
-                LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
-            </otherwise>
-        </choose>
+        <if test="(categoryIds != null and categoryIds.size() > 0) or categoryId != null">
+            INNER JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+        </if>
         <where>
             <if test="keyword != null and keyword != ''">
-                (p.product_name LIKE '%' || #{keyword} || '%' 
+                AND (p.product_name LIKE '%' || #{keyword} || '%' 
                      OR p.content LIKE '%' || #{keyword} || '%'
                      OR p.origin_name LIKE '%' || #{keyword} || '%')
             </if>
@@ -38,7 +33,7 @@
                     #{id}
                 </foreach>
             </if>
-            <if test="categoryIds == null and categoryId != null">
+            <if test="(categoryIds == null or categoryIds.size() == 0) and categoryId != null">
                 AND cpm.interest_category_id = #{categoryId}
             </if>
         </where>
@@ -74,38 +69,40 @@
             c.category_name AS cat_categoryName,
             c.parent_id AS cat_parentId,
             c.depth AS cat_level
-        FROM (
-            /* 🚨 1. 여기서 먼저 상품 ID만 페이징으로 가져옵니다 */
-            SELECT DISTINCT p.id
-            FROM Bg_Product p
-            <choose>
-                <when test="categoryIds != null and categoryIds.size() > 0 or categoryId != null">
-                    INNER JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
-                </when>
-                <otherwise>
-                    LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
-                </otherwise>
-            </choose>
-            <where>
-                <if test="keyword != null and keyword != ''">
-                    AND (p.product_name LIKE '%' || #{keyword} || '%' 
-                    OR p.content LIKE '%' || #{keyword} || '%'
-                    OR p.origin_name LIKE '%' || #{keyword} || '%')
-                </if>
-                </where>
-            ORDER BY p.id DESC
-            LIMIT #{size} OFFSET #{offset}
-        ) AS base
-        /* 🚨 2. 뽑힌 ID를 가진 실제 상품 정보와 카테고리를 조인합니다 */
-        JOIN Bg_Product p ON base.id = p.id
+        FROM Bg_Product p
         LEFT JOIN Bg_Category_product_mapping cpm2 ON p.id = cpm2.product_id
         LEFT JOIN Bg_Interest_category c ON cpm2.interest_category_id = c.id
-        ORDER BY p.id DESC
-    </select>
-    
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (p.product_name LIKE '%' || #{keyword} || '%' 
+                    OR p.content LIKE '%' || #{keyword} || '%'
+                    OR p.origin_name LIKE '%' || #{keyword} || '%')
+            </if>
 
-    <select id="findByProductId" parameterType="int"
-            resultMap="productResultMap">
+            <if test="categoryIds != null and categoryIds.size() > 0">
+                AND p.id IN (
+                    SELECT DISTINCT product_id 
+                    FROM Bg_Category_product_mapping 
+                    WHERE interest_category_id IN
+                    <foreach collection="categoryIds" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                )
+            </if>
+            
+            <if test="(categoryIds == null or categoryIds.size() == 0) and categoryId != null">
+                AND p.id IN (
+                    SELECT product_id 
+                    FROM Bg_Category_product_mapping 
+                    WHERE interest_category_id = #{categoryId}
+                )
+            </if>
+        </where>
+        ORDER BY p.id DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findByProductId" parameterType="int" resultMap="productResultMap">
         SELECT
             p.id AS productId,
             p.product_name AS productName,
@@ -146,4 +143,3 @@
     </delete>
 
 </mapper>
-

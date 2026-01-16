@@ -33,71 +33,110 @@ public class AdminProductService {
 
     public PageResponseDto<AdminProductResponseDto> getProductList(ProductSearchDto searchDto) {
         // 카테고리 ID가 있으면 하위 카테고리 포함하여 검색
-        if (searchDto.getCategoryId() != null) {
-            List<Integer> categoryIds = new ArrayList<>();
-            categoryIds.add(searchDto.getCategoryId()); // 자기 자신도 포함
-            
-            // 하위 카테고리 ID 목록 조회
-            List<Integer> descendantIds = adminCategoryMapper.findDescendantCategoryIds(searchDto.getCategoryId());
-            if (descendantIds != null && !descendantIds.isEmpty()) {
-                categoryIds.addAll(descendantIds);
+        if (searchDto.getCategoryIds() == null || searchDto.getCategoryIds().isEmpty()) {
+            if (searchDto.getCategoryId() != null) {
+                List<Integer> ids = new ArrayList<>();
+                ids.add(searchDto.getCategoryId()); // 자기 자신도 포함 
+                List<Integer> descendants = adminCategoryMapper.findDescendantCategoryIds(searchDto.getCategoryId());
+                if (descendants != null) ids.addAll(descendants);
+                searchDto.setCategoryIds(ids);
             }
-            
-            searchDto.setCategoryIds(categoryIds);
         }
 
-        // offset 계산
-        Integer offset = (searchDto.getPage() - 1) * searchDto.getSize();
-        searchDto.setOffset(offset);
-        
+        searchDto.setOffset((searchDto.getPage() - 1) * searchDto.getSize());
+
         Integer totalCount = adminProductMapper.countProductList(searchDto);
         Integer totalPage = totalCount > 0 ? (int) Math.ceil((double) totalCount / searchDto.getSize()) : 1;
         
-        // 디버깅: 총 개수와 페이지 정보 출력
-        System.out.println("=== 검색 결과 디버깅 ===");
-        System.out.println("Keyword: " + searchDto.getKeyword());
-        System.out.println("CategoryId: " + searchDto.getCategoryId());
-        System.out.println("CategoryIds: " + searchDto.getCategoryIds());
-        System.out.println("TotalCount: " + totalCount);
-        System.out.println("Size: " + searchDto.getSize());
-        System.out.println("TotalPage: " + totalPage);
-        System.out.println("CurrentPage: " + searchDto.getPage());
-        System.out.println("Offset: " + searchDto.getOffset());
-        
-        PageResponseDto<AdminProductResponseDto> response = new PageResponseDto<>();
         List<AdminProductResponseDto> productList = adminProductMapper.findProductList(searchDto);
-        
-        productList.forEach(product -> {
-            String url = product.getImageUrl();
-            if (url != null && !url.isEmpty()) {
-                // 1. 만약 /uploads/ 로 시작하지 않는 데이터라면 (기존 데이터)
-                if (!url.startsWith("/uploads/") && !url.startsWith("http")) {
-                    
-                    // 2. 이미 product/ 로 시작하고 있다면 앞에 /uploads/만 붙임
-                    if (url.startsWith("product/")) {
-                        product.setImageUrl("/uploads/" + url);
-                    } 
-                    // 3. 그 외의 경우 (파일명만 있거나 할 때)
-                    else {
-                        product.setImageUrl("/uploads/product/" + url);
-                    }
-                }
-            }
-        });
+
+        // 리팩토링 : 공통메서드로 이미지 경로 보정
+
+        productList.forEach(this::formatProductImageUrl);
+
+        PageResponseDto<AdminProductResponseDto> response  = new PageResponseDto<>();
         response.setList(productList);
         response.setTotalPage(totalPage);
         response.setCurrentPage(searchDto.getPage());
-        
+
         return response;
+    
     }
+
+    //         // 하위 카테고리 ID 목록 조회
+    //         List<Integer> descendantIds = adminCategoryMapper.findDescendantCategoryIds(searchDto.getCategoryId());
+    //         if (descendantIds != null && !descendantIds.isEmpty()) {
+    //             categoryIds.addAll(descendantIds);
+    //         }
+            
+    //         searchDto.setCategoryIds(categoryIds);
+    //     }
+
+    //     // offset 계산
+    //     Integer offset = (searchDto.getPage() - 1) * searchDto.getSize();
+    //     searchDto.setOffset(offset);
+        
+    //     Integer totalCount = adminProductMapper.countProductList(searchDto);
+    //     Integer totalPage = totalCount > 0 ? (int) Math.ceil((double) totalCount / searchDto.getSize()) : 1;
+        
+    //     // 디버깅: 총 개수와 페이지 정보 출력
+    //     System.out.println("=== 검색 결과 디버깅 ===");
+    //     System.out.println("Keyword: " + searchDto.getKeyword());
+    //     System.out.println("CategoryId: " + searchDto.getCategoryId());
+    //     System.out.println("CategoryIds: " + searchDto.getCategoryIds());
+    //     System.out.println("TotalCount: " + totalCount);
+    //     System.out.println("Size: " + searchDto.getSize());
+    //     System.out.println("TotalPage: " + totalPage);
+    //     System.out.println("CurrentPage: " + searchDto.getPage());
+    //     System.out.println("Offset: " + searchDto.getOffset());
+        
+    //     PageResponseDto<AdminProductResponseDto> response = new PageResponseDto<>();
+    //     List<AdminProductResponseDto> productList = adminProductMapper.findProductList(searchDto);
+        
+    //     productList.forEach(product -> {
+    //         String url = product.getImageUrl();
+    //         if (url != null && !url.isEmpty()) {
+    //             // 1. 만약 /uploads/ 로 시작하지 않는 데이터라면 (기존 데이터)
+    //             if (!url.startsWith("/uploads/") && !url.startsWith("http")) {
+                    
+    //                 // 2. 이미 product/ 로 시작하고 있다면 앞에 /uploads/만 붙임
+    //                 if (url.startsWith("product/")) {
+    //                     product.setImageUrl("/uploads/" + url);
+    //                 } 
+    //                 // 3. 그 외의 경우 (파일명만 있거나 할 때)
+    //                 else {
+    //                     product.setImageUrl("/uploads/product/" + url);
+    //                 }
+    //             }
+    //         }
+    //     });
+    //     response.setList(productList);
+    //     response.setTotalPage(totalPage);
+    //     response.setCurrentPage(searchDto.getPage());
+        
+    //     return response;
+    // }
+
 
     public AdminProductResponseDto getProduct(Integer productId) {
         AdminProductResponseDto product = adminProductMapper.findByProductId(productId);
         // 이미지 URL에 uploads/ 접두사 추가
-        if (product != null && product.getImageUrl() != null && !product.getImageUrl().startsWith("/uploads/") && !product.getImageUrl().startsWith("uploads/")) {
-            product.setImageUrl("/uploads/" + product.getImageUrl());
-        }
+        if (product != null) formatProductImageUrl(product);
         return product;
+    }
+
+    private void formatProductImageUrl(AdminProductResponseDto product) {
+        String url = product.getImageUrl();
+        if (url == null || url.isEmpty() || url.startsWith("http") || url.startsWith("/uploads/")) {
+            return;
+        }
+        
+        // 기존 데이터(product/...)와 신규 데이터 대응
+        if (url.startsWith("product/")) {
+            product.setImageUrl("/uploads/" + url);
+        } else {
+            product.setImageUrl("/uploads/product/" + url);
+        }
     }
 
     public Integer insertProduct(AdminProductRequestDto dto) {
@@ -112,8 +151,8 @@ public class AdminProductService {
         
         // 3. [핵심 수정] 다중 카테고리 매핑 저장
         // 기존의 dto.getCategory() != null 체크를 삭제했습니다.
-        if (result > 0 && dto.getCategoryId() != null && !dto.getCategoryId().isEmpty()) {
-            categoryProductMappingMapper.insertMappings(dto.getProductId(), dto.getCategoryId());
+        if (result > 0 && dto.getCategoryIds() != null && !dto.getCategoryIds().isEmpty()) {
+            categoryProductMappingMapper.insertMappings(dto.getProductId(), dto.getCategoryIds());
         }
         
         return result > 0 ? 1 : 0;
@@ -133,8 +172,8 @@ public class AdminProductService {
             categoryProductMappingMapper.deleteByProductId(dto.getProductId());
             
             // 새로운 카테고리 리스트가 있으면 저장
-            if (dto.getCategoryId() != null && !dto.getCategoryId().isEmpty()) {
-                categoryProductMappingMapper.insertMappings(dto.getProductId(), dto.getCategoryId());
+            if (dto.getCategoryIds() != null && !dto.getCategoryIds().isEmpty()) {
+                categoryProductMappingMapper.insertMappings(dto.getProductId(), dto.getCategoryIds());
             }
         }
         
