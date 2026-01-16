@@ -63,6 +63,12 @@
         )
     </delete>
 
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteByUserId" parameterType="int">
+        DELETE FROM Bg_Recent_product
+        WHERE user_id = #{userId}
+    </delete>
+
 </mapper>
 
 

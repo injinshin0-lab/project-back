@@ -18,7 +18,9 @@ public interface QuestionMapper {
     // 1:1 문의 작성
     void insertQuestion(QuestionRequestDto question);
 
-
-
-
+    // 회원 탈퇴
+    // 사용자가 작성한 문의 목록 조회
+    List<Long> findQuestionIdsByUserId(@Param("userId") Integer userId);
+    // 사용자가 작성한 문의 목록 삭제
+    void deleteByUserId(@Param("userId") Integer userId);
 }

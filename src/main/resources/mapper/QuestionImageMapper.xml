@@ -26,6 +26,11 @@
         )
     </insert>
 
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteByQuestionId" parameterType="long">
+        DELETE FROM Bg_Question_Image
+        WHERE question_id = #{questionId}
+    </delete>
 
 </mapper>
 

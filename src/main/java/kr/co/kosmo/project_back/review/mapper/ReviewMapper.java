@@ -28,4 +28,10 @@ public interface ReviewMapper {
 
    // 마이페이지 내 리뷰 조회
    List<MyReviewResponseDto> findReviewsByUserId(Integer userId);
+   
+   // 회원 탈퇴
+   // 사용자가 작성한 리뷰 아이디 목록 조회
+   List<Long> findReviewIdsByUserId(@Param("userId") Integer userId);
+   // 사용자가 작성한 리뷰 전체 삭제
+   void deleteByUserId(@Param("userId") Integer userId);
 }

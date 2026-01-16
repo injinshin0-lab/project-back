@@ -15,4 +15,7 @@ public interface QuestionImageMapper {
         @Param("questionId") Integer questionId,
         @Param("imageUrl") String imageUrl 
     );
+
+    // 회원탈퇴용
+    void deleteByQuestionId(@Param("questionId")Long questionId);
 }

@@ -26,4 +26,7 @@ public interface RecentProductMapper {
             @Param("userId") Integer userId,
             @Param("productId") Integer productId);
     int deleteOldestRecentProduct(@Param("userId") Integer userId);
+
+    // 회원 탈퇴
+    void deleteByUserId(@Param("userId") Integer userId);
 }

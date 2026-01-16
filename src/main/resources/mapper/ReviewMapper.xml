@@ -125,6 +125,19 @@
         WHERE r.user_id = #{userId} 
         ORDER BY r.created_at DESC
     </select>
+
+    <!-- 회원 탈퇴 -->
+    <select id="findReviewIdsByUserId" parameterType="int" resultType="long">
+        SELECT id
+        FROM Bg_Review
+        WHERE user_id = #{userId} 
+    </select>
+
+    <delete id="deleteByUserId" parameterType="int">
+        DELETE FROM Bg_Review
+        WHERE user_id = #{userId}
+    </delete>
+
 </mapper>
 
 

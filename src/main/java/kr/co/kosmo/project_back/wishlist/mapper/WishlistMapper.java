@@ -3,6 +3,7 @@ package kr.co.kosmo.project_back.wishlist.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import kr.co.kosmo.project_back.product.dto.ProductDto;
 
@@ -16,4 +17,6 @@ public interface WishlistMapper {
     void insertWish(Integer userId, Integer productId);
     // 찜 목록 삭제
     void deleteWish(Integer userId, Integer productId);
+    // 회원 탈퇴
+    void deleteByUserId(@Param("userId") Integer userId);
 }

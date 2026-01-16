@@ -57,6 +57,17 @@
             SELECT last_insert_rowid()
         </selectKey>
     </insert>
+
+    <!-- 회원 탈퇴 -->
+    <select id="findQuestionIdsByUserId" parameterType="int" resultType="long">
+        SELECT id 
+        FROM Bg_Question
+        WHERE user_id = #{userId}     
+    </select>
+    <delete id="deleteByUserId" parameterType="int">
+        DELETE FROM Bg_Question
+        WHERE user_id = #{userId}
+    </delete>
 </mapper>
 
 

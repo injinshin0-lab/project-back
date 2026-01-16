@@ -107,4 +107,10 @@
         WHERE id = #{userId}
      </update>
 
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM Bg_User
+        WHERE id = #{userId}
+    </delete>
+
 </mapper>

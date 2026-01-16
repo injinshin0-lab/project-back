@@ -43,4 +43,7 @@ public interface UserMapper {
         @Param("userId") Integer userId,
         @Param("password") String password 
     );
+
+    // 회원 탈퇴
+    void deleteUser(@Param("userId") Integer userId);
 }

@@ -44,10 +44,11 @@
             AND product_id = #{productId}
     </delete>
 
-
-
-
-
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteByUserId" parameterType="int">
+        DELETE FROM Bg_Wishlist
+        WHERE user_id = #{userId}
+    </delete>
 </mapper>
 
 

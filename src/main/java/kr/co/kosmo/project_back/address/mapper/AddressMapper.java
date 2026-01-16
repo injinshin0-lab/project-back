@@ -22,4 +22,7 @@ public interface AddressMapper {
     );
     // 기본 배송지 해제
     void clearDefaultAddress(@Param("userId") Integer userId);
+
+    // 회원 탈퇴
+    void deleteByUserId(@Param("userId") Integer userId);
 }

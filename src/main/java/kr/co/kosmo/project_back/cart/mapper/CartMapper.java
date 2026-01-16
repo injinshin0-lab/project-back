@@ -20,5 +20,6 @@ public interface CartMapper {
     void deleteCartItem(@Param("userId") Integer userId, @Param("productId") Integer productId);
     // 장바구니 전체 삭제
     void deleteCart(Integer userId);
-    
+    // 회원 탈퇴
+    void deleteByUserId(@Param("userId") Integer userId);
 }

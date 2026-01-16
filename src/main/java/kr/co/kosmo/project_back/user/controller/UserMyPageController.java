@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpSession;
+import kr.co.kosmo.project_back.auth.dto.response.MessageResponseDto;
 import kr.co.kosmo.project_back.order.service.OrderService;
 import kr.co.kosmo.project_back.user.dto.UserPasswordChangeRequestDto;
 import kr.co.kosmo.project_back.user.dto.UserUpdateRequestDto;
@@ -94,6 +96,28 @@ public class UserMyPageController {
         }
         return ResponseEntity.ok(
                orderService.getOrderListByUserId(loginUserId)
+        );
+    }
+    // 회원 탈퇴
+    @PostMapping("/{userId}/delete")
+    public ResponseEntity<?> withdraw(
+            @PathVariable Integer userId,
+            HttpSession session
+    ) {
+        // 로그인 쳌
+        Integer loginUserId = (Integer) session.getAttribute("LOGIN_USER");
+        if(loginUserId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MessageResponseDto("로그인이 필요합니다."));
+        }
+        if(!loginUserId.equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new MessageResponseDto("본인 계정만 탈퇴할 수 있습니다."));
+        }
+        userService.withdraw(userId);
+        session.invalidate();
+        return ResponseEntity.ok(
+            new MessageResponseDto("회원 탈퇴가 완료되었습니다.")
         );
     }
 }
