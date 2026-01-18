@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.kosmo.project_back.alarm.service.AlarmService;
 import kr.co.kosmo.project_back.question.dto.QuestionRequestDto;
 import kr.co.kosmo.project_back.question.dto.QuestionResponseDto;
 import kr.co.kosmo.project_back.question.mapper.QuestionImageMapper;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class QuestionService {
     private final QuestionMapper questionMapper;
     private final QuestionImageMapper questionImageMapper;
+    private final AlarmService alarmService;
 
     // 내 문의 목록 조회
     public List<QuestionResponseDto> getQuestionList(
@@ -47,5 +49,4 @@ public class QuestionService {
             }
         }
     }
-
 }

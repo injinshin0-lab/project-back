@@ -68,6 +68,16 @@
         DELETE FROM Bg_Question
         WHERE user_id = #{userId}
     </delete>
+
+    <!-- 문의한 유저 아이디 찾기  -->
+    <select id="findUserIdByQuestionId"
+            parameterType="int"
+            resultType="int">
+        SELECT user_id 
+        FROM Bg_Question
+        WHERE id = #{questionId} 
+    </select>
+
 </mapper>
 
 
