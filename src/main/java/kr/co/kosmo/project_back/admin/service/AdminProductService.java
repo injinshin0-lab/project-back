@@ -32,15 +32,31 @@ public class AdminProductService {
     private String uploadDir;
 
     public PageResponseDto<AdminProductResponseDto> getProductList(ProductSearchDto searchDto) {
-        // 카테고리 ID가 있으면 하위 카테고리 포함하여 검색
-        if (searchDto.getCategoryIds() == null || searchDto.getCategoryIds().isEmpty()) {
-            if (searchDto.getCategoryId() != null) {
-                List<Integer> ids = new ArrayList<>();
-                ids.add(searchDto.getCategoryId()); // 자기 자신도 포함 
-                List<Integer> descendants = adminCategoryMapper.findDescendantCategoryIds(searchDto.getCategoryId());
-                if (descendants != null) ids.addAll(descendants);
-                searchDto.setCategoryIds(ids);
+        // 카테고리 ID가 있으면 하위 카테고리 포함하여 검
+    if (searchDto.getCategoryIds() != null && !searchDto.getCategoryIds().isEmpty()) {
+            List<Integer> allTargetIds = new ArrayList<>(searchDto.getCategoryIds());
+
+            for (Integer catId : searchDto.getCategoryIds()) {
+                List<Integer> descendants = adminCategoryMapper.findDescendantCategoryIds(catId);
+                if (descendants != null && !descendants.isEmpty()) {
+                    for (Integer childId : descendants) {
+                        if (!allTargetIds.contains(childId)) {
+                            allTargetIds.add(childId);
+                        }
+                    }
+                }
             }
+
+            searchDto.setCategoryIds(allTargetIds);
+        }
+
+        else if (searchDto.getCategoryId() != null) {
+            List<Integer> ids = new ArrayList<>();
+            ids.add(searchDto.getCategoryId()); // 자기 자신도 포함 
+            List<Integer> descendants = adminCategoryMapper.findDescendantCategoryIds(searchDto.getCategoryId());
+            if (descendants != null) ids.addAll(descendants);
+            searchDto.setCategoryIds(ids);
+            
         }
 
         searchDto.setOffset((searchDto.getPage() - 1) * searchDto.getSize());
