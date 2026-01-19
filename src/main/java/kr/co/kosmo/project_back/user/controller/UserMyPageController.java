@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
 import kr.co.kosmo.project_back.auth.dto.response.MessageResponseDto;
 import kr.co.kosmo.project_back.order.service.OrderService;
+import kr.co.kosmo.project_back.user.dto.UserDto;
 import kr.co.kosmo.project_back.user.dto.UserPasswordChangeRequestDto;
 import kr.co.kosmo.project_back.user.dto.UserUpdateRequestDto;
 import kr.co.kosmo.project_back.user.service.UserService;
@@ -27,6 +28,19 @@ public class UserMyPageController {
 
     private final OrderService orderService;
     private final UserService userService;
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserInfo(@PathVariable Integer userId, HttpSession session) {
+        Integer loginUserId = (Integer) session.getAttribute("LOGIN_USER");
+        if(loginUserId == null || !loginUserId.equals(userId)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("권한이 없습니다.");
+        }
+        
+        // UserService에서 UserDto(아이디, 이름, 전화번호, 이메일, 카테고리 포함)를 반환하는 로직 호출
+        UserDto userDto = userService.getUserInfo(userId); 
+        return ResponseEntity.ok(userDto);
+    }
+
 
     @PatchMapping("/{userId}")
     public ResponseEntity<?> updateMyInfo(

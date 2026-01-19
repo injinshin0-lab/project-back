@@ -84,6 +84,17 @@ public class UserService {
        return userMapper.existsByLoginId(loginId) > 0;
    }
 
+   public UserDto getUserInfo(Integer userId) {
+    // 유저 기본 정보 조회
+    UserDto userDto = userMapper.selectById(userId);
+    if(userDto == null) throw new RuntimeException("사용자를 찾을 수 없습니다.");
+    // 관심 카테고리 아이디 리스트 조회
+    List<Integer> categoryIds = userSelectedCategoryMapper.findUserCategory(userId);
+    // UserDto에 조회한 카테고리 리스트 세팅
+    userDto.setCategoryIds(categoryIds);
+    return userDto;
+   }
+
    @Transactional
    public void updateUserInfo(Integer userId, UserUpdateRequestDto dto) {
         // 이름 / 전화번호 수정
