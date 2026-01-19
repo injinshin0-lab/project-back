@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class AlarmSettingDto {
     private Integer userId;
-    private Boolean isDeliveryEnabled;
-    private Boolean enabled;
-    private Boolean isAnswerEnabled;
+    private Boolean isDeliveryEnabled;      // 배송상태변경알림
+    private Boolean isOrderEnabled;         // 주문상태변경알림
+    private Boolean isAnswerEnabled;        // 문의답변등록알림
 }

@@ -3,6 +3,7 @@ package kr.co.kosmo.project_back.user.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import kr.co.kosmo.project_back.alarm.dto.AlarmSettingDto;
 import kr.co.kosmo.project_back.user.dto.UserDto;
 import kr.co.kosmo.project_back.user.dto.UserJoinDto;
 import kr.co.kosmo.project_back.user.dto.UserUpdateRequestDto;

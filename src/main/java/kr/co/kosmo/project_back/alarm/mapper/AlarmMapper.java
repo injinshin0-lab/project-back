@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.kosmo.project_back.alarm.dto.AlarmDto;
+import kr.co.kosmo.project_back.alarm.dto.AlarmSettingDto;
 
 @Mapper
 public interface AlarmMapper {
@@ -12,6 +13,13 @@ public interface AlarmMapper {
     List<AlarmDto> findAlarmsByUserId(Integer userId);
     // 알림 삭제
     void deleteAlarm(Integer alarmId);
-    // 알림 설정
+    // 알림 생성
     void insertAlarm(AlarmDto dto);
+    // 알림 설정
+    AlarmSettingDto findSettingsByUserId(Integer userId);
+    void updateSettings(AlarmSettingDto dto);
+    // 알림 읽음 처리
+    void updateReadStatus(Integer alarmId);
+    // 알림 전체 읽음 처리
+    void updateAllReadStatus(Integer userId);
 }
