@@ -1,6 +1,8 @@
 package kr.co.kosmo.project_back.admin.controller;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import kr.co.kosmo.project_back.admin.dto.AlarmDto;
 import kr.co.kosmo.project_back.admin.service.AdminAlarmService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/v1/alarm")
@@ -24,6 +29,29 @@ public class AdminAlarmController {
     public ResponseEntity<List<AlarmDto>> getAlarmList(@RequestParam Integer userId) {
         return ResponseEntity.ok(alarmService.getAlarmList(userId));
     }
+
+    @PostMapping("/send")
+    public ResponseEntity<Integer> sendAlarm(@RequestBody AlarmDto alarmDto) {
+        
+        if (alarmDto.getUserId() == null) {
+            System.out.println("전체 알림 방송 요청됨:" + alarmDto.getContent());
+            return ResponseEntity.ok(1);
+        }
+        
+        Integer result = alarmService.insertAdminAlarm(alarmDto.getUserId(), alarmDto.getContent());
+        return ResponseEntity.ok(result);
+    }
+
+    // 모든 알람찾기
+    @GetMapping("/all")
+    public ResponseEntity<Map<String, Object>> getAllAlarms( // 👈 리턴 타입을 Map으로 변경
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size) {
+        
+        // 👈 서비스의 'Paged' 메서드를 호출해야 합니다!
+        return ResponseEntity.ok(alarmService.getAllAlarmListPaged(page, size));
+    }
+        
 
     @PutMapping("/read/{notificationsId}")
     public ResponseEntity<Integer> markNotificationAsRead(@PathVariable Integer notificationsId) {

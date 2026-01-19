@@ -1,6 +1,9 @@
 package kr.co.kosmo.project_back.admin.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import kr.co.kosmo.project_back.admin.dto.AlarmDto;
@@ -45,4 +48,17 @@ public class AdminAlarmService {
         alarm.setContent(message);
         return alarmMapper.insertAlarm(alarm);
     }
+
+
+    public Map<String, Object> getAllAlarmListPaged(int page, int size) {
+        int offset = (page - 1) * size;
+        List<AlarmDto> list = alarmMapper.findAllAlarmsPaged(size, offset);
+        int totalCount = alarmMapper.countAllAlarms();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", list);
+        result.put("totalCount", totalCount);
+        return result;
+    }
+    
 }

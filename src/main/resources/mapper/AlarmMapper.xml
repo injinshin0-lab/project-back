@@ -17,12 +17,29 @@
         FROM Bg_Alarm
         WHERE user_id = #{userId}
         ORDER BY created_at DESC
+        LIMIT 50
     </select>
 
     <insert id="insertAlarm" parameterType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
         INSERT INTO Bg_Alarm (user_id, type, message, created_at)
         VALUES (#{userId}, #{type}, #{content}, datetime('now', 'localtime'))
     </insert>
+
+    <select id="findAllAlarmsPaged" resultType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
+        SELECT
+            id,
+            user_id AS userId,
+            type,
+            message AS content,
+            created_at AS createdAt
+        FROM Bg_Alarm
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAllAlarms" resultType="int">
+        SELECT COUNT (*) FROM Bg_Alarm
+    </select>
 
 </mapper>
 
