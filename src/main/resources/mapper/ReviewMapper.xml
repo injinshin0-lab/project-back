@@ -5,16 +5,29 @@
 
 <mapper namespace="kr.co.kosmo.project_back.review.mapper.ReviewMapper">
 
+    <resultMap id="ReviewResultMap" type="kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto">
+        <id property="reviewId" column="reviewId"/>
+        <result property="userId" column="userId"/>
+        <result property="content" column="content"/>
+        <result property="rating" column="rating"/>
+        <result property="createdAt" column="createdAt"/>
+        <collection property="reviewImages" ofType="kr.co.kosmo.project_back.review.dto.response.ReviewImageDto">
+            <id property="reviewImageId" column="reviewImageId"/>
+            <result property="imageUrl" column="imageUrl"/>
+        </collection>
+    </resultMap>
+
     <!-- 상품별 리뷰 조회 -->
     <select id="findReviewsByProductId"
-            resultType="kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto">
+            resultMap="ReviewResultMap">
         SELECT 
             r.id          AS reviewId,
             r.user_id     AS userId,
             r.content,
             r.rating,
             r.created_at  AS createdAt, 
-            COUNT(ri.id)  AS imageCount
+            ri.id         AS reviewImageId,
+            ri.image_url  AS imageUrl
         FROM Bg_Review r
         LEFT JOIN Bg_Review_Image ri
             ON r.id = ri.review_id
