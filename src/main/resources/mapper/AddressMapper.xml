@@ -56,6 +56,7 @@
             <if test="address != null">address = #{address},</if>
             <if test="detailAddress != null">detail_address = #{detailAddress},</if>
             <if test="isDefault != null">is_default = #{isDefault},</if>
+            id = #{id}
         </set>
         WHERE id = #{id} 
             AND user_id = #{userId} 

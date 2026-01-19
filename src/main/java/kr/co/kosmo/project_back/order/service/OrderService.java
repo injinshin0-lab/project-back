@@ -91,10 +91,35 @@ public class OrderService {
     }
 
     private void processAddress(OrderRequestDto dto) {
-        if (dto.getShippingAddressId() == null) {
-            throw new IllegalStateException("배송지를 선택해주세요.");
+        // 기존 배송지를 선택한 경우
+         if (dto.getShippingAddressId() != null) {
+            dto.setAddressId(dto.getShippingAddressId());
+            return;
         }
-        dto.setAddressId(dto.getShippingAddressId());
+        // 신규 주소를 입력한 경우
+        if (dto.getPostcode() != null && !dto.getPostcode().isEmpty()) {
+            // 주소 객체 생성 및 정보 매핑
+            // AddressDto의 필드명은 프로젝트의 Bg_Address 테이블 구조에 맞게 조정하세요.
+            kr.co.kosmo.project_back.address.dto.AddressDto newAddr = new kr.co.kosmo.project_back.address.dto.AddressDto();
+            newAddr.setUserId(dto.getUserId());
+            newAddr.setPostcode(dto.getPostcode());
+            newAddr.setAddress(dto.getAddress1());
+            newAddr.setDetailAddress(dto.getAddress2());
+            newAddr.setRecipient(dto.getRecipient()); // 필요 시 프론트에서 받아오세요
+            newAddr.setRecipientPhone(dto.getRecipientPhone()); // 필요 시 프론트에서 받아오세요
+            newAddr.setIsDefault(0); // 신규 주소는 기본 배송지 아님으로 설정
+    
+            // 1. DB에 주소 저장 (Mapper에서 selectKey를 통해 ID를 받아와야 함)
+            addressMapper.insertAddress(newAddr); 
+            
+            // 2. 저장된 신규 주소 ID를 주문 DTO에 세팅
+            dto.setAddressId(newAddr.getId()); 
+            return;
+        }
+    
+        // 3. 둘 다 없는 경우에만 예외 발생
+        throw new IllegalStateException("배송지를 선택하거나 신규 주소를 입력해주세요.");
+
     }
 
     // 마이페이지 주문 조회

@@ -17,6 +17,8 @@ public class OrderRequestDto {
     private String postcode;
     private String address1;
     private String address2;
+    private String recipient;
+    private String recipientPhone;
     
     private String paymentMethod;
     private Boolean useCartItems;

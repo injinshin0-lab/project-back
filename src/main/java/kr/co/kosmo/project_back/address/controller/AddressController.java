@@ -34,7 +34,7 @@ public class AddressController {
     @PostMapping("/{userId}/addresses")
     public ResponseEntity<?> addAddresses(
         @PathVariable Integer userId, 
-        @ModelAttribute AddressDto dto,
+        @RequestBody AddressDto dto,
         HttpSession session
     ) {
         Integer loginUserId = (Integer) session.getAttribute("LOGIN_USER");
@@ -53,7 +53,7 @@ public class AddressController {
     public ResponseEntity<?> updateAddresses(
         @PathVariable Integer userId,
         @PathVariable Integer addressId,
-        @ModelAttribute AddressDto dto,
+        @RequestBody AddressDto dto,
         HttpSession session
     ) {
         Integer loginUserId = (Integer) session.getAttribute("LOGIN_USER");
