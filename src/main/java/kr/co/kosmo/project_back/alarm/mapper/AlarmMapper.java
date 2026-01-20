@@ -3,6 +3,7 @@ package kr.co.kosmo.project_back.alarm.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import kr.co.kosmo.project_back.alarm.dto.AlarmDto;
 import kr.co.kosmo.project_back.alarm.dto.AlarmSettingDto;
@@ -22,4 +23,7 @@ public interface AlarmMapper {
     void updateReadStatus(Integer alarmId);
     // 알림 전체 읽음 처리
     void updateAllReadStatus(Integer userId);
+
+    // 주문 상태 업데이트 추가
+    void updateOrderStatus(@Param("orderId") Integer orderId, @Param("status") String status);
 }

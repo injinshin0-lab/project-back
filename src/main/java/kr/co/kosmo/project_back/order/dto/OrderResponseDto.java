@@ -12,6 +12,7 @@ import lombok.Setter;
 public class OrderResponseDto {
     private Integer orderId;
     private Integer userId;
+    private String status;
     private String payType;
     private Integer addressId;
     private Integer totalPrice;

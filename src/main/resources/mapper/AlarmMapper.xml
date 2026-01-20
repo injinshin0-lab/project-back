@@ -13,7 +13,9 @@
             id,
             user_id     AS userId,
             type,
-            message
+            message,
+            created_at  AS createdAt,
+            is_read     AS isRead
         FROM Bg_Alarm 
         WHERE user_id = #{userId} 
         ORDER BY id DESC

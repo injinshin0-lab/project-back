@@ -10,4 +10,6 @@ public class AlarmDto {
     private Integer userId;
     private String type;
     private String message;
+    private String createdAt; // 추가
+    private Integer isRead;// 추가 (0: 안읽음, 1: 읽음)
 }

@@ -84,6 +84,7 @@
         SELECT
             id                  AS orderId,
             user_id             AS userId,
+            order_status        AS status,
             payment_method      AS payType,
             address_id          AS addressId,
             payment_price       AS totalPrice,
@@ -91,6 +92,24 @@
         FROM Bg_Order
         WHERE user_id = #{userId}
         ORDER BY created_at DESC
+    </select>
+
+    <select id="checkDuplicateAlarm" resultType="int">
+        SELECT COUNT(*) 
+        FROM Bg_Alarm 
+        WHERE user_id = #{userId} 
+        AND message LIKE '%' || #{orderNo} || '%' 
+        AND message LIKE '%' || #{status} || '%'
+    </select>
+    
+    <update id="updateOrderStatus">
+        UPDATE Bg_Order
+        SET order_status = #{status}
+        WHERE id = #{orderId}
+    </update>
+
+    <select id="findOrderById" resultType="kr.co.kosmo.project_back.order.dto.OrderResponseDto">
+        SELECT id AS orderId, user_id AS userId, order_status AS status FROM Bg_Order WHERE id = #{orderId}
     </select>
 
 </mapper>

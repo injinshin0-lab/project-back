@@ -32,4 +32,12 @@ public interface OrderMapper {
         @Param("userId") Integer usdrId,
         @Param("productId") Integer productId 
     );
+    void updateOrderStatus(@Param("orderId") Integer orderId, @Param("status") String status);
+    OrderResponseDto findOrderById(Integer orderId); // 알림 보낼 대상(userId)을 찾기 위해 필요
+
+    int checkDuplicateAlarm(
+        @Param("userId") Integer userId, 
+        @Param("orderNo") String orderNo, 
+        @Param("status") String status
+    );
 }

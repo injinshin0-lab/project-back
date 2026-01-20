@@ -57,18 +57,19 @@ public class AlarmService {
         alarmMapper.insertAlarm(alarm);
     }
     // 주문 상태 변경 알림
-    public void insertOrderStatusAlarm(Integer userId) {
+    public void insertOrderAlarm(Integer userId, String orderId) {
         AlarmSettingDto setting = alarmMapper.findSettingsByUserId(userId);
-        // off면 생성 안 함
         if(setting != null && Boolean.FALSE.equals(setting.getIsOrderEnabled())) {
             return;
         }
         AlarmDto alarm = new AlarmDto();
         alarm.setUserId(userId);
         alarm.setType("ORDER");
-        alarm.setMessage("주문 상태가 변경되었습니다.");
+        // 메시지에 주문 번호 등을 포함
+        alarm.setMessage("주문(" + orderId + ")이 정상적으로 완료되었습니다."); 
         alarmMapper.insertAlarm(alarm);
     }
+    
     // 배송 상태 변경 알림
     public void insertDeliveryStatusAlarm(Integer userId) {
         AlarmSettingDto setting = alarmMapper.findSettingsByUserId(userId);
@@ -90,4 +91,13 @@ public class AlarmService {
     public void markAllAsRead(Integer userId) {
         alarmMapper.updateAllReadStatus(userId);
     }
+
+    // 관리자 직접 알림 추가
+    // public void insertAdminAlarm(Integer userId, String message) {
+    //     AlarmDto alarm = new AlarmDto();
+    //     alarm.setUserId(userId);
+    //     alarm.setType("ADMIN");
+    //     alarm.setMessage(message);
+    //     alarmMapper.insertAlarm(alarm);
+    // }
 }
