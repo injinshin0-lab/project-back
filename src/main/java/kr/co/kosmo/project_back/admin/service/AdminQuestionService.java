@@ -9,7 +9,7 @@ import kr.co.kosmo.project_back.admin.dto.QuestionResponseDto;
 import kr.co.kosmo.project_back.admin.dto.QuestionSearchDto;
 import kr.co.kosmo.project_back.admin.mapper.AdminQuestionMapper;
 import kr.co.kosmo.project_back.admin.mapper.AdminQuestionImageMapper;
-import kr.co.kosmo.project_back.admin.service.AdminAlarmService;
+// import kr.co.kosmo.project_back.admin.service.AdminAlarmService;
 
 @Service
 @RequiredArgsConstructor

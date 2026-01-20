@@ -33,13 +33,18 @@ public class AdminAlarmController {
     @PostMapping("/send")
     public ResponseEntity<Integer> sendAlarm(@RequestBody AlarmDto alarmDto) {
         
-        if (alarmDto.getUserId() == null) {
-            System.out.println("전체 알림 방송 요청됨:" + alarmDto.getContent());
-            return ResponseEntity.ok(1);
+        // 1. 전체발송일 때 (아이디가 아예 없을때)
+        if (alarmDto.getUserLoginId() == null && alarmDto.getUserId() == null) {
+            return ResponseEntity.ok(alarmService.insertAdminAlarm(null, alarmDto.getContent()));
         }
-        
-        Integer result = alarmService.insertAdminAlarm(alarmDto.getUserId(), alarmDto.getContent());
-        return ResponseEntity.ok(result);
+
+        // 특정 유저 발송 (문자 아이디가 들어왔을 때) 
+        if (alarmDto.getUserLoginId() != null) {
+            return ResponseEntity.ok(alarmService.insertAdminAlarmByLoginId(alarmDto.getUserLoginId(), alarmDto.getContent()));
+        }
+
+        // ID 숫자가 들어왔을때
+        return ResponseEntity.ok(alarmService.insertAdminAlarm(alarmDto.getUserId(), alarmDto.getContent()));
     }
 
     // 모든 알람찾기

@@ -3,6 +3,8 @@ package kr.co.kosmo.project_back.admin.mapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param; // 🔥 필수 임포트
+import org.apache.ibatis.annotations.Select;
+
 import kr.co.kosmo.project_back.admin.dto.AlarmDto;
 
 @Mapper
@@ -22,4 +24,11 @@ public interface AdminAlarmMapper {
 
     // 5. 전체 개수 조회
     int countAllAlarms();
+
+    // 전체추가
+    int insertAllUserAlarm(@Param("type") String type, @Param("content") String content);
+
+    // 유저가 설정한 ID 검색
+    @Select("SELECT id FROM Bg_User WHERE login_id = #{loginId}")
+    Integer findIdByLoginId(@Param("loginId") String loginId);
 }

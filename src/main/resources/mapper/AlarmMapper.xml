@@ -27,19 +27,35 @@
 
     <select id="findAllAlarmsPaged" resultType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
         SELECT
-            id,
-            user_id AS userId,
-            type,
-            message AS content,
-            created_at AS createdAt
-        FROM Bg_Alarm
-        ORDER BY created_at DESC
+            MAX(a.id) AS id,
+            a.type, 
+            a.message AS content, 
+            a.created_at AS createdAt,
+            COUNT(a.user_id) AS userCount,
+            CASE
+                WHEN COUNT(a.user_id) > 1 THEN NULL
+                ELSE MAX(u.login_id)
+            END AS userLoginId, MAX(a.user_id) AS userId
+        FROM Bg_Alarm a
+        LEFT JOIN Bg_User u ON a.user_id = u.id
+        GROUP BY a.message, a.created_at, a.type
+        ORDER BY a.created_at DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="countAllAlarms" resultType="int">
-        SELECT COUNT (*) FROM Bg_Alarm
+        SELECT COUNT(*) FROM (
+            SELECT 1 
+            FROM Bg_Alarm 
+            GROUP BY message, created_at, type
+    ) AS temp_table
     </select>
 
+
+    <insert id="insertAllUserAlarm">
+        INSERT INTO Bg_Alarm (user_id, type, message, created_at)
+        SELECT id, #{type}, #{content}, datetime('now', 'localtime')
+        FROM Bg_User
+    </insert>
 </mapper>
 

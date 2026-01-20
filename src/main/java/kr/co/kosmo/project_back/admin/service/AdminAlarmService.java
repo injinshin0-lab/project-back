@@ -3,7 +3,6 @@ package kr.co.kosmo.project_back.admin.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import kr.co.kosmo.project_back.admin.dto.AlarmDto;
@@ -41,12 +40,19 @@ public class AdminAlarmService {
      * @param message 알림 메시지
      * @return 생성된 알림 ID
      */
+
     public Integer insertAdminAlarm(Integer userId, String message) {
-        AlarmDto alarm = new AlarmDto();
-        alarm.setUserId(userId);
-        alarm.setType("관리자알림");
-        alarm.setContent(message);
-        return alarmMapper.insertAlarm(alarm);
+    // 1. 중복 선언된 AlarmDto alarm 변수를 하나로 통일하거나 안으로 넣습니다.
+    
+    if (userId == null) {
+            return alarmMapper.insertAllUserAlarm("전체공지", message);
+        } else {
+            AlarmDto alarm = new AlarmDto(); 
+            alarm.setUserId(userId);
+            alarm.setType("관리자알림");
+            alarm.setContent(message);
+            return alarmMapper.insertAlarm(alarm);
+        }
     }
 
 
@@ -59,6 +65,16 @@ public class AdminAlarmService {
         result.put("list", list);
         result.put("totalCount", totalCount);
         return result;
+    }
+
+    public Integer insertAdminAlarmByLoginId(String loginId, String message) {
+        Integer userId = alarmMapper.findIdByLoginId(loginId);
+
+        if (userId == null) {
+            throw new RuntimeException("존재하지 않는 사용자 아이디입니다.");
+        }
+
+        return insertAdminAlarm(userId, message);
     }
     
 }
