@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.admin.mapper.AdminAlarmMapper">
+
+    <insert id="insertAlarm" parameterType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
+        INSERT INTO Bg_Alarm (user_id, type, message, is_read, created_at)
+        VALUES (#{userId}, #{type}, #{content}, 0, DATETIME('now', 'localtime')  )
+    </insert>
+
+    <insert id="insertAllUserAlarm">
+        INSERT INTO Bg_Alarm (user_id, type, message, is_read, created_at)
+        SELECT id, #{type}, #{content}, 0, DATETIME('now', 'localtime') FROM Bg_User
+    </insert>
+
+    <select id="findAlarmsByUserId" resultType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
+        SELECT 
+            id, user_id AS userId, type, message AS content, 
+            is_read AS isRead, created_at AS createdAt
+        FROM Bg_Alarm
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllAlarmsPaged" resultType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
+        SELECT 
+            a.id, a.user_id AS userId, u.login_id AS loginId, 
+            a.type, a.message AS content, a.is_read AS isRead, a.created_at AS createdAt
+        FROM Bg_Alarm a
+        LEFT JOIN Bg_User u ON a.user_id = u.id
+        ORDER BY a.created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAllAlarms" resultType="int">
+        SELECT COUNT(*) FROM Bg_Alarm
+    </select>
+
+    <select id="findAllAlarms" resultType="kr.co.kosmo.project_back.admin.dto.AlarmDto">
+        SELECT id, user_id AS userId, type, message AS content, created_at AS createdAt
+        FROM Bg_Alarm
+        ORDER BY created_at DESC
+    </select>
+
+</mapper>

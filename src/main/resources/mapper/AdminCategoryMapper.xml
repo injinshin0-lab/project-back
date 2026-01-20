@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.admin.mapper.AdminCategoryMapper">
+
+    <select id="findAllCategories" resultType="kr.co.kosmo.project_back.admin.dto.CategoryDto">
+        SELECT
+            id,
+            category_name AS categoryName,
+            parent_id AS parentId,
+            depth
+        FROM Bg_Interest_category
+        ORDER BY depth, id
+    </select>
+
+    <insert id="insertCategory" parameterType="kr.co.kosmo.project_back.admin.dto.CategoryDto"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Bg_Interest_category (category_name, parent_id, depth)
+        VALUES (#{categoryName}, #{parentId}, #{depth})
+    </insert>
+
+    <update id="updateCategory" parameterType="kr.co.kosmo.project_back.admin.dto.CategoryDto">
+        UPDATE Bg_Interest_category
+        SET category_name = #{categoryName},
+            parent_id = #{parentId},
+            depth = #{depth}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteCategory" parameterType="int">
+        DELETE FROM Bg_Interest_category WHERE id = #{id}
+    </delete>
+
+    <!-- 특정 카테고리의 모든 하위 카테고리 ID 목록 조회 (재귀 CTE 사용) -->
+    <select id="findDescendantCategoryIds" parameterType="int" resultType="int">
+        WITH RECURSIVE category_tree AS (
+            -- 시작 노드 (선택한 카테고리)
+            SELECT id, parent_id, depth
+            FROM Bg_Interest_category
+            WHERE id = #{categoryId}
+            
+            UNION ALL
+            
+            -- 하위 카테고리들
+            SELECT c.id, c.parent_id, c.depth
+            FROM Bg_Interest_category c
+            INNER JOIN category_tree ct ON c.parent_id = ct.id
+        )
+        SELECT id FROM category_tree
+        WHERE id != #{categoryId}  -- 자기 자신은 제외 (하위 카테고리만)
+    </select>
+
+</mapper>

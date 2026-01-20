@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.admin.mapper.AdminUserMapper">
+
+    <select id="countUserList" parameterType="kr.co.kosmo.project_back.admin.dto.UserSearchDto" resultType="int">
+        SELECT COUNT(*)
+        FROM Bg_User
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND date(created_at) &gt;= date(#{startDate})
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND date(created_at) &lt;= date(#{endDate})
+            </if>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="keywordType == 'loginId'">
+                        AND login_id LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <when test="keywordType == 'name'">
+                        AND user_name LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <when test="keywordType == 'email'">
+                        AND email LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <otherwise>
+                        AND (login_id LIKE '%' || #{keyword} || '%' 
+                             OR user_name LIKE '%' || #{keyword} || '%' 
+                             OR email LIKE '%' || #{keyword} || '%')
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="findUserList" parameterType="kr.co.kosmo.project_back.admin.dto.UserSearchDto"
+            resultType="kr.co.kosmo.project_back.admin.dto.AdminUserResponseDto">
+        SELECT
+            u.id,
+            u.login_id AS loginId,
+            u.user_name AS userName,
+            u.email,
+            u.phone,
+            u.created_at AS createdAt,
+            u.last_login_at AS lastLoginAt
+        FROM Bg_User u
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND date(u.created_at) &gt;= date(#{startDate})
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND date(u.created_at) &lt;= date(#{endDate})
+            </if>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="keywordType == 'loginId'">
+                        AND u.login_id LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <when test="keywordType == 'name'">
+                        AND u.user_name LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <when test="keywordType == 'email'">
+                        AND u.email LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <otherwise>
+                        AND (u.login_id LIKE '%' || #{keyword} || '%' 
+                             OR u.user_name LIKE '%' || #{keyword} || '%' 
+                             OR u.email LIKE '%' || #{keyword} || '%')
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        ORDER BY u.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findById" parameterType="int"
+            resultType="kr.co.kosmo.project_back.admin.dto.AdminUserResponseDto">
+        SELECT
+            u.id,
+            u.login_id AS loginId,
+            u.user_name AS userName,
+            u.email,
+            u.phone,
+            u.created_at AS createdAt,
+            u.last_login_at AS lastLoginAt
+        FROM Bg_User u
+        WHERE u.id = #{id}
+    </select>
+
+</mapper>
+

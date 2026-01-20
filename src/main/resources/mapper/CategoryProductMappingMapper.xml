@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.admin.mapper.CategoryProductMappingMapper">
+
+    <delete id="deleteByProductId" parameterType="int">
+        DELETE FROM Bg_Category_product_mapping
+        WHERE product_id = #{productId}
+    </delete>
+
+    <insert id="insertMappings">
+        INSERT INTO Bg_Category_product_mapping (product_id, interest_category_id)
+        VALUES
+        <foreach collection="categoryId" item="catId" separator=",">
+            (#{productId}, #{catId})
+        </foreach>
+    </insert>
+
+    <select id="findCategoryIdsByProductId" parameterType="int" resultType="int">
+        SELECT interest_category_id
+        FROM Bg_Category_product_mapping
+        WHERE product_id = #{productId}
+    </select>
+
+</mapper>
+
+
+
+
