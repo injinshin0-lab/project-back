@@ -95,10 +95,23 @@ public class OrderService {
             
             String statusMsg = "";
             switch(newStatus) {
-                case "PREPARING": statusMsg = "상품 준비를 시작했습니다."; break;
-                case "SHIPPED":   statusMsg = "상품 배송이 시작되었습니다."; break;
-                case "DELIVERED": statusMsg = "배송이 완료되었습니다."; break;
-                default:          statusMsg = "[" + newStatus + "] 상태로 변경되었습니다.";
+                case "결제 완료": 
+                    statusMsg = "결제가 정상적으로 완료되었습니다."; 
+                    break;
+                case "상품 준비중": 
+                    statusMsg = "상품 준비를 시작했습니다."; 
+                    break;
+                case "배송 중": 
+                    statusMsg = "상품 배송이 시작되었습니다. 조금만 기다려주세요!"; 
+                    break;
+                case "배송 완료": 
+                    statusMsg = "배송이 완료되었습니다. 상품은 만족스러우신가요?"; 
+                    break;
+                case "주문 취소": 
+                    statusMsg = "주문이 취소되었습니다. 이용해 주셔서 감사합니다."; 
+                    break;
+                default: 
+                    statusMsg = "주문 상태가 [" + newStatus + "]로 변경되었습니다.";
             }
             
             alarm.setMessage(String.format("[%s] %s", orderNo, statusMsg));
