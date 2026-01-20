@@ -1,5 +1,7 @@
 package kr.co.kosmo.project_back.user.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,7 @@ public class UserDto {
     private String email;
     private String phone;
     private String role;
+    private List<Integer> categoryIds;
     private String createdAt;
     private String updatedAt;
     private String lastLoginAt;

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.kosmo.project_back.order.mapper.OrderMapper;
 import kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto;
+import kr.co.kosmo.project_back.review.dto.response.MyReviewResponseDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewResponseDto;
 import kr.co.kosmo.project_back.review.mapper.ReviewImageMapper;
 import kr.co.kosmo.project_back.review.mapper.ReviewMapper;
@@ -72,14 +73,15 @@ public class ReviewService {
         try {
             String original = file.getOriginalFilename();
             String ext = "";
+            if(original != null && original.contains(".")) {
+                ext = original.substring(original.lastIndexOf("."));
+            }
+
             String fileName = UUID.randomUUID() + ext;
 
             // 프로젝트 루트 기준 절대경로 만들기
-            String projectRoot = new File("").getAbsolutePath(); // 실행 기준(프로젝트 폴더)
-            String dirPath = projectRoot + File.separator + reviewUploadPath
-                + File.separator + LocalDate.now().getYear()
-                + File.separator + String.format("%02d", LocalDate.now().getMonthValue());
-            
+            String datePath = LocalDate.now().getYear() + "/" + String.format("%02d", LocalDate.now().getMonthValue());
+            String dirPath = reviewUploadPath + "reviews/" + datePath;
             File dir = new File(dirPath);
             if(!dir.exists()) dir.mkdirs();
 
@@ -88,10 +90,7 @@ public class ReviewService {
             file.transferTo(saveFile);
 
             // DB 저장 URL
-            return "/uploads/reviews/"
-                    + LocalDate.now().getYear() + "/"
-                    + String.format("%02d", LocalDate.now().getMonthValue())
-                    + "/" + fileName;
+            return "/uploads/reviews/" + datePath + "/" + fileName;
 
         } catch (Exception e) {
             throw new RuntimeException("리뷰 이미지 저장 실패", e);
@@ -105,5 +104,10 @@ public class ReviewService {
     // 리뷰 삭제
     public void deleteReview(Long reviewId) {
         reviewMapper.deleteReview(reviewId);
+    }
+
+    // 내 리뷰 조회
+    public List<MyReviewResponseDto> getMyReviews(Integer userId) {
+        return reviewMapper.findReviewsByUserId(userId);
     }
 }

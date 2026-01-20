@@ -28,6 +28,11 @@
         ORDER BY created_at ASC
     </select>
 
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteByReviewId" parameterType="long">
+        DELETE FROM Bg_Review_Image
+        WHERE review_id = #{reviewId}
+    </delete>
 
 </mapper>
 

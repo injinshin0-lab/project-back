@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kosmo.project_back.recommendation.mapper.RecommendationMapper">
+
+    <!-- 인기 상품 추천(최근 판매량 기준) -->
+    <select id="findTop10ByUserId"
+            parameterType="int"
+            resultType="kr.co.kosmo.project_back.recommendation.dto.RecommendationResponseDto">
+        SELECT 
+            p.id                AS productId,
+            p.product_name      AS productName,
+            p.origin_name       AS originName,
+            p.content           AS content,
+            p.price             AS price,
+            p.image_url         AS imageUrl,
+            ROW_NUMBER() OVER (ORDER BY SUM(oi.amount) DESC) AS rank 
+        FROM Bg_Order_item oi 
+        JOIN Bg_Product p 
+            ON oi.product_id = p.id 
+        GROUP BY p.id 
+        ORDER BY SUM(oi.amount) DESC
+        LIMIT 10 
+    </select>
+
+    <!-- 개인별 맞춤 추천 -->
+    <select id="findByUserInterest"
+            parameterType="int"
+            resultType="kr.co.kosmo.project_back.recommendation.dto.RecommendationResponseDto">
+        SELECT DISTINCT
+            p.id                AS productId,
+            p.product_name      AS productName,
+            p.origin_name       AS originName,
+            p.content           AS content,
+            p.price             AS price,
+            p.image_url         AS imageUrl,
+            0                   AS rank 
+        FROM Bg_Product p
+        JOIN Bg_Category_product_mapping cpm 
+            ON p.id = cpm.product_id 
+        JOIN Bg_User_category_mapping ucm 
+            ON cpm.interest_category_id = ucm.interest_category_id 
+        WHERE ucm.user_id = #{userId} 
+    </select>
+
+    <!-- 구매이력 상품 아이디 목록 -->
+    <select id="findPurchasedProductIds" parameterType="int" resultType="int">
+        SELECT DISTINCT oi.product_id 
+        FROM Bg_Order_item oi
+        JOIN Bg_Order o 
+            ON oi.order_id = o.id 
+        WHERE o.user_id = #{userId} 
+            AND o.order_status = '결제 완료'
+    </select>
+
+    <!-- 찜한 상품 아이디 목록 -->
+    <select id="findWishProductIds" parameterType="int" resultType="int">
+        SELECT product_id 
+        FROM Bg_Wishlist 
+        WHERE user_id = #{userId} 
+    </select>
+
+    <!-- 장바구니 상품 아이디 목록 -->
+    <select id="findCartProductIds" parameterType="int" resultType="int">
+        SELECT product_id
+        FROM Bg_cart 
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 최근 본 상품 아이디 목록 -->
+    <select id="findRecentViewedProductIds" parameterType="int" resultType="int">
+        SELECT product_id
+        FROM Bg_Recent_product
+        WHERE user_id = #{userId} 
+    </select>
+
+    <!-- AI 추천 결과 저장 -->
+
+    <!-- 기존 추천 삭제 -->
+    <delete id="deleteAiRecommendationByUser" parameterType="int">
+        DELETE FROM Bg_AI_recommendation 
+        WHERE user_id = #{userId} 
+    </delete>
+
+    <!-- 추천 결과 저장 -->
+    <insert id="insertAiRecommendation">
+        INSERT INTO Bg_AI_recommendation 
+        (user_id, product_id, score, created_at)
+        VALUES 
+        (#{userId}, #{productId}, #{score}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <!-- 저장된 추천 조회 -->
+    <select id="findAiRecommendationByUser"
+            parameterType="int"
+            resultType="kr.co.kosmo.project_back.recommendation.dto.RecommendationResponseDto">
+        SELECT
+            p.id                AS productId,
+            p.product_name      AS productName,
+            p.origin_name       AS originName,
+            p.content           AS content,
+            p.price             AS price,
+            p.image_url         AS imageUrl,
+            r.score             AS rank 
+        FROM Bg_AI_recommendation r 
+        JOIN Bg_Product p ON r.product_id = p.id 
+        WHERE r.user_id = #{userId}    
+        ORDER BY r.score DESC 
+    </select>
+
+</mapper>
+

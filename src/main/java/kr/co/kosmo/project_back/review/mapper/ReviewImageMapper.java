@@ -14,4 +14,6 @@ public interface ReviewImageMapper {
         @Param("imageUrl") String imageUrl 
     );  
     List<ReviewImageDto> findByReviewId(@Param("reviewId") Long reviewId);
+    // 탈퇴용
+    void deleteByReviewId(@Param("reviewId")Long reviewId);
 }

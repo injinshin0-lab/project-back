@@ -13,6 +13,13 @@ public class OrderRequestDto {
     private Integer userId;
     private Integer addressId;
     private Integer shippingAddressId;
+
+    private String postcode;
+    private String address1;
+    private String address2;
+    private String recipient;
+    private String recipientPhone;
+    
     private String paymentMethod;
     private Boolean useCartItems;
     // 바로주문

@@ -34,6 +34,9 @@ build/
 
 # sqlite database
 db/*.db
+db/*.db-shm
+db/*.db-wal
+db/*.sqbpro
 
 # local spring config
 src/main/resources/application.properties

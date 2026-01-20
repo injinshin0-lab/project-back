@@ -16,7 +16,7 @@
 
     <!-- 회원 관심분야 조회 -->
     <select id="findUserCategory" resultType="int">
-        SELECT category_id
+        SELECT interest_category_id
         FROM Bg_User_category_mapping
         WHERE user_id = #{userId}
     </select>
@@ -26,5 +26,7 @@
         DELETE FROM Bg_User_category_mapping
         WHERE user_id = #{userId}
     </delete>
+
+    
 
 </mapper>

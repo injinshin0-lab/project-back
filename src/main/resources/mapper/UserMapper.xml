@@ -41,7 +41,7 @@
         WHERE login_id = #{loginId}
     </select>
 
-    <!-- 자동로그인용: id로 회원 조회 -->
+    <!-- 자동로그인용 : id로 회원 조회 -->
     <select id="selectById"
             parameterType="int"
             resultType="kr.co.kosmo.project_back.user.dto.UserDto">
@@ -83,4 +83,34 @@
         SET last_login_at = CURRENT_TIMESTAMP
         WHERE id = #{userId} 
     </update>
+
+    <!-- 마이페이지 - 회원 정보 수정 -->
+    <update id="updateUserInfo">
+        UPDATE Bg_User
+        <set>
+            <if test="dto.userName != null">
+                user_name = #{dto.userName},
+            </if>
+            <if test="dto.phone != null">
+                phone = #{dto.phone},
+            </if>
+            updated_at = CURRENT_TIMESTAMP
+        </set>
+        WHERE id = #{userId} 
+    </update>
+
+    <!-- 마이페이지 비번 변경 -->
+     <update id="updatePasswordByUserId">
+        UPDATE Bg_User
+        SET password = #{password},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{userId}
+     </update>
+
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM Bg_User
+        WHERE id = #{userId}
+    </delete>
+
 </mapper>

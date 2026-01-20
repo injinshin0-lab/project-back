@@ -5,44 +5,81 @@
 
 <mapper namespace="kr.co.kosmo.project_back.address.mapper.AddressMapper">
 
+    <!-- 주소 목록 조회 -->
     <select id="selectAddressesByUserId" 
         resultType="kr.co.kosmo.project_back.address.dto.AddressDto">
         SELECT 
             id,
-            user_id as userId,
+            user_id         AS userId,
             recipient,
+            recipient_phone AS recipientPhone,
             postcode,
             address,
-            detail_address as detailAddress,
-            recipient_phone as recipientPhone,
-            is_default as isDefault
+            detail_address  AS detailAddress,
+            is_default      AS isDefault
         FROM Bg_Address
         WHERE user_id = #{userId}
         ORDER BY is_default DESC, id DESC
     </select>
 
+    <!-- 주소 추가 -->
     <insert id="insertAddress"
-            parameterType="kr.co.kosmo.project_back.address.dto.AddressDto">
-        INSERT INTO Bg_Address
-        (
+            parameterType="kr.co.kosmo.project_back.address.dto.AddressDto"
+            useGeneratedKeys="true" 
+            keyProperty="id">
+        INSERT INTO Bg_Address (
             user_id,
             recipient,
+            recipient_phone,
             postcode,
             address,
             detail_address,
-            recipient_phone,
             is_default
-        )
-        VALUES
-        (
+        ) VALUES (
             #{userId},
             #{recipient},
+            #{recipientPhone},
             #{postcode},
             #{address},
             #{detailAddress},
-            #{recipientPhone},
             #{isDefault}
         )
     </insert>
+
+    <!-- 주소 수정 -->
+   <update id="updateAddress">
+        UPDATE Bg_Address
+        <set>
+            <if test="recipient != null">recipient = #{recipient},</if>
+            <if test="recipientPhone != null">recipient_phone = #{recipientPhone},</if>
+            <if test="postcode != null">postcode = #{postcode},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="detailAddress != null">detail_address = #{detailAddress},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+            id = #{id}
+        </set>
+        WHERE id = #{id} 
+            AND user_id = #{userId} 
+    </update>
+
+    <!-- 주소 삭제 -->
+    <delete id="deleteAddress">
+        DELETE FROM Bg_Address
+        WHERE id = #{addressId} 
+            AND user_id = #{userId} 
+    </delete>
+
+    <!-- 기본 배송지 해제 -->
+    <update id="clearDefaultAddress">
+        UPDATE Bg_Address
+        SET is_default = 0
+        WHERE user_id = #{userId} 
+    </update>
+
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteByUserId" parameterType="int">
+        DELETE FROM Bg_Address
+        WHERE user_id = #{userId}
+    </delete>
 
 </mapper>
