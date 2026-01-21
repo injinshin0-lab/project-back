@@ -34,16 +34,13 @@ public class RecommendationController {
         return ResponseEntity.ok(response);
     }
     // 개인 맞춤 추천
+
     @GetMapping("/personal")
     public ResponseEntity<Map<String, Object>> getPersonalRecommendations(HttpSession session) {
-        // 사용자 정보 가져오기
+        // 1. 세션에서 로그인 유저 가져오기
         Integer userId = (Integer) session.getAttribute("LOGIN_USER");
-        if(userId == null) {
-            return ResponseEntity.status(401).build();
-        }
         
-        List<RecommendationResponseDto> recommendations = 
-            recommendationService.getPersonalRecommendations(userId);
+        List<RecommendationResponseDto> recommendations = recommendationService.getPersonalRecommendations(userId);
         Map<String, Object> response = new HashMap<>();
         response.put("recommendations", recommendations);
         response.put("type", "personal");

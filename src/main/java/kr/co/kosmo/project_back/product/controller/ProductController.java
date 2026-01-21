@@ -85,4 +85,12 @@ public class ProductController {
             productService.getPopularKeywords()
         );
     }
+
+    // 인기 상품
+    @GetMapping("/popular")
+    public ResponseEntity<List<ProductDto>> getPopularProducts() {
+        List<ProductDto> products = productService.getPopularProducts();
+        return ResponseEntity.ok(products);
+    }
+
 }

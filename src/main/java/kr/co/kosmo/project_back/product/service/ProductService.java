@@ -63,6 +63,11 @@ public class ProductService {
     public List<String> getPopularKeywords() {
         return searchMapper.findPopularKeywords();
     }
+
+    // 인기 상품
+    public List<ProductDto> getPopularProducts() {
+        return productMapper.findTopSalesProducts();
+    }
 }
 
     
