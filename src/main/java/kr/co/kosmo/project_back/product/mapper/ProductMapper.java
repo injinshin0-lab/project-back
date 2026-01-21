@@ -16,4 +16,7 @@ public interface ProductMapper {
     // 상품검색 + 목록
     int countProductList(ProductSearchDto searchDto);
     List<ProductDto> findProductList(ProductSearchDto searchDto);
+
+    // 인기 상품 전용 메서드 추가
+    List<ProductDto> findTopSalesProducts();
 }

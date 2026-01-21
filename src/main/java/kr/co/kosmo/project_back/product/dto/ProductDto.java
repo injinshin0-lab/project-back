@@ -12,7 +12,9 @@ public class ProductDto {
     private Integer price;
     private String originName;
     private String imageUrl;
-    private Boolean iswished;   
+    private Boolean iswished;
+    private Integer salesCount;
 }
+
 
 // 결과용 DTO (검색 조건 X)

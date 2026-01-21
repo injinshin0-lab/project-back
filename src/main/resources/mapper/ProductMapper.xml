@@ -87,6 +87,22 @@
         WHERE id = #{productId} 
     </select>
 
+    <!-- 인기순 -->
+    <select id="findTopSalesProducts" resultType="kr.co.kosmo.project_back.product.dto.ProductDto">
+        SELECT 
+            p.id as productId,
+            p.product_name as productName,
+            p.price as price,
+            p.image_url as imageUrl,
+            /* 해당 상품이 주문된 총 수량을 합산 */
+            IFNULL(SUM(oi.amount), 0) as salesCount
+        FROM Bg_Product p
+        LEFT JOIN Bg_Order_item oi ON p.id = oi.product_id
+        GROUP BY p.id
+        ORDER BY salesCount DESC
+        LIMIT 4
+    </select>
+
 
 </mapper>
         

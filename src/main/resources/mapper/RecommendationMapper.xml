@@ -93,21 +93,18 @@
     </insert>
 
     <!-- 저장된 추천 조회 -->
-    <select id="findAiRecommendationByUser"
-            parameterType="int"
-            resultType="kr.co.kosmo.project_back.recommendation.dto.RecommendationResponseDto">
-        SELECT
-            p.id                AS productId,
-            p.product_name      AS productName,
-            p.origin_name       AS originName,
-            p.content           AS content,
-            p.price             AS price,
-            p.image_url         AS imageUrl,
-            r.score             AS rank 
-        FROM Bg_AI_recommendation r 
-        JOIN Bg_Product p ON r.product_id = p.id 
-        WHERE r.user_id = #{userId}    
-        ORDER BY r.score DESC 
+
+    <select id="findAiRecommendationByUser" resultType="kr.co.kosmo.project_back.recommendation.dto.RecommendationResponseDto">
+        SELECT 
+            p.id as productId,
+            p.product_name as productName,
+            p.price as price,
+            p.image_url as imageUrl,
+            r.score as rank  FROM Bg_AI_recommendation r
+        JOIN Bg_Product p ON r.product_id = p.id
+        WHERE r.user_id = #{userId}
+        ORDER BY r.score DESC
+        
     </select>
 
 </mapper>
