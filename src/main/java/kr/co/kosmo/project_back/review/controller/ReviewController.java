@@ -55,6 +55,14 @@ public class ReviewController {
                 .body(new ReviewCreateResponseDto(null, "로그인이 필요합니다."));
         }
 
+        // ✅ 추가: 구매 확정 상태 확인 로직
+        // orderService에 해당 상품을 구매했는지 확인하는 메서드가 있어야 합니다.
+        boolean canReview = orderService.canUserReview(userId, productId);
+        if (!canReview) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ReviewCreateResponseDto(null, "상품을 구매한 고객(배송 완료 등)만 리뷰 작성이 가능합니다."));
+        }
+
         // 이미지 제한
         if( dto.getImages() != null ) {
             if(dto.getImages().size() > 5) {

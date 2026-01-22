@@ -1,6 +1,7 @@
 package kr.co.kosmo.project_back.question.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,5 +51,18 @@ public class QuestionController {
             }
             questionService.insertQuestion(userId, dto);
             return ResponseEntity.status(HttpStatus.CREATED).build(); 
+    }
+
+    @GetMapping("/search-products")
+    public ResponseEntity<List<Map<String, Object>>> searchProducts(
+            HttpSession session,
+            @RequestParam String keyword
+    ) {
+        Integer userId = (Integer) session.getAttribute("LOGIN_USER");
+        if(userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        
+        // Service에 keyword와 userId를 전달하여 검색 결과 반환
+        List<Map<String, Object>> results = questionService.searchProducts(userId, keyword);
+        return ResponseEntity.ok(results);
     }
 }

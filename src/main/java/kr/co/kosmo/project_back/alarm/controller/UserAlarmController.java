@@ -50,6 +50,25 @@ public class UserAlarmController {
         alarmService.deleteAlarm(notificationId);
         return ResponseEntity.noContent().build();
     }
+
+    // ✅ 알림 설정 조회 추가
+    @GetMapping("/settings/{userId}/notifications")
+    public ResponseEntity<AlarmSettingDto> getSettings(
+            @PathVariable Integer userId,
+            HttpSession session) {
+        Integer loginUserId = (Integer) session.getAttribute("LOGIN_USER");
+        if (loginUserId == null) {
+            return ResponseEntity.status(401).build();
+        }
+        if (!loginUserId.equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        // AlarmService에 해당 메서드가 구현되어 있는지 확인 (이미 mapper에는 findSettingsByUserId가 있음)
+        AlarmSettingDto settings = alarmService.getSettings(userId); 
+        return ResponseEntity.ok(settings);
+    }
+    
     // 알림 설정
     @PutMapping("/settings/{userId}/notifications")
     public ResponseEntity<Void> updateSettings(

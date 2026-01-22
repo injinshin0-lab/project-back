@@ -75,7 +75,7 @@
             ON o.id = oi.order_id 
         WHERE o.user_id = #{userId}
             AND oi.product_id = #{productId} 
-            AND TRIM(o.order_status) = '결제 완료'
+            AND TRIM(o.order_status) IN ('결제 완료', '상품 준비중', '배송 중', '배송 완료')
     </select>
 
     <!-- 마이페이지 주문 내역 조회 -->

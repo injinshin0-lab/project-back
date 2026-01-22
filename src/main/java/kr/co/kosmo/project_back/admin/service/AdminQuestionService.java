@@ -25,6 +25,8 @@ public class AdminQuestionService {
         Integer totalCount = questionMapper.countQuestionList(searchDto);
         Integer totalPage = (int) Math.ceil((double) totalCount / searchDto.getSize());
         
+        searchDto.setOffset((searchDto.getPage() - 1) * searchDto.getSize());
+        
         List<QuestionResponseDto> questionList = questionMapper.findQuestionList(searchDto);
         
         // 각 질문에 이미지 리스트 추가
@@ -76,10 +78,3 @@ public class AdminQuestionService {
         return result;
     }
 }
-
-
-
-
-
-
-

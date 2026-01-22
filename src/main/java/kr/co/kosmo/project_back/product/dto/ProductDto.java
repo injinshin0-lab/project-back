@@ -1,5 +1,7 @@
 package kr.co.kosmo.project_back.product.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +16,7 @@ public class ProductDto {
     private String imageUrl;
     private Boolean iswished;
     private Integer salesCount;
+    private List<String> categoryNames;
 }
 
 

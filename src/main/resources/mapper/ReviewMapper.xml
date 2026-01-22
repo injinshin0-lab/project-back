@@ -27,7 +27,8 @@
             r.rating,
             r.created_at  AS createdAt, 
             ri.id         AS reviewImageId,
-            ri.image_url  AS imageUrl
+            ri.image_url  AS imageUrl,
+            (SELECT COUNT(*) FROM Bg_Review_Image WHERE review_id = r.id) AS imageCount
         FROM Bg_Review r
         LEFT JOIN Bg_Review_Image ri
             ON r.id = ri.review_id
@@ -35,20 +36,14 @@
         GROUP BY r.id
         ORDER BY 
         <choose>
-            <!-- 사진 리뷰 우선 -->
+            <when test="sort == 'rating_desc'">
+                r.rating DESC, r.created_at DESC </when>
+            <when test="sort == 'rating_asc'">
+                r.rating ASC, r.created_at DESC  </when>
             <when test="sort == 'photo'">
-                imageCount DESC,
-                r.created_at DESC
-            </when>
-            <!-- 평점순 -->
-            <when test="sort == 'rating'">
-                r.rating DESC,
-                r.created_at DESC
-            </when>
-            <!-- 최신순 -->
+                imageCount DESC, r.created_at DESC </when>
             <otherwise>
-                r.created_at DESC 
-            </otherwise>
+                r.created_at DESC </otherwise>
         </choose>
     </select>
 

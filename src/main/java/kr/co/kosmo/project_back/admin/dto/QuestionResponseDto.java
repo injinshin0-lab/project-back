@@ -15,6 +15,7 @@ import lombok.Setter;
 public class QuestionResponseDto {
     private Integer id;
     private Integer userId;
+    private String userName;
     private Integer productId;
     private String title;
     private String content;
