@@ -58,6 +58,32 @@
         </selectKey>
     </insert>
 
+    <select id="searchProductOrOrder" resultType="map">
+        SELECT DISTINCT
+            p.id AS productId,
+            p.product_name AS productName,
+            'PRODUCT' AS type,
+            NULL AS orderNo
+        FROM Bg_Product p
+        WHERE p.product_name LIKE '%' || #{keyword} || '%'
+        
+        UNION ALL
+
+        /* 사용자의 주문 번호 및 해당 주문의 상품 검색 */
+        SELECT 
+            p.id AS productId,
+            p.product_name AS productName,
+            'ORDER' AS type,
+            'ORD-' || o.id AS orderNo
+        FROM Bg_Order o
+        JOIN Bg_Order_Item oi ON o.id = oi.order_id
+        JOIN Bg_Product p ON oi.product_id = p.id
+        WHERE o.user_id = #{userId}
+        AND ('ORD-' || o.id LIKE '%' || #{keyword} || '%' 
+            OR p.product_name LIKE '%' || #{keyword} || '%')
+        LIMIT 15
+    </select>
+
     <!-- 회원 탈퇴 -->
     <select id="findQuestionIdsByUserId" parameterType="int" resultType="long">
         SELECT id 
@@ -78,13 +104,12 @@
         WHERE id = #{questionId} 
     </select>
 
+    <select id="findAnswerByQuestionId" resultType="kr.co.kosmo.project_back.admin.dto.QuestionAnswerDto">
+        SELECT 
+            question_id as questionid,
+            content
+        FROM Bg_Answer
+        WHERE question_id = #{questionId}
+    </select>
+
 </mapper>
-
-
-
-
-
-
-
-
-

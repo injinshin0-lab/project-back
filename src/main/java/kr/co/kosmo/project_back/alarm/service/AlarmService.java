@@ -22,6 +22,11 @@ public class AlarmService {
     public void deleteAlarm(Integer alarmId) {
         alarmMapper.deleteAlarm(alarmId);
     }
+
+    public AlarmSettingDto getSettings(Integer userId) {
+        return alarmMapper.findSettingsByUserId(userId);
+    }
+
     // 알림 설정 
     public void updateSettings(AlarmSettingDto dto) {
         AlarmSettingDto current = alarmMapper.findSettingsByUserId(dto.getUserId());
@@ -66,7 +71,7 @@ public class AlarmService {
         alarm.setUserId(userId);
         alarm.setType("ORDER");
         // 메시지에 주문 번호 등을 포함
-        alarm.setMessage("주문(" + orderId + ")이 정상적으로 완료되었습니다."); 
+        alarm.setMessage("[" + orderId + "] 결제 완료되었습니다.");
         alarmMapper.insertAlarm(alarm);
     }
     
@@ -91,13 +96,4 @@ public class AlarmService {
     public void markAllAsRead(Integer userId) {
         alarmMapper.updateAllReadStatus(userId);
     }
-
-    // 관리자 직접 알림 추가
-    // public void insertAdminAlarm(Integer userId, String message) {
-    //     AlarmDto alarm = new AlarmDto();
-    //     alarm.setUserId(userId);
-    //     alarm.setType("ADMIN");
-    //     alarm.setMessage(message);
-    //     alarmMapper.insertAlarm(alarm);
-    // }
 }

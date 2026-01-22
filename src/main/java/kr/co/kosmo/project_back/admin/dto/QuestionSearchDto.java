@@ -18,6 +18,7 @@ public class QuestionSearchDto {
     private String keyword;
     private Integer size = 10;
     private Integer page = 1;
+    private Integer offset;
 
     public Integer getOffset() {
         return (page - 1) * size;

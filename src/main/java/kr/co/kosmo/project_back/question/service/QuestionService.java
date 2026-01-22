@@ -3,6 +3,7 @@ package kr.co.kosmo.project_back.question.service;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -33,11 +34,13 @@ public class QuestionService {
         // 문의 목록 조회
         List<QuestionResponseDto> questions = 
             questionMapper.findQuestionByUserId(userId, status, type);
+
         // 각 문의에 이미지 붙이기
         for(QuestionResponseDto dto : questions) {
             dto.setQuestionImages(
                 questionImageMapper.findImagesByQuestionId(dto.getQuestionId())
             );
+            dto.setAnswer(questionMapper.findAnswerByQuestionId(dto.getQuestionId()));
         }
         return questions;
     }
@@ -84,6 +87,10 @@ public class QuestionService {
         } catch (Exception e) {
             throw new RuntimeException("문의 이미지 저장 실패", e);
         }
+    }
+
+    public List<Map<String, Object>> searchProducts(Integer userId, String keyword) {
+        return questionMapper.searchProductOrOrder(userId, keyword);
     }
 
 

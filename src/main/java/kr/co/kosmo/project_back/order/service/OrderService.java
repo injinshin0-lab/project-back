@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.kosmo.project_back.address.mapper.AddressMapper;
 import kr.co.kosmo.project_back.alarm.dto.AlarmDto;
+import kr.co.kosmo.project_back.alarm.dto.AlarmSettingDto;
 import kr.co.kosmo.project_back.alarm.mapper.AlarmMapper;
 import kr.co.kosmo.project_back.alarm.service.AlarmService;
 import kr.co.kosmo.project_back.cart.dto.CartDto;
@@ -77,16 +78,23 @@ public class OrderService {
 
         if (order == null) return;
 
-        String orderNo = "ORD-" + String.format("%03d", orderId);
-
-        
-        // 상태 업데이트
         orderMapper.updateOrderStatus(orderId, newStatus);
 
-        int duplicateCount = orderMapper.checkDuplicateAlarm(order.getUserId(), orderNo, newStatus);
+        String orderNo = "ORD-" + String.format("%03d", orderId);
+
+        String checkStatus = newStatus.replace(" ", "");
+
+        int duplicateCount = orderMapper.checkDuplicateAlarm(order.getUserId(), orderNo, checkStatus);
         
         // 중복이 아닐 때만 알림 생성
         if (duplicateCount == 0) {
+            AlarmSettingDto setting = alarmMapper.findSettingsByUserId(order.getUserId());
+
+            // 배송 알림 설정이 OFF(false)라면 여기서 리턴하여 중단
+            if (setting != null && Boolean.FALSE.equals(setting.getIsDeliveryEnabled())) {
+                return; 
+            }
+
             AlarmDto alarm = new AlarmDto();
             alarm.setUserId(order.getUserId());
             
@@ -96,19 +104,23 @@ public class OrderService {
             String statusMsg = "";
             switch(newStatus) {
                 case "결제 완료": 
-                    statusMsg = "결제가 정상적으로 완료되었습니다."; 
+                case "결제완료": 
+                    statusMsg = "결제 완료되었습니다. 정상적으로 처리되었습니다."; // "결제 완료" 키워드 포함
                     break;
                 case "상품 준비중": 
-                    statusMsg = "상품 준비를 시작했습니다."; 
+                case "상품준비중":
+                    statusMsg = "상품 준비중입니다. 조금만 기다려주세요."; // "상품 준비중" 키워드 포함
                     break;
                 case "배송 중": 
-                    statusMsg = "상품 배송이 시작되었습니다. 조금만 기다려주세요!"; 
+                case "배송중":
+                    statusMsg = "배송 중입니다. 상품 배송이 시작되었습니다!"; // "배송 중" 키워드 포함
                     break;
                 case "배송 완료": 
-                    statusMsg = "배송이 완료되었습니다. 상품은 만족스러우신가요?"; 
+                case "배송완료":
+                    statusMsg = "배송 완료되었습니다. 상품은 만족스러우신가요?"; // "배송 완료" 키워드 포함
                     break;
-                case "주문 취소": 
-                    statusMsg = "주문이 취소되었습니다. 이용해 주셔서 감사합니다."; 
+                case "주문취소": 
+                    statusMsg = "주문 취소되었습니다. 이용해 주셔서 감사합니다."; // "주문 취소" 키워드 포함
                     break;
                 default: 
                     statusMsg = "주문 상태가 [" + newStatus + "]로 변경되었습니다.";
@@ -210,7 +222,15 @@ public class OrderService {
                 "orders", orderList,
                 "pagination", Map.of(
                         "totalCount", orders.size()
-                )
-            );
-        }
+            )
+        );
     }
+
+    public boolean canUserReview(Integer userId, Integer productId) {
+        // mapper의 countCompletedOrder는 '결제 완료', '상품 준비중', '배송 중', '배송 완료'를 체크함
+        int count = orderMapper.countCompletedOrder(userId, productId);
+        return count > 0;
+    }
+}
+
+    

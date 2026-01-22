@@ -43,6 +43,7 @@
         SELECT 
             q.id, 
             q.user_id AS userId, 
+            u.user_name AS userName,
             q.product_id AS productId, 
             q.title, 
             q.content, 
@@ -53,6 +54,7 @@
             p.image_url AS productImageUrl
         FROM Bg_Question q
         LEFT JOIN Bg_Product p ON q.product_id = p.id
+        LEFT JOIN Bg_User u ON q.user_id = u.id
         <where>
             <if test="startDate != null and startDate != ''"> AND date(q.created_at) &gt;= date(#{startDate}) </if>
             <if test="endDate != null and endDate != ''"> AND date(q.created_at) &lt;= date(#{endDate}) </if>
@@ -95,7 +97,9 @@
     </insert>
 
     <update id="updateQuestionStatus" parameterType="int">
-        UPDATE Bg_Question SET question_status = 'ANSWERED' WHERE id = #{questionId}
+        UPDATE Bg_Question 
+        SET question_status = '답변완료' 
+        WHERE id = #{questionId}
     </update>
 
 </mapper>
