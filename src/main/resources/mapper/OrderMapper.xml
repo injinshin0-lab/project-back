@@ -8,19 +8,19 @@
     <!-- 주문 1건 생성 -->
     <insert id="insertOrder"
             parameterType="kr.co.kosmo.project_back.order.dto.OrderRequestDto">
-        INSERT INTO Bg_Order
+        INSERT INTO bg_order
             (user_id, payment_method, order_status, address_id, payment_price)
         VALUES
             (#{userId}, #{paymentMethod}, '결제 완료', #{addressId}, #{paymentPrice});
             <!-- 방금 생성된 값 가져오기 -->
         <selectKey keyProperty="orderId" resultType="int" order="AFTER">
-            SELECT last_insert_rowid()
+            SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
 
     <!-- 주문 상품 여러 건 생성 -->
     <insert id="insertOrderItems">
-        INSERT INTO Bg_Order_item
+        INSERT INTO bg_order_item
             (order_id, product_id, amount, price)
         VALUES
         <foreach collection="items" item="item" separator=",">
@@ -31,7 +31,7 @@
     <!-- 주문 내역 개수 조회(페이징) -->
     <select id="countOrderList" resultType="int" parameterType="kr.co.kosmo.project_back.order.dto.OrderSearchDto">
         SELECT COUNT(*)
-        FROM Bg_Order
+        FROM bg_order
         WHERE user_id = #{userId}
     </select>
 
@@ -46,7 +46,7 @@
             address_id      AS addressId,
             payment_price   AS totalPrice,
             created_at      AS createdAt
-        FROM Bg_Order
+        FROM bg_order
         WHERE user_id = #{userId}
         ORDER BY created_at DESC 
         LIMIT #{size} 
@@ -62,16 +62,16 @@
             p.product_name      AS productName,
             oi.price,
             oi.amount           AS quantity
-        FROM Bg_Order_item oi
-        JOIN Bg_Product p ON p.id = oi.product_id 
+        FROM bg_order_item oi
+        JOIN bg_product p ON p.id = oi.product_id 
         WHERE oi.order_id = #{orderId} 
     </select>
 
     <!-- 리뷰작성 가능 여부 확인 -->
     <select id="countCompletedOrder" resultType="int">
         SELECT COUNT(*)
-        FROM Bg_Order o 
-        JOIN Bg_Order_item oi
+        FROM bg_order o 
+        JOIN bg_order_item oi
             ON o.id = oi.order_id 
         WHERE o.user_id = #{userId}
             AND oi.product_id = #{productId} 
@@ -89,27 +89,27 @@
             address_id          AS addressId,
             payment_price       AS totalPrice,
             created_at          AS createdAt
-        FROM Bg_Order
+        FROM bg_order
         WHERE user_id = #{userId}
         ORDER BY created_at DESC
     </select>
 
     <select id="checkDuplicateAlarm" resultType="int">
         SELECT COUNT(*) 
-        FROM Bg_Alarm 
+        FROM bg_alarm 
         WHERE user_id = #{userId} 
-        AND message LIKE '%' || #{orderNo} || '%' 
-        AND message LIKE '%' || #{status} || '%'
+        AND message LIKE CONCAT('%', #{orderNo}, '%') 
+        AND message LIKE CONCAT('%', #{status}, '%')
     </select>
     
     <update id="updateOrderStatus">
-        UPDATE Bg_Order
+        UPDATE bg_order
         SET order_status = #{status}
         WHERE id = #{orderId}
     </update>
 
     <select id="findOrderById" resultType="kr.co.kosmo.project_back.order.dto.OrderResponseDto">
-        SELECT id AS orderId, user_id AS userId, order_status AS status FROM Bg_Order WHERE id = #{orderId}
+        SELECT id AS orderId, user_id AS userId, order_status AS status FROM bg_order WHERE id = #{orderId}
     </select>
 
 </mapper>

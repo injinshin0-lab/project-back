@@ -15,11 +15,11 @@
             title,
             content,
             created_at      AS createdAt
-        FROM Bg_Faq
+        FROM bg_faq
         <where>
             <if test="keyword != null and keyword != ''">
-                (title LIKE '%' || #{keyword} || '%'
-                    OR content LIKE '%' || #{keyword} || '%')
+                (title LIKE CONCAT('%', #{keyword}, '%')
+                    OR content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
         ORDER BY created_at DESC 
@@ -32,11 +32,11 @@
             resultType="int">
 
         SELECT COUNT(*)
-        FROM Bg_Faq 
+        FROM bg_faq 
         <where>
             <if test="keyword != null and keyword != ''">
-                (title LIKE '%' || #{keyword} || '%'
-                OR content LIKE '%' || #{keyword} || '%')
+                (title LIKE CONCAT('%', #{keyword}, '%')
+                OR content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
     </select>
@@ -50,7 +50,7 @@
             title,
             content,
             created_at      AS createdAt
-        FROM Bg_Faq
+        FROM bg_faq
         WHERE id = #{faqId} 
     </select>
 </mapper>

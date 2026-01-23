@@ -7,23 +7,23 @@
 
     <!-- 회원 관심분야 저장 -->
     <insert id="insertUserCategories">
-        INSERT INTO Bg_User_category_mapping (user_id, interest_category_id)
+        INSERT INTO bg_user_category_mapping (user_id, interest_category_id, created_at)
         VALUES
         <foreach collection="categoryIds" item="categoryId" separator=",">
-            (#{userId}, #{categoryId})
+            (#{userId}, #{categoryId}, NOW())
         </foreach>
     </insert>
 
     <!-- 회원 관심분야 조회 -->
     <select id="findUserCategory" resultType="int">
         SELECT interest_category_id
-        FROM Bg_User_category_mapping
+        FROM bg_user_category_mapping
         WHERE user_id = #{userId}
     </select>
 
     <!-- 회원 관심분야 삭제 -->
     <delete id="deleteCategoriesByUser">
-        DELETE FROM Bg_User_category_mapping
+        DELETE FROM bg_user_category_mapping
         WHERE user_id = #{userId}
     </delete>
 

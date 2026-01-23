@@ -7,21 +7,21 @@
 
     <select id="countOrderList" parameterType="kr.co.kosmo.project_back.admin.dto.OrderSearchDto" resultType="int">
         SELECT COUNT(DISTINCT o.id)
-        FROM Bg_Order o
-        LEFT JOIN Bg_User u ON o.user_id = u.id
+        FROM bg_order o
+        LEFT JOIN bg_user u ON o.user_id = u.id
         <if test="productName != null and productName != ''">
-            INNER JOIN Bg_Order_item oi ON o.id = oi.order_id
-            INNER JOIN Bg_Product p ON oi.product_id = p.id
+            INNER JOIN bg_order_item oi ON o.id = oi.order_id
+            INNER JOIN bg_product p ON oi.product_id = p.id
         </if>
         <where>
             <if test="userId != null">
                 AND o.user_id = #{userId}
             </if>
             <if test="loginId != null and loginId != ''">
-                AND u.login_id LIKE '%' || #{loginId} || '%'
+                AND u.login_id LIKE CONCAT('%', #{loginId}, '%')
             </if>
             <if test="productName != null and productName != ''">
-                AND p.product_name LIKE '%' || #{productName} || '%'
+                AND p.product_name CONCAT('%', #{productName}, '%')
             </if>
             <if test="status != null and status != ''">
                 AND o.order_status = #{status}
@@ -66,22 +66,22 @@
             o.payment_price AS totalPrice,
             o.order_status AS status,
             o.created_at AS createdAt
-        FROM Bg_Order o
-        LEFT JOIN Bg_User u ON o.user_id = u.id
-        LEFT JOIN Bg_Address a ON o.address_id = a.id
+        FROM bg_order o
+        LEFT JOIN bg_user u ON o.user_id = u.id
+        LEFT JOIN bg_address a ON o.address_id = a.id
         <if test="productName != null and productName != ''">
-            INNER JOIN Bg_Order_item oi ON o.id = oi.order_id
-            INNER JOIN Bg_Product p ON oi.product_id = p.id
+            INNER JOIN bg_order_item oi ON o.id = oi.order_id
+            INNER JOIN bg_product p ON oi.product_id = p.id
         </if>
         <where>
             <if test="userId != null">
                 AND o.user_id = #{userId}
             </if>
             <if test="loginId != null and loginId != ''">
-                AND u.login_id LIKE '%' || #{loginId} || '%'
+                AND u.login_id LIKE CONCAT('%', #{loginId}, '%')
             </if>
             <if test="productName != null and productName != ''">
-                AND p.product_name LIKE '%' || #{productName} || '%'
+                AND p.product_name LIKE CONCAT('%', #{productName}, '%')
             </if>
             <if test="status != null and status != ''">
                 AND o.order_status = #{status}
@@ -115,7 +115,7 @@
     </select>
 
     <update id="updateOrderStatus">
-        UPDATE Bg_Order
+        UPDATE bg_order
         SET order_status = #{status}
         WHERE id = #{orderId}
     </update>
@@ -135,9 +135,9 @@
             o.payment_price AS totalPrice,
             o.order_status AS status,
             o.created_at AS createdAt
-        FROM Bg_Order o
-        LEFT JOIN Bg_User u ON o.user_id = u.id
-        LEFT JOIN Bg_Address a ON o.address_id = a.id
+        FROM bg_order o
+        LEFT JOIN bg_user u ON o.user_id = u.id
+        LEFT JOIN bg_address a ON o.address_id = a.id
         WHERE o.id = #{orderId}
     </select>
 

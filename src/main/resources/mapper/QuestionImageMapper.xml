@@ -11,13 +11,13 @@
         SELECT
             qi.id           AS questionImageId,
             qi.image_url    AS imageUrl
-        FROM Bg_Question_Image qi
+        FROM bg_question_image qi
         WHERE qi.question_id = #{questionId}
     </select>
 
     <!-- 문의 이미지 저장 --> 
     <insert id="insertQuestionImage">
-        INSERT INTO Bg_Question_Image (
+        INSERT INTO bg_question_image (
             question_id,
             image_url
         ) VALUES (
@@ -28,7 +28,7 @@
 
     <!-- 회원 탈퇴 -->
     <delete id="deleteByQuestionId" parameterType="long">
-        DELETE FROM Bg_Question_Image
+        DELETE FROM bg_question_image
         WHERE question_id = #{questionId}
     </delete>
 

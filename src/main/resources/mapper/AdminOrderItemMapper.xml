@@ -14,9 +14,9 @@
             COALESCE(p.product_name, '상품명 없음') AS productName,
             oi.price AS price,
             COALESCE(p.image_url, '') AS imageUrl
-        FROM Bg_Order_item oi
-        LEFT JOIN Bg_Product p ON oi.product_id = p.id
-        LEFT JOIN Bg_Order o ON oi.order_id = o.id
+        FROM bg_order_item oi
+        LEFT JOIN bg_product p ON oi.product_id = p.id
+        LEFT JOIN bg_order o ON oi.order_id = o.id
         WHERE oi.order_id = #{orderId}
     </select>
 

@@ -5,7 +5,7 @@
 
 <mapper namespace="kr.co.kosmo.project_back.review.mapper.ReviewImageMapper">
     <insert id="insertReviewImage">
-        INSERT INTO Bg_Review_Image (
+        INSERT INTO bg_review_image (
             review_id,
             image_url,
             created_at
@@ -13,7 +13,7 @@
         VALUES (
             #{reviewId},
             #{imageUrl},
-            datetime('now','+9 hours')
+            DATE_ADD(NOW(), INTERVAL 9 HOUR)
         )
     </insert>
 
@@ -23,14 +23,14 @@
         SELECT 
             id              AS reviewImageId,
             image_url       AS imageUrl
-        FROM Bg_Review_Image
+        FROM bg_review_image
         WHERE review_id = #{reviewId}
         ORDER BY created_at ASC
     </select>
 
     <!-- 회원 탈퇴 -->
     <delete id="deleteByReviewId" parameterType="long">
-        DELETE FROM Bg_Review_Image
+        DELETE FROM bg_review_image
         WHERE review_id = #{reviewId}
     </delete>
 

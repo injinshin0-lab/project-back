@@ -15,8 +15,8 @@
             p.price,
             p.origin_name   AS originName,
             p.image_url     AS imageUrl
-        FROM Bg_Recent_product rp 
-        JOIN Bg_Product p ON rp.product_id = p.id 
+        FROM bg_recent_product rp 
+        JOIN bg_product p ON rp.product_id = p.id 
         WHERE rp.user_id = #{userId} 
         ORDER BY rp.viewed_at DESC 
         LIMIT 10
@@ -25,20 +25,20 @@
     <!-- 존재 여부 확인 -->
     <select id="existsRecentProduct" resultType="int">
         SELECT COUNT(*)
-        FROM Bg_Recent_product
+        FROM bg_recent_product
         WHERE user_id = #{userId} 
             AND product_id = #{productId}
     </select>
 
     <!-- 최근 본 상품 추가 -->
     <insert id="insertRecentProduct">
-        INSERT INTO Bg_Recent_product(user_id, product_id, viewed_at)
+        INSERT INTO bg_recent_product(user_id, product_id, viewed_at)
         VALUES (#{userId}, #{productId}, CURRENT_TIMESTAMP)
     </insert>
 
     <!-- 최근 본 상품 업뎃 -->
     <update id="updateRecentProduct">
-        UPDATE Bg_Recent_product
+        UPDATE bg_recent_product
         SET viewed_at = CURRENT_TIMESTAMP
         WHERE user_id = #{userId}
             AND product_id = #{productId}
@@ -47,25 +47,26 @@
     <!-- 최근 본 상품 갯수 -->
     <select id="countRecentProducts" resultType="int">
         SELECT COUNT(*)
-        FROM Bg_Recent_product
+        FROM bg_recent_product
         WHERE user_id = #{userId}
     </select>
 
     <!-- 10개 이상일 시 가장 오래된 1개 삭제 -->
     <delete id="deleteOldestRecentProduct">
-        DELETE FROM Bg_Recent_product
+        DELETE FROM bg_recent_product
         WHERE id = (
-            SELECT id
-            FROM Bg_Recent_product
-            WHERE user_id = #{userId}
-            ORDER BY viewed_at ASC 
-            LIMIT 1
+            SELECT temp.id FROM (
+                SELECT id FROM bg_recent_product
+                WHERE user_id = #{userId}
+                ORDER BY viewed_at ASC
+                LIMIT 1
+            ) AS temp
         )
     </delete>
 
     <!-- 회원 탈퇴 -->
     <delete id="deleteByUserId" parameterType="int">
-        DELETE FROM Bg_Recent_product
+        DELETE FROM bg_recent_product
         WHERE user_id = #{userId}
     </delete>
 

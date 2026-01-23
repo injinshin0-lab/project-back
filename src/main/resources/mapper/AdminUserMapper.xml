@@ -7,7 +7,7 @@
 
     <select id="countUserList" parameterType="kr.co.kosmo.project_back.admin.dto.UserSearchDto" resultType="int">
         SELECT COUNT(*)
-        FROM Bg_User
+        FROM bg_user
         <where>
             <if test="startDate != null and startDate != ''">
                 AND date(created_at) &gt;= date(#{startDate})
@@ -18,18 +18,18 @@
             <if test="keyword != null and keyword != ''">
                 <choose>
                     <when test="keywordType == 'loginId'">
-                        AND login_id LIKE '%' || #{keyword} || '%'
+                        AND login_id LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <when test="keywordType == 'name'">
-                        AND user_name LIKE '%' || #{keyword} || '%'
+                        AND user_name LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <when test="keywordType == 'email'">
-                        AND email LIKE '%' || #{keyword} || '%'
+                        AND email LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <otherwise>
-                        AND (login_id LIKE '%' || #{keyword} || '%' 
-                             OR user_name LIKE '%' || #{keyword} || '%' 
-                             OR email LIKE '%' || #{keyword} || '%')
+                        AND (login_id LIKE CONCAT('%', #{keyword}, '%') 
+                             OR user_name LIKE CONCAT('%', #{keyword}, '%') 
+                             OR email LIKE CONCAT('%', #{keyword}, '%'))
                     </otherwise>
                 </choose>
             </if>
@@ -46,7 +46,7 @@
             u.phone,
             u.created_at AS createdAt,
             u.last_login_at AS lastLoginAt
-        FROM Bg_User u
+        FROM bg_user u
         <where>
             <if test="startDate != null and startDate != ''">
                 AND date(u.created_at) &gt;= date(#{startDate})
@@ -57,18 +57,18 @@
             <if test="keyword != null and keyword != ''">
                 <choose>
                     <when test="keywordType == 'loginId'">
-                        AND u.login_id LIKE '%' || #{keyword} || '%'
+                        AND u.login_id LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <when test="keywordType == 'name'">
-                        AND u.user_name LIKE '%' || #{keyword} || '%'
+                        AND u.user_name LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <when test="keywordType == 'email'">
-                        AND u.email LIKE '%' || #{keyword} || '%'
+                        AND u.email LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <otherwise>
-                        AND (u.login_id LIKE '%' || #{keyword} || '%' 
-                             OR u.user_name LIKE '%' || #{keyword} || '%' 
-                             OR u.email LIKE '%' || #{keyword} || '%')
+                        AND (u.login_id LIKE CONCAT('%', #{keyword}, '%') 
+                             OR u.user_name LIKE CONCAT('%', #{keyword}, '%') 
+                             OR u.email LIKE CONCAT('%', #{keyword}, '%'))
                     </otherwise>
                 </choose>
             </if>
@@ -87,7 +87,7 @@
             u.phone,
             u.created_at AS createdAt,
             u.last_login_at AS lastLoginAt
-        FROM Bg_User u
+        FROM bg_user u
         WHERE u.id = #{id}
     </select>
 

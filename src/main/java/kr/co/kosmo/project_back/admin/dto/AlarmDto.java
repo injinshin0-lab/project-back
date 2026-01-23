@@ -19,6 +19,7 @@ public class AlarmDto {
     private String content;
 
     private int userCount;
+    private Integer count;
     
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;

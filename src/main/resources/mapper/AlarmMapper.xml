@@ -16,21 +16,21 @@
             message,
             created_at  AS createdAt,
             is_read     AS isRead
-        FROM Bg_Alarm 
+        FROM bg_alarm 
         WHERE user_id = #{userId} 
         ORDER BY id DESC
     </select>
 
     <!-- 알림 삭제 -->
     <delete id="deleteAlarm" parameterType="int">
-        DELETE FROM Bg_Alarm
+        DELETE FROM bg_alarm
         WHERE id = #{alarmId} 
     </delete>
     
     <!-- 알림 생성 -->
     <insert id="insertAlarm" parameterType="kr.co.kosmo.project_back.alarm.dto.AlarmDto">
-        INSERT INTO Bg_Alarm (user_id, type, message)
-        VALUES (#{userId}, #{type}, #{message})
+        INSERT INTO bg_alarm (user_id, type, message, is_read, created_at)
+        VALUES (#{userId}, #{type}, #{message}, 0, NOW())
     </insert>
 
     <!-- 알림 설정 조회 -->
@@ -42,14 +42,14 @@
             order_is_read       AS isOrderEnabled,
             delivery_is_read    AS isDeliveryEnabled,
             inquery_is_read     AS isAnswerEnabled
-        FROM Bg_User
+        FROM bg_user
         WHERE id = #{userId} 
     </select>
 
     <!-- 알림 설정 수정 -->
     <update id="updateSettings"
             parameterType="kr.co.kosmo.project_back.alarm.dto.AlarmSettingDto">
-        UPDATE Bg_User
+        UPDATE bg_user
         SET 
             order_is_read       = #{isOrderEnabled},
             delivery_is_read    = #{isDeliveryEnabled},
@@ -59,14 +59,14 @@
 
     <!-- 알림 읽음 처리 -->
     <update id="updateReadStatus">
-        UPDATE Bg_Alarm
+        UPDATE bg_alarm
         SET is_read = 1
         WHERE id = #{alarmId}
     </update>
 
     <!-- 알림 전체 읽음 처리 -->
     <update id="updateAllReadStatus">
-        UPDATE Bg_Alarm
+        UPDATE bg_alarm
         SET is_read = 1 
         WHERE user_id = #{userId} 
             AND is_read = 0 

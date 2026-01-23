@@ -10,12 +10,12 @@
         SELECT
             id AS reviewImageId,
             image_url AS imageUrl
-        FROM Bg_Review_Image
+        FROM bg_review_image
         WHERE review_id = #{reviewId}
     </select>
 
     <delete id="deleteImagesByReviewId" parameterType="int">
-        DELETE FROM Bg_Review_Image WHERE review_id = #{reviewId}
+        DELETE FROM bg_review_image WHERE review_id = #{reviewId}
     </delete>
 
 </mapper>

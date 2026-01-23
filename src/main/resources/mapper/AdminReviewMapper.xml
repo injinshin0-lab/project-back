@@ -13,8 +13,8 @@
             u.login_id AS loginId,
             r.content,
             r.rating
-        FROM Bg_Review r
-        LEFT JOIN Bg_User u ON r.user_id = u.id
+        FROM bg_review r
+        LEFT JOIN bg_user u ON r.user_id = u.id
         WHERE r.product_id = #{productId}
         ORDER BY r.id DESC
     </select>
@@ -27,13 +27,13 @@
             u.login_id AS loginId,
             r.content,
             r.rating
-        FROM Bg_Review r
-        LEFT JOIN Bg_User u ON r.user_id = u.id
+        FROM bg_review r
+        LEFT JOIN bg_user u ON r.user_id = u.id
         WHERE r.id = #{reviewId}
     </select>
 
     <delete id="deleteReviewByReviewId" parameterType="int">
-        DELETE FROM Bg_Review WHERE id = #{reviewId}
+        DELETE FROM bg_review WHERE id = #{reviewId}
     </delete>
 
 </mapper>

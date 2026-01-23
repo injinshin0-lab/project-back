@@ -7,11 +7,11 @@
 
     <select id="countFaqList" parameterType="kr.co.kosmo.project_back.admin.dto.FaqSearchDto" resultType="int">
         SELECT COUNT(*)
-        FROM Bg_FAQ
+        FROM bg_faq
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (title LIKE '%' || #{keyword} || '%' 
-                     OR content LIKE '%' || #{keyword} || '%')
+                AND (title LIKE CONCAT('%', #{keyword}, '%') 
+                     OR content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
     </select>
@@ -24,11 +24,11 @@
             content,
             created_at AS createdAt,
             updated_at AS updatedAt
-        FROM Bg_FAQ
+        FROM bg_faq
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (title LIKE '%' || #{keyword} || '%' 
-                     OR content LIKE '%' || #{keyword} || '%')
+                AND (title LIKE CONCAT('%', #{keyword}, '%') 
+                     OR content LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
         ORDER BY id DESC
@@ -43,25 +43,25 @@
             content,
             created_at AS createdAt,
             updated_at AS updatedAt
-        FROM Bg_FAQ
+        FROM bg_faq
         WHERE id = #{faqId}
     </select>
 
     <insert id="insertFaq" parameterType="kr.co.kosmo.project_back.admin.dto.FaqDto"
             useGeneratedKeys="true" keyProperty="faqId">
-        INSERT INTO Bg_FAQ (title, content)
+        INSERT INTO bg_faq (title, content)
         VALUES (#{title}, #{content})
     </insert>
 
     <update id="updateFaq" parameterType="kr.co.kosmo.project_back.admin.dto.FaqDto">
-        UPDATE Bg_FAQ
+        UPDATE bg_faq
         SET title = #{title},
             content = #{content}
         WHERE id = #{faqId}
     </update>
 
     <delete id="deleteFaq" parameterType="int">
-        DELETE FROM Bg_FAQ WHERE id = #{faqId}
+        DELETE FROM bg_faq WHERE id = #{faqId}
     </delete>
 
 </mapper>

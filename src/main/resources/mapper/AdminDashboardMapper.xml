@@ -7,10 +7,10 @@
 
     <select id="getTotalCounts" resultType="kr.co.kosmo.project_back.admin.dto.DashboardDto">
         SELECT
-            (SELECT COUNT(*) FROM Bg_User) AS totalUserCount,
-            (SELECT COUNT(*) FROM Bg_Product) AS totalProductCount,
-            (SELECT COUNT(*) FROM Bg_Order) AS totalOrderCount,
-            (SELECT COALESCE(SUM(payment_price), 0) FROM Bg_Order) AS totalSalesAmount
+            (SELECT COUNT(*) FROM bg_user) AS totalUserCount,
+            (SELECT COUNT(*) FROM bg_product) AS totalProductCount,
+            (SELECT COUNT(*) FROM bg_order) AS totalOrderCount,
+            (SELECT COALESCE(SUM(payment_price), 0) FROM bg_order) AS totalSalesAmount
     </select>
 
 </mapper>

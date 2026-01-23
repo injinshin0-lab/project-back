@@ -9,11 +9,8 @@
     <select id="findPopularKeywords" resultType="String">
         SELECT 
             p.product_name 
-        FROM Bg_Recent_product rp 
-        JOIN Bg_Product p
-            ON rp.product_id = p.id 
-        GROUP By rp.product_id, p.product_name 
-        ORDER By COUNT(*) DESC 
+        FROM bg_recent_product rp 
+        ORDER BY view_count DESC 
         LIMIT 10
     </select>
 </mapper>

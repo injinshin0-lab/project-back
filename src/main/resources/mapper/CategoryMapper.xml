@@ -11,9 +11,9 @@
             id,
             category_name  AS categoryName,
             parent_id      AS parentId,
-            depth
-        FROM Bg_Interest_category
-        ORDER By depth, parent_id, id
+            `depth`
+        FROM bg_interest_category
+        ORDER By `depth`, parent_id, id
     </select>
 
 </mapper>

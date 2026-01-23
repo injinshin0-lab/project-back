@@ -18,35 +18,35 @@
             p.origin_name       AS originName,
             p.content,
             1                   AS iswished         <!-- 찜한 상품임을 알리는 -->
-        FROM Bg_Wishlist w  
-        JOIN Bg_Product p ON w.product_id = p.id 
+        FROM bg_wishlist w  
+        JOIN bg_product p ON w.product_id = p.id 
         WHERE w.user_id = #{userId}      
     </select>
 
     <!-- 찜 여부 확인 -->
     <select id="findWish" resultType="int">
         SELECT COUNT(*)
-        FROM Bg_Wishlist
+        FROM bg_wishlist
         WHERE user_id = #{userId}
             AND product_id = #{productId}
     </select>
 
     <!-- 찜 목록 추가 -->
     <insert id="insertWish">
-        INSERT INTO Bg_Wishlist(user_id, product_id)
+        INSERT INTO bg_wishlist(user_id, product_id)
         VALUES (#{userId}, #{productId})
     </insert>
 
     <!-- 찜 목록 삭제 -->
     <delete id="deleteWish">
-        DELETE FROM Bg_Wishlist
+        DELETE FROM bg_wishlist
         WHERE user_id = #{userId}
             AND product_id = #{productId}
     </delete>
 
     <!-- 회원 탈퇴 -->
     <delete id="deleteByUserId" parameterType="int">
-        DELETE FROM Bg_Wishlist
+        DELETE FROM bg_wishlist
         WHERE user_id = #{userId}
     </delete>
 </mapper>

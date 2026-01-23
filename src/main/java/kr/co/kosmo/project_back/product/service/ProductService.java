@@ -19,6 +19,7 @@ public class ProductService {
 
     // 상품상세 조회
     public ProductDto getProduct(Integer productId) {
+        productMapper.updateViewCount(productId);
         ProductDto product = productMapper.findByProductId(productId);
         if (product != null) formatProductImageUrl(product); // ✅ 경로 보정 추가
         return product;
@@ -46,16 +47,20 @@ public class ProductService {
     // ✅ 이미지 경로 보정 함수 (AdminProductService와 동일한 로직 유지)
     private void formatProductImageUrl(ProductDto product) {
         String url = product.getImageUrl();
+
         if (url == null || url.isEmpty() || url.startsWith("http") || url.startsWith("/uploads/")) {
             return;
         }
         
+        String resultUrl;
+
         // 기존 데이터 및 신규 날짜형 데이터 모두 대응
         if (url.startsWith("product/")) {
-            product.setImageUrl("/uploads/" + url);
+            resultUrl = "/uploads/" + url;
         } else {
-            product.setImageUrl("/uploads/product/" + url);
+            resultUrl = "/uploads/product/" + url;
         }
+        product.setImageUrl(resultUrl.replace(" ", "%20"));
     }
 
 
@@ -66,7 +71,17 @@ public class ProductService {
 
     // 인기 상품
     public List<ProductDto> getPopularProducts() {
-        return productMapper.findTopSalesProducts();
+        List<ProductDto> list = productMapper.findTopSalesProducts();
+        // ✅ 이 줄을 추가해서 인기 상품 목록도 경로를 보정해줘야 합니다!
+        list.forEach(this::formatProductImageUrl);
+        return list;
+    }
+
+    // 조회순 상품 가져오기
+    public List<ProductDto> getTopViewProducts() {
+        List<ProductDto> list = productMapper.findTopViewProducts();
+        list.forEach(this::formatProductImageUrl);
+        return list;
     }
 }
 

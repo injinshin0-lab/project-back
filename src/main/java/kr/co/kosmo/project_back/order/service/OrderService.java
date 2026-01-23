@@ -177,7 +177,7 @@ public class OrderService {
         // 신규 주소를 입력한 경우
         if (dto.getPostcode() != null && !dto.getPostcode().isEmpty()) {
             // 주소 객체 생성 및 정보 매핑
-            // AddressDto의 필드명은 프로젝트의 Bg_Address 테이블 구조에 맞게 조정하세요.
+            // AddressDto의 필드명은 프로젝트의 bg_address 테이블 구조에 맞게 조정하세요.
             kr.co.kosmo.project_back.address.dto.AddressDto newAddr = new kr.co.kosmo.project_back.address.dto.AddressDto();
             newAddr.setUserId(dto.getUserId());
             newAddr.setPostcode(dto.getPostcode());
