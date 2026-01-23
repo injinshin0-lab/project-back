@@ -19,4 +19,8 @@ public interface ProductMapper {
 
     // 인기 상품 전용 메서드 추가
     List<ProductDto> findTopSalesProducts();
+
+    Integer updateViewCount(Integer productId);
+
+    List<ProductDto> findTopViewProducts();
 }

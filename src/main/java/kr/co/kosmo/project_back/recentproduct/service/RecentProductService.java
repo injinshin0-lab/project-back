@@ -3,6 +3,7 @@ package kr.co.kosmo.project_back.recentproduct.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.kosmo.project_back.product.dto.ProductDto;
 import kr.co.kosmo.project_back.recentproduct.mapper.RecentProductMapper;
@@ -18,6 +19,7 @@ public class RecentProductService {
         return recentProductmapper.findRecentProductsByUserId(userId);
     }
     // 최근 본 상품 추가
+    @Transactional
     public void insertOrUpdateRecentProduct(Integer userId, Integer productId) {
         int exists = recentProductmapper.existsRecentProduct(userId, productId);
         if(exists > 0) {        // 이미 있다면 시간 갱신

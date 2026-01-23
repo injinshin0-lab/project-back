@@ -10,10 +10,10 @@
             parameterType="kr.co.kosmo.project_back.user.dto.UserJoinDto"
             useGeneratedKeys="true"
             keyProperty="id">
-        INSERT INTO Bg_User
-        (login_id, password, user_name, phone, email)
+        INSERT INTO bg_user
+        (login_id, password, user_name, phone, email, role, created_at, updated_at, last_login_at, delivery_is_read, inquery_is_read, order_is_read)
         VALUES
-        (#{loginId}, #{password}, #{name}, #{phone}, #{email})
+        (#{loginId}, #{password}, #{name}, #{phone}, #{email}, 'USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1, 1)
     </insert>
     
     <!-- 아이디로 회원조회 -->
@@ -31,13 +31,13 @@
             created_at      AS createdAt,
             updated_at      AS updatedAt,
             last_login_at   AS lastLoginAt
-        FROM Bg_User
+        FROM bg_user
         WHERE login_id = #{loginId}
     </select>
 
     <!-- 아이디 중복 체크 -->
     <select id="existsByLoginId" parameterType="string" resultType="int">
-        SELECT COUNT(*) FROM Bg_User
+        SELECT COUNT(*) FROM bg_user
         WHERE login_id = #{loginId}
     </select>
 
@@ -56,7 +56,7 @@
             created_at      AS createdAt,
             updated_at      AS updatedAt,
             last_login_at   AS lastLoginAt
-        FROM Bg_User
+        FROM bg_user
         WHERE id = #{id}
     </select>
 
@@ -66,12 +66,12 @@
             id,
             login_id        AS loginId,
             email
-        FROM Bg_User WHERE user_name = #{name} AND email = #{email}
+        FROM bg_user WHERE user_name = #{name} AND email = #{email}
     </select>
 
     <!-- 바뀐 비번 저장 -->
     <update id="updatePasswordByEmail">
-        UPDATE Bg_User
+        UPDATE bg_user
         SET password = #{password},
             updated_at = CURRENT_TIMESTAMP
         WHERE email = #{email}
@@ -79,14 +79,14 @@
 
     <!-- 마지막 로그인 시간 업뎃 -->
     <update id="updateLastLoginAt">
-        UPDATE Bg_User 
+        UPDATE bg_user 
         SET last_login_at = CURRENT_TIMESTAMP
         WHERE id = #{userId} 
     </update>
 
     <!-- 마이페이지 - 회원 정보 수정 -->
     <update id="updateUserInfo">
-        UPDATE Bg_User
+        UPDATE bg_user
         <set>
             <if test="dto.userName != null">
                 user_name = #{dto.userName},
@@ -101,7 +101,7 @@
 
     <!-- 마이페이지 비번 변경 -->
      <update id="updatePasswordByUserId">
-        UPDATE Bg_User
+        UPDATE bg_user
         SET password = #{password},
             updated_at = CURRENT_TIMESTAMP
         WHERE id = #{userId}
@@ -109,7 +109,7 @@
 
     <!-- 회원 탈퇴 -->
     <delete id="deleteUser" parameterType="int">
-        DELETE FROM Bg_User
+        DELETE FROM bg_user
         WHERE id = #{userId}
     </delete>
 

@@ -29,6 +29,6 @@ public interface AdminAlarmMapper {
     int insertAllUserAlarm(@Param("type") String type, @Param("content") String content);
 
     // 유저가 설정한 ID 검색
-    @Select("SELECT id FROM Bg_User WHERE login_id = #{loginId}")
+    @Select("SELECT id FROM bg_user WHERE login_id = #{loginId}")
     Integer findIdByLoginId(@Param("loginId") String loginId);
 }

@@ -17,9 +17,9 @@
         p.origin_name     AS originName,
         p.image_url       AS imageUrl,
         c.category_name   AS categoryName
-    FROM Bg_Product p
-    LEFT JOIN Bg_Category_product_mapping m ON p.id = m.product_id
-    LEFT JOIN Bg_Interest_category c ON m.interest_category_id = c.id
+    FROM bg_product p
+    LEFT JOIN bg_category_product_mapping m ON p.id = m.product_id
+    LEFT JOIN bg_interest_category c ON m.interest_category_id = c.id
     WHERE p.id = #{productId}
 </select>
 
@@ -40,15 +40,15 @@
         parameterType="kr.co.kosmo.project_back.product.dto.ProductSearchDto"
         resultType="int">
     SELECT COUNT(DISTINCT p.id)
-    FROM Bg_Product p
-    LEFT JOIN Bg_Category_product_mapping m ON p.id = m.product_id
-    LEFT JOIN Bg_Interest_category c ON m.interest_category_id = c.id
+    FROM bg_product p
+    LEFT JOIN bg_category_product_mapping m ON p.id = m.product_id
+    LEFT JOIN bg_interest_category c ON m.interest_category_id = c.id
     WHERE 1 = 1
     <if test="keyword != null and keyword != ''">
         AND (
-            product_name LIKE '%' || #{keyword} || '%'
-            OR content LIKE '%' || #{keyword} || '%'
-            OR c.category_name LIKE '%' || #{keyword} || '%'
+            product_name LIKE CONCAT('%', #{keyword}, '%')
+            OR content LIKE CONCAT('%', #{keyword}, '%')
+            OR c.category_name LIKE CONCAT('%', #{keyword}, '%')
         )   <!-- 키워드가 상품이름에 있던 내용에 있던 일단 다 검색 -->
     </if>
 </select>
@@ -63,16 +63,17 @@
         p.content,
         p.price,
         p.origin_name     AS originName,
-        p.image_url       AS imageUrl
-    FROM Bg_Product p
-    LEFT JOIN Bg_Category_product_mapping m ON p.id = m.product_id
-    LEFT JOIN Bg_Interest_category c ON m.interest_category_id = c.id
+        p.image_url       AS imageUrl,
+        p.created_at
+    FROM bg_product p
+    LEFT JOIN bg_category_product_mapping m ON p.id = m.product_id
+    LEFT JOIN bg_interest_category c ON m.interest_category_id = c.id
     WHERE 1 = 1
     <if test="keyword != null and keyword != ''">
         AND (
-            p.product_name LIKE '%' || #{keyword} || '%'
-            OR p.content LIKE '%' || #{keyword} || '%'
-            OR c.category_name LIKE '%' || #{keyword} || '%'
+            p.product_name LIKE CONCAT('%', #{keyword}, '%')
+            OR p.content LIKE CONCAT('%', #{keyword}, '%')
+            OR c.category_name LIKE CONCAT('%', #{keyword}, '%')
         )
     </if>
     ORDER BY 
@@ -104,7 +105,7 @@
             parameterType="int"
             resultType="int">
         SELECT price
-        FROM Bg_Product
+        FROM bg_product
         WHERE id = #{productId} 
     </select>
 
@@ -117,13 +118,28 @@
             p.image_url as imageUrl,
             /* 해당 상품이 주문된 총 수량을 합산 */
             IFNULL(SUM(oi.amount), 0) as salesCount
-        FROM Bg_Product p
-        LEFT JOIN Bg_Order_item oi ON p.id = oi.product_id
+        FROM bg_product p
+        LEFT JOIN bg_order_item oi ON p.id = oi.product_id
         GROUP BY p.id
         ORDER BY salesCount DESC
         LIMIT 10
     </select>
 
+    <select id="findTopViewProducts" resultType="kr.co.kosmo.project_back.product.dto.ProductDto">
+        SELECT 
+            id as productId,
+            product_name as productName,
+            price as price,
+            image_url as imageUrl,
+            view_count as viewCount
+        FROM bg_product
+        ORDER BY view_count DESC, id DESC
+        LIMIT 4
+    </select>
+
+    <update id="updateViewCount" parameterType="int">
+        UPDATE bg_product SET view_count = view_count + 1 WHERE id = #{productId}
+    </update>
 
 </mapper>
         

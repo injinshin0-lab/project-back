@@ -10,22 +10,22 @@
             id AS categoryId,
             category_name AS categoryName,
             parent_id AS parentId,
-            depth AS level
-        FROM Bg_Interest_category
-        ORDER BY depth, id
+            `depth` AS level
+        FROM bg_interest_category
+        ORDER BY `depth`, id
     </select>
 
     <select id="countProductList" parameterType="kr.co.kosmo.project_back.admin.dto.ProductSearchDto" resultType="int">
         SELECT COUNT(DISTINCT p.id)
-        FROM Bg_Product p
+        FROM bg_product p
         <if test="(categoryIds != null and categoryIds.size() > 0) or categoryId != null">
-            INNER JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
+            INNER JOIN bg_category_product_mapping cpm ON p.id = cpm.product_id
         </if>
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (p.product_name LIKE '%' || #{keyword} || '%' 
-                     OR p.content LIKE '%' || #{keyword} || '%'
-                     OR p.origin_name LIKE '%' || #{keyword} || '%')
+                AND (p.product_name LIKE CONCAT('%', #{keyword}, '%') 
+                     OR p.content LIKE CONCAT('%', #{keyword}, '%')
+                     OR p.origin_name LIKE CONCAT('%', #{keyword}, '%'))
             </if>
             <if test="categoryIds != null and categoryIds.size() > 0">
                 AND cpm.interest_category_id IN
@@ -71,15 +71,15 @@
             c.depth AS cat_level
         FROM (
             SELECT DISTINCT p.id
-            FROM Bg_Product p
+            FROM bg_product p
             <if test="(categoryIds != null and categoryIds.size() > 0) or categoryId != null">
-                INNER JOIN Bg_Category_product_mapping cpm_filter ON p.id = cpm_filter.product_id
+                INNER JOIN bg_category_product_mapping cpm_filter ON p.id = cpm_filter.product_id
             </if>
             <where>
                 <if test="keyword != null and keyword != ''">
-                    AND (p.product_name LIKE '%' || #{keyword} || '%' 
-                        OR p.content LIKE '%' || #{keyword} || '%'
-                        OR p.origin_name LIKE '%' || #{keyword} || '%')
+                    AND (p.product_name LIKE CONCAT('%', #{keyword}, '%') 
+                        OR p.content LIKE CONCAT('%', #{keyword}, '%')
+                        OR p.origin_name LIKE CONCAT('%', #{keyword}, '%'))
                 </if>
                 <if test="categoryIds != null and categoryIds.size() > 0">
                     AND cpm_filter.interest_category_id IN
@@ -94,9 +94,9 @@
             ORDER BY p.id DESC
             LIMIT #{size} OFFSET #{offset}
         ) AS base        
-        JOIN Bg_Product p ON base.id = p.id
-        LEFT JOIN Bg_Category_product_mapping cpm2 ON p.id = cpm2.product_id
-        LEFT JOIN Bg_Interest_category c ON cpm2.interest_category_id = c.id
+        JOIN bg_product p ON base.id = p.id
+        LEFT JOIN bg_category_product_mapping cpm2 ON p.id = cpm2.product_id
+        LEFT JOIN bg_interest_category c ON cpm2.interest_category_id = c.id
         ORDER BY p.id DESC
     </select>
 
@@ -112,20 +112,20 @@
             c.category_name AS cat_categoryName,
             c.parent_id AS cat_parentId,
             c.depth AS cat_level
-        FROM Bg_Product p
-        LEFT JOIN Bg_Category_product_mapping cpm ON p.id = cpm.product_id
-        LEFT JOIN Bg_Interest_category c ON cpm.interest_category_id = c.id
+        FROM bg_product p
+        LEFT JOIN bg_category_product_mapping cpm ON p.id = cpm.product_id
+        LEFT JOIN bg_interest_category c ON cpm.interest_category_id = c.id
         WHERE p.id = #{productId}
     </select>
 
     <insert id="insertProduct" parameterType="kr.co.kosmo.project_back.admin.dto.AdminProductRequestDto"
             useGeneratedKeys="true" keyProperty="productId">
-        INSERT INTO Bg_Product (product_name, origin_name, content, price, image_url)
-        VALUES (#{productName}, #{originName}, #{content}, #{price}, #{imageUrl})
+        INSERT INTO bg_product (product_name, origin_name, content, price, image_url, product_status, view_count)
+        VALUES (#{productName}, #{originName}, #{content}, #{price}, #{imageUrl}, 'SALE', 0)
     </insert>
 
     <update id="updateProduct" parameterType="kr.co.kosmo.project_back.admin.dto.AdminProductRequestDto">
-        UPDATE Bg_Product
+        UPDATE bg_product
         <set>
             <if test="productName != null">product_name = #{productName},</if>
             <if test="originName != null">origin_name = #{originName},</if>
@@ -137,7 +137,7 @@
     </update>
 
     <delete id="deleteProduct" parameterType="int">
-        DELETE FROM Bg_Product WHERE id = #{productId}
+        DELETE FROM bg_product WHERE id = #{productId}
     </delete>
 
 </mapper>

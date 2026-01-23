@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryDto {
-    private Integer id;
+    private Integer categoryId;
     private String categoryName;
     private Integer parentId;
     private Integer depth;

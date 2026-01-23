@@ -17,7 +17,7 @@
             address,
             detail_address  AS detailAddress,
             is_default      AS isDefault
-        FROM Bg_Address
+        FROM bg_address
         WHERE user_id = #{userId}
         ORDER BY is_default DESC, id DESC
     </select>
@@ -27,7 +27,7 @@
             parameterType="kr.co.kosmo.project_back.address.dto.AddressDto"
             useGeneratedKeys="true" 
             keyProperty="id">
-        INSERT INTO Bg_Address (
+        INSERT INTO bg_address (
             user_id,
             recipient,
             recipient_phone,
@@ -48,7 +48,7 @@
 
     <!-- 주소 수정 -->
    <update id="updateAddress">
-        UPDATE Bg_Address
+        UPDATE bg_address
         <set>
             <if test="recipient != null">recipient = #{recipient},</if>
             <if test="recipientPhone != null">recipient_phone = #{recipientPhone},</if>
@@ -64,21 +64,21 @@
 
     <!-- 주소 삭제 -->
     <delete id="deleteAddress">
-        DELETE FROM Bg_Address
+        DELETE FROM bg_address
         WHERE id = #{addressId} 
             AND user_id = #{userId} 
     </delete>
 
     <!-- 기본 배송지 해제 -->
     <update id="clearDefaultAddress">
-        UPDATE Bg_Address
+        UPDATE bg_address
         SET is_default = 0
         WHERE user_id = #{userId} 
     </update>
 
     <!-- 회원 탈퇴 -->
     <delete id="deleteByUserId" parameterType="int">
-        DELETE FROM Bg_Address
+        DELETE FROM bg_address
         WHERE user_id = #{userId}
     </delete>
 

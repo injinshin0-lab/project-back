@@ -13,20 +13,20 @@
             p.product_name    AS productName,
             c.quantity,
             p.price
-        FROM Bg_Cart c
-        JOIN Bg_Product p ON c.product_id = p.id 
+        FROM bg_cart c
+        JOIN bg_product p ON c.product_id = p.id 
         WHERE c.user_id = #{userId}        
     </select>
 
     <!-- 장바구니 추가 -->
     <insert id="insertCartItem">
-        INSERT INTO Bg_Cart (user_id, product_id, quantity)
-        VALUES (#{userId}, #{productId}, #{quantity})
+        INSERT INTO bg_cart (user_id, product_id, quantity, added_at)
+        VALUES (#{userId}, #{productId}, #{quantity}, NOW())
     </insert>
 
     <!-- 수량 수정 -->
     <update id="updateCartItemByCartItemId"> 
-        UPDATE Bg_Cart
+        UPDATE bg_cart
         SET quantity = #{quantity}
         WHERE id = #{cartItemId}
             AND user_id = #{userId}
@@ -34,7 +34,7 @@
 
     <!-- 장바구니 항목 삭제(단건) -->
     <delete id="deleteCartItem">
-        DELETE FROM Bg_Cart
+        DELETE FROM bg_cart
         WHERE user_id = #{userId}
             AND product_id = #{productId}
     </delete>
@@ -42,27 +42,17 @@
 
     <!-- 장바구니 전체 삭제 -->
     <delete id="deleteCart">
-        DELETE FROM Bg_Cart
+        DELETE FROM bg_cart
         WHERE user_id = #{userId}
     </delete>
 
     <!-- 회원 탈퇴 -->
     <delete id="deleteByUserId" parameterType="int">
-        DELETE FROM Bg_Cart
+        DELETE FROM bg_cart
         WHERE user_id = #{userId}
     </delete>
 
 </mapper>
-
-
-<!-- updateCartQuantity를 추가한 이유... -->
-<!-- 1. insertOrUpdateCartItem 하나로 장바구니 추가/수정을 
-전부 처리하려고 했으나... 그러기 위해선 DB에 user_id/product_id가
-UNIQUE/PK여야 함..
-2. DB를 그대로 둔다면..
-UNIQUE 제약이 없기 때문에 중복 여부를 판단할수 없음..
-그래서 수정.추가를 한번에 구현하지 못한다.. -->
-
 
 
 

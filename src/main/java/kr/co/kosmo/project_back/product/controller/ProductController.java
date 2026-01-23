@@ -93,4 +93,9 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/top-views")
+    public ResponseEntity<List<ProductDto>> getTopViewProducts() {
+        return ResponseEntity.ok(productService.getTopViewProducts());
+    }
+
 }

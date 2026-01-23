@@ -28,12 +28,11 @@
             r.created_at  AS createdAt, 
             ri.id         AS reviewImageId,
             ri.image_url  AS imageUrl,
-            (SELECT COUNT(*) FROM Bg_Review_Image WHERE review_id = r.id) AS imageCount
-        FROM Bg_Review r
-        LEFT JOIN Bg_Review_Image ri
+            (SELECT COUNT(*) FROM bg_review_image WHERE review_id = r.id) AS imageCount
+        FROM bg_review r
+        LEFT JOIN bg_review_image ri
             ON r.id = ri.review_id
         WHERE r.product_id = #{productId}
-        GROUP BY r.id
         ORDER BY 
         <choose>
             <when test="sort == 'rating_desc'">
@@ -52,7 +51,7 @@
             parameterType="kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto"
             useGeneratedKeys="true"
             keyProperty="reviewId">
-        INSERT INTO Bg_Review (
+        INSERT INTO bg_review (
             user_id,
             product_id,
             content,
@@ -71,7 +70,7 @@
     <!-- 리뷰 수정 -->
     <update id="updateReview"
             parameterType="kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto">
-        UPDATE Bg_Review
+        UPDATE bg_review
         SET
             content = #{content},
             rating = #{rating},
@@ -82,7 +81,7 @@
     <!-- 리뷰 삭제 -->
     <delete id="deleteReview"
             parameterType="kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto">
-        DELETE FROM Bg_Review
+        DELETE FROM bg_review
         WHERE id = #{reviewId}
     </delete>
 
@@ -124,10 +123,10 @@
             ri.id               AS review_image_id,
             ri.image_url        AS image_url
 
-        FROM Bg_Review r
-        JOIN Bg_Product p 
+        FROM bg_review r
+        JOIN bg_product p 
             ON r.product_id = p.id 
-        LEFT JOIN Bg_Review_Image ri 
+        LEFT JOIN bg_review_image ri 
             ON r.id = ri.review_id 
 
         WHERE r.user_id = #{userId} 
@@ -137,12 +136,12 @@
     <!-- 회원 탈퇴 -->
     <select id="findReviewIdsByUserId" parameterType="int" resultType="long">
         SELECT id
-        FROM Bg_Review
+        FROM bg_review
         WHERE user_id = #{userId} 
     </select>
 
     <delete id="deleteByUserId" parameterType="int">
-        DELETE FROM Bg_Review
+        DELETE FROM bg_review
         WHERE user_id = #{userId}
     </delete>
 

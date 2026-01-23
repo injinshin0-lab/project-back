@@ -10,12 +10,12 @@
         SELECT
             id,
             image_url AS imageUrl
-        FROM Bg_Question_Image
+        FROM bg_question_image
         WHERE question_id = #{questionId}
     </select>
 
     <insert id="insertQuestionImage">
-        INSERT INTO Bg_Question_Image (question_id, image_url)
+        INSERT INTO bg_question_image (question_id, image_url)
         VALUES (#{questionId}, #{imageUrl})
     </insert>
 

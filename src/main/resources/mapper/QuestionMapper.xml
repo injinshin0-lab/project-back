@@ -17,7 +17,7 @@
             q.question_status       AS questionStatus,
             q.type                  AS type,
             q.created_at            AS createdAt 
-        FROM Bg_Question q 
+        FROM bg_question q 
         WHERE q.user_id = #{userId} 
          <!-- 답변/미답변 필터 -->
         <if test="status != null and status != ''">
@@ -34,7 +34,7 @@
     <!-- 문의 작성 -->
     <insert id="insertQuestion"
             parameterType="kr.co.kosmo.project_back.question.dto.QuestionRequestDto">
-        INSERT INTO Bg_Question (
+        INSERT INTO bg_question (
             user_id,
             product_id,
             title,
@@ -54,7 +54,7 @@
         <selectKey keyProperty="questionId"
                     resultType="int"
                     order="AFTER">
-            SELECT last_insert_rowid()
+            SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
 
@@ -64,8 +64,8 @@
             p.product_name AS productName,
             'PRODUCT' AS type,
             NULL AS orderNo
-        FROM Bg_Product p
-        WHERE p.product_name LIKE '%' || #{keyword} || '%'
+        FROM bg_product p
+        WHERE p.product_name LIKE CONCAT('%', #{keyword}, '%')
         
         UNION ALL
 
@@ -75,23 +75,23 @@
             p.product_name AS productName,
             'ORDER' AS type,
             'ORD-' || o.id AS orderNo
-        FROM Bg_Order o
-        JOIN Bg_Order_Item oi ON o.id = oi.order_id
-        JOIN Bg_Product p ON oi.product_id = p.id
+        FROM bg_order o
+        JOIN bg_order_item oi ON o.id = oi.order_id
+        JOIN bg_product p ON oi.product_id = p.id
         WHERE o.user_id = #{userId}
-        AND ('ORD-' || o.id LIKE '%' || #{keyword} || '%' 
-            OR p.product_name LIKE '%' || #{keyword} || '%')
+        AND ('ORD-' || o.id LIKE CONCAT('%', #{keyword}, '%') 
+            OR p.product_name LIKE CONCAT('%', #{keyword}, '%'))
         LIMIT 15
     </select>
 
     <!-- 회원 탈퇴 -->
     <select id="findQuestionIdsByUserId" parameterType="int" resultType="long">
         SELECT id 
-        FROM Bg_Question
+        FROM bg_question
         WHERE user_id = #{userId}     
     </select>
     <delete id="deleteByUserId" parameterType="int">
-        DELETE FROM Bg_Question
+        DELETE FROM bg_question
         WHERE user_id = #{userId}
     </delete>
 
@@ -100,7 +100,7 @@
             parameterType="int"
             resultType="int">
         SELECT user_id 
-        FROM Bg_Question
+        FROM bg_question
         WHERE id = #{questionId} 
     </select>
 
@@ -108,7 +108,7 @@
         SELECT 
             question_id as questionid,
             content
-        FROM Bg_Answer
+        FROM bg_answer
         WHERE question_id = #{questionId}
     </select>
 
