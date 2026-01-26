@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpSession;
+import kr.co.kosmo.project_back.order.mapper.OrderMapper;
 import kr.co.kosmo.project_back.order.service.OrderService;
 import kr.co.kosmo.project_back.review.dto.request.ReviewRequestDto;
 import kr.co.kosmo.project_back.review.dto.response.ReviewCreateResponseDto;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class ReviewController {
     private final ReviewService reviewService;
     private final OrderService orderService;
+    private final OrderMapper orderMapper;
 
     // 상품별 리뷰 목록 조회
     @GetMapping("/{productId}/reviews")
@@ -105,5 +107,19 @@ public class ReviewController {
     ) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
+    }
+
+    // 구매 가능 여부 확인 API 추가
+    @GetMapping("/{productId}/can-review")
+    public ResponseEntity<Boolean> checkCanReview(
+        @PathVariable Integer productId,
+        HttpSession session
+    ) {
+        Integer userId = (Integer) session.getAttribute("LOGIN_USER");
+        if (userId == null) return ResponseEntity.ok(false);
+
+        // service에 로직을 분리해도 좋고, 직접 mapper를 호출해도 됩니다.
+        int count = orderMapper.countCompletedOrder(userId, productId);
+        return ResponseEntity.ok(count > 0);
     }
 }
