@@ -16,38 +16,16 @@ import lombok.RequiredArgsConstructor;
 public class RecommendationService {
     private final RecommendationMapper recommendationMapper;
 
-    // 개인별 맞춤 추천: 장고가 계산해둔 결과물만 그대로 조회
     public List<RecommendationResponseDto> getPersonalRecommendations(Integer userId) {
-        List<RecommendationResponseDto> recommendations = recommendationMapper.findAiRecommendationByUser(userId);
-        
-        // ✅ 이미지 경로 보정 로직 추가
-        recommendations.forEach(this::formatRecommendationImageUrl);
-        
-        return recommendations;
+        // ❌ formatRecommendationImageUrl 호출을 삭제하세요.
+        return recommendationMapper.findAiRecommendationByUser(userId);
     }
 
     public List<RecommendationResponseDto> getPopularRecommendations() {
-        List<RecommendationResponseDto> list = recommendationMapper.findTop10ByUserId(null);
-        
-        // ✅ 여기도 추가
-        list.forEach(this::formatRecommendationImageUrl);
-        
-        return list;
+        // ❌ formatRecommendationImageUrl 호출을 삭제하세요.
+        return recommendationMapper.findTop10ByUserId(null);
     }
 
-    private void formatRecommendationImageUrl(RecommendationResponseDto dto) {
-        String url = dto.getImageUrl();
-
-        if (url == null || url.isEmpty() || url.startsWith("http") || url.startsWith("/uploads/")) {
-            return;
-        }
-        
-        String resultUrl;
-        if (url.startsWith("product/")) {
-            resultUrl = "/uploads/" + url;
-        } else {
-            resultUrl = "/uploads/product/" + url;
-        }
-        dto.setImageUrl(resultUrl.replace(" ", "%20"));
-    }
+    // ❌ formatRecommendationImageUrl 메서드 전체를 삭제하거나 주석 처리하세요.
+    // 주소 보정은 오직 WebConfig(Serializer) 한 곳에서만 처리하는 것이 가장 안전합니다.
 }

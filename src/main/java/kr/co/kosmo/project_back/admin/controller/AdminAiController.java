@@ -10,31 +10,24 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import kr.co.kosmo.project_back.admin.dto.AiResponseDto;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/admin/ai")
+@RequiredArgsConstructor
 public class AdminAiController {
-    
-    @PostMapping("/run")
-    public ResponseEntity<?> runAiEngine(){
-        // 장고 api 주소
-        String djangoUrl = "http://localhost:8000/api_service/run-ai/";
 
-        // 외부 API와 통신하기 위한 스프링 도구
-        RestTemplate restTemplate = new RestTemplate();
-        
+    private final RestTemplate restTemplate; // WebConfig의 무제한 Bean 주입
+
+    @PostMapping({"/run", "/run/"})
+    public ResponseEntity<?> runAiEngine() {
+        String djangoUrl = "http://django-svc.bogam:8000/api_service/run-ai/";
         try {
-            // 장고에게 POST 요청을 보내고 결과를 DTO로 받는다
-            // 두번째 인자는 보낼 데이터인데 지금은 필요없으니까 null
-            AiResponseDto response = restTemplate.postForObject(djangoUrl, null, AiResponseDto.class);
-
+            // 이제 이 요청은 장고가 응답할 때까지 끝까지 기다립니다.
+            AiResponseDto response = restTemplate.postForObject(djangoUrl, new HashMap<>(), AiResponseDto.class);
             return ResponseEntity.ok(response);
-
         } catch (Exception e) {
-            Map<String, String> errorMap = new HashMap<>();
-            errorMap.put("status", "error");
-            errorMap.put("message", "AI 엔진서버 연결에 실패했습니다. : " + e.getMessage());
-            return ResponseEntity.status(500).body(errorMap);
+            return ResponseEntity.status(500).body("에러 발생: " + e.toString());
         }
     }
 }
