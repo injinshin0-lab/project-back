@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="260" src="https://github.com/user-attachments/assets/a8c4e118-3e56-49f0-b0ae-373e1164b4c1" />
+  <img width="240" src="https://github.com/user-attachments/assets/a8c4e118-3e56-49f0-b0ae-373e1164b4c1" />
 </p>
 
 <h1 align="center">보감 (Bogam) 🥬</h1>
@@ -62,4 +62,5 @@
 • 자신의 소비 패턴을 반영한 쇼핑 경험을 원하는 사용자  
 
 • 목적에 맞는 농산물 선택을 중요하게 생각하는 사용자
+
 
